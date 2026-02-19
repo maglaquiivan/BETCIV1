@@ -520,16 +520,13 @@ function initializeQuickActions() {
                     document.getElementById('traineeStatus').value = 'ACTIVE';
                     break;
                 case 1: // View Reports
-                    showNotification('Generating reports...', 'info');
-                    setTimeout(() => {
-                        showNotification('Reports generated successfully!', 'success');
-                    }, 1500);
+                    window.location.href = 'records.html';
                     break;
                 case 2: // Manage Appointments
-                    showSection('appointments');
+                    window.location.href = 'appointments.html';
                     break;
                 case 3: // System Settings
-                    showSection('settings');
+                    window.location.href = 'settings.html';
                     break;
             }
         });
