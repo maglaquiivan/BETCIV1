@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="header-right">
-                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <button class="dark-mode-btn" id="darkModeBtn" onclick="handleDarkModeToggle()" title="Toggle Dark Mode">
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile">
@@ -377,10 +377,6 @@
     <script>
         // Wait for external script to load
         document.addEventListener('DOMContentLoaded', function() {
-            // Ensure functions are available globally
-            window.toggleDarkMode = toggleDarkMode;
-            window.handleLogout = handleLogout;
-            
             // Initialize dropdown
             initializeRecordsDropdown();
         });
@@ -420,6 +416,13 @@
                 dropdown.classList.remove('active');
             }
         });
+
+        // Dark mode toggle wrapper
+        function handleDarkModeToggle() {
+            if (typeof toggleDarkMode === 'function') {
+                toggleDarkMode();
+            }
+        }
 
         // Logout handler
         function handleLogout() {
