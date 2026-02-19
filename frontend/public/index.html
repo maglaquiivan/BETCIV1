@@ -664,7 +664,7 @@
     // Chat Widget Functions
     function toggleChatWidget() {
       const chatWindow = document.getElementById('chatWindow');
-      chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
+      chatWindow.classList.toggle('active');
     }
 
     function sendChatMessage() {
