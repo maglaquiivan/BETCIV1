@@ -883,6 +883,20 @@ body.dark-mode .sidebar {
   background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
 }
 
+body.dark-mode .sidebar-nav .nav-link {
+  color: #ffffff;
+}
+
+body.dark-mode .sidebar-nav .nav-link:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+body.dark-mode .sidebar-nav .nav-item.active .nav-link {
+  background: rgba(255, 255, 255, 0.25);
+  color: #ffffff;
+}
+
 body.dark-mode .top-header {
   background: #1e1e1e;
   border-bottom-color: #3a3a3a;
@@ -1050,6 +1064,14 @@ body.dark-mode .modal-header h3 {
 }
 
 body.dark-mode .delete-warning p {
+  color: #d0d0d0;
+}
+
+body.dark-mode .logo-text h3 {
+  color: #ffffff;
+}
+
+body.dark-mode .logo-text p {
   color: #d0d0d0;
 }
 
