@@ -496,20 +496,20 @@
             <img src="../assets/img/logo.png" alt="Bot">
           </div>
           <div class="msg-content">
-            <p>Hello! Welcome to BETCI. How can we help you today?</p>
+            <p>Hi there! 👋 Welcome to BETCI. How can we assist you today?</p>
             <span class="msg-time">Just now</span>
           </div>
         </div>
         
         <div class="quick-replies">
-          <button class="quick-reply-btn" onclick="sendQuickReply('View Courses')">
-            <i class="bi bi-book"></i> View Courses
+          <button class="quick-reply-btn" onclick="sendQuickReply('Tell me about courses')">
+            <i class="bi bi-book"></i> Courses
           </button>
-          <button class="quick-reply-btn" onclick="sendQuickReply('Enrollment Info')">
-            <i class="bi bi-info-circle"></i> Enrollment Info
+          <button class="quick-reply-btn" onclick="sendQuickReply('How do I enroll?')">
+            <i class="bi bi-pencil-square"></i> Enrollment
           </button>
-          <button class="quick-reply-btn" onclick="sendQuickReply('Contact Us')">
-            <i class="bi bi-telephone"></i> Contact Us
+          <button class="quick-reply-btn" onclick="sendQuickReply('Contact information')">
+            <i class="bi bi-telephone"></i> Contact
           </button>
         </div>
       </div>
@@ -674,7 +674,7 @@
         addChatMessage(message, 'user');
         input.value = '';
         setTimeout(() => {
-          addChatMessage('Thanks for your message! Our team will respond shortly.', 'bot');
+          addChatMessage('Thanks for reaching out! Our team will get back to you shortly. For immediate assistance, please call +63 2 8123 4567.', 'bot');
         }, 500);
       }
     }
@@ -682,7 +682,17 @@
     function sendQuickReply(text) {
       addChatMessage(text, 'user');
       setTimeout(() => {
-        addChatMessage('Thanks for your interest! Please contact us for more details.', 'bot');
+        let response = '';
+        if (text.includes('course')) {
+          response = 'We offer 6 TESDA-accredited programs: Forklift, Bulldozer, Dump Truck, Excavator, Wheel Loader, and Backhoe Loader operations. Visit our Courses section to learn more!';
+        } else if (text.includes('enroll')) {
+          response = 'To enroll, click the Login button and register as a trainee. Our team will guide you through the process. Questions? Email us at admissions@betci.edu.ph';
+        } else if (text.includes('contact')) {
+          response = 'Contact us at: 📞 +63 2 8123 4567 | 📧 info@betci.edu.ph | 📍 123 Training Avenue, Manila';
+        } else {
+          response = 'Thanks for your interest! How else can we help?';
+        }
+        addChatMessage(response, 'bot');
       }, 500);
     }
 
