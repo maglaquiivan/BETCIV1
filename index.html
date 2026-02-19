@@ -4,11 +4,23 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BETCI - Redirect</title>
+  <style>
+    body { margin: 0; padding: 0; font-family: Arial, sans-serif; background: #f5f5f5; }
+    .container { display: flex; align-items: center; justify-content: center; height: 100vh; }
+    .message { text-align: center; }
+    .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #E67E22; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 20px; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
   <script>
     window.location.href = 'frontend/public/index.html';
   </script>
 </head>
 <body>
-  <p>Redirecting to BETCI...</p>
+  <div class="container">
+    <div class="message">
+      <div class="spinner"></div>
+      <p>Redirecting to BETCI...</p>
+    </div>
+  </div>
 </body>
 </html>

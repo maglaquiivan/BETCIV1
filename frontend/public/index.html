@@ -467,6 +467,68 @@
 
   </main>
 
+  <!-- Custom Chat Widget -->
+  <div class="chat-widget" id="chatWidget">
+    <button class="chat-bubble" id="chatBubble" onclick="toggleChatWidget()">
+      <i class="bi bi-chat-dots-fill"></i>
+      <span class="chat-badge">1</span>
+    </button>
+    
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-window-header">
+        <div class="chat-header-info">
+          <div class="chat-avatar">
+            <img src="../assets/img/logo.png" alt="BETCI">
+          </div>
+          <div>
+            <h4>BETCI Support</h4>
+            <p class="chat-status"><span class="status-dot"></span> Online</p>
+          </div>
+        </div>
+        <button class="chat-close-btn" onclick="toggleChatWidget()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+      
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg bot-msg">
+          <div class="msg-avatar">
+            <img src="../assets/img/logo.png" alt="Bot">
+          </div>
+          <div class="msg-content">
+            <p>Hello! Welcome to BETCI. How can we help you today?</p>
+            <span class="msg-time">Just now</span>
+          </div>
+        </div>
+        
+        <div class="quick-replies">
+          <button class="quick-reply-btn" onclick="sendQuickReply('View Courses')">
+            <i class="bi bi-book"></i> View Courses
+          </button>
+          <button class="quick-reply-btn" onclick="sendQuickReply('Enrollment Info')">
+            <i class="bi bi-info-circle"></i> Enrollment Info
+          </button>
+          <button class="quick-reply-btn" onclick="sendQuickReply('Contact Us')">
+            <i class="bi bi-telephone"></i> Contact Us
+          </button>
+        </div>
+      </div>
+      
+      <div class="chat-input-area">
+        <input 
+          type="text" 
+          class="chat-input-field" 
+          id="chatInputField" 
+          placeholder="Type your message..."
+          onkeypress="handleChatKeyPress(event)"
+        >
+        <button class="chat-send-button" onclick="sendChatMessage()">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
   <footer id="footer" class="footer light-background">
     <div class="container">
       <div class="footer-content">
@@ -598,6 +660,54 @@
         loadCoursesFromStorage();
       }
     });
+
+    // Chat Widget Functions
+    function toggleChatWidget() {
+      const chatWindow = document.getElementById('chatWindow');
+      chatWindow.style.display = chatWindow.style.display === 'none' ? 'flex' : 'none';
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatInputField');
+      const message = input.value.trim();
+      if (message) {
+        addChatMessage(message, 'user');
+        input.value = '';
+        setTimeout(() => {
+          addChatMessage('Thanks for your message! Our team will respond shortly.', 'bot');
+        }, 500);
+      }
+    }
+
+    function sendQuickReply(text) {
+      addChatMessage(text, 'user');
+      setTimeout(() => {
+        addChatMessage('Thanks for your interest! Please contact us for more details.', 'bot');
+      }, 500);
+    }
+
+    function addChatMessage(text, sender) {
+      const chatMessages = document.getElementById('chatMessages');
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `chat-msg ${sender}-msg`;
+      msgDiv.innerHTML = `
+        <div class="msg-avatar">
+          <img src="../assets/img/logo.png" alt="${sender}">
+        </div>
+        <div class="msg-content">
+          <p>${text}</p>
+          <span class="msg-time">Just now</span>
+        </div>
+      `;
+      chatMessages.appendChild(msgDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function handleChatKeyPress(event) {
+      if (event.key === 'Enter') {
+        sendChatMessage();
+      }
+    }
   </script>
 
 </body>
