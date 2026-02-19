@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Settings - BETCI Admin</title>
+    <meta name="description" content="BETCI Admin - Settings" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../../assets/img/logo.png" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Admin Dashboard CSS -->
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
+    
+    <!-- Settings Page CSS -->
+    <link rel="stylesheet" href="../assets/css/settings.css" />
+    
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-image">
+                    <img src="../../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
+                </div>
+                <div class="logo-text">
+                    <h3>BETCI</h3>
+                    <p>Admin</p>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="bi bi-house-door"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="trainees.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Trainees</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts.html" class="nav-link">
+                            <i class="bi bi-person-badge"></i>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="training-catalog.html" class="nav-link">
+                            <i class="bi bi-book"></i>
+                            <span>Training Catalog</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="appointments.html" class="nav-link">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Appointments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="records.html" class="nav-link">
+                            <i class="bi bi-file-earmark"></i>
+                            <span>Records</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="settings.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <div class="search-container">
+                        <i class="bi bi-search"></i>
+                        <input type="text" placeholder="Search settings..." class="search-input">
+                    </div>
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+
+                <div class="header-right">
+                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                        <span class="user-name">Admin</span>
+                        <i class="bi bi-chevron-down dropdown-arrow"></i>
+                        
+                        <div class="user-dropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                                <div class="dropdown-user-info">
+                                    <h4>Admin User</h4>
+                                    <p>admin@betci.edu.ph</p>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <ul class="dropdown-menu">
+                                <li><a href="#"><i class="bi bi-person"></i>My Profile</a></li>
+                                <li><a href="#"><i class="bi bi-gear"></i>Settings</a></li>
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-footer">
+                                <button class="logout-btn" onclick="handleLogout()">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content settings-content">
+                <!-- Settings Dropdown Header -->
+                <div class="settings-dropdown-header">
+                    <div class="dropdown-title">
+                        <i class="bi bi-gear"></i>
+                        <span id="dropdownTitleText">Settings</span>
+                        <i class="bi bi-chevron-down dropdown-chevron"></i>
+                    </div>
+                    <div class="dropdown-menu-settings">
+                        <a href="#" class="dropdown-item active" onclick="showSection('manage-profile', event)">
+                            <span>Manage Profile</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="showSection('change-password', event)">
+                            <span>Change Password</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="showSection('appearance', event)">
+                            <span>Appearance</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Manage Profile Section -->
+                <div id="manage-profile" class="settings-section active">
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-header-content">
+                                <div>
+                                    <h2 class="card-title">My Profile</h2>
+                                    <p class="card-subtitle">Update your profile information</p>
+                                </div>
+                                <button type="button" class="btn btn-edit" id="editProfileBtn" onclick="toggleEditMode()">
+                                    <i class="bi bi-pencil"></i> Edit Profile
+                                </button>
+                            </div>
+                        </div>
+                        <form id="profileForm" method="POST" action="/api/profile/update">
+                            <div class="profile-avatar-section">
+                                <div class="profile-avatar-large">A</div>
+                                <div class="profile-avatar-info">
+                                    <h3>Admin User</h3>
+                                    <p>Administrator</p>
+                                    <button type="button" class="btn btn-secondary" style="margin-top: 8px;" onclick="changeAvatar()">
+                                        <i class="bi bi-camera"></i> Change Photo
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Full Name</label>
+                                    <input type="text" class="form-control" name="fullname" value="Admin User" disabled required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" name="email" value="admin@betci.edu.ph" disabled required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Phone</label>
+                                    <input type="tel" class="form-control" name="phone" value="+63 9XX XXX XXXX" disabled>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Department</label>
+                                    <input type="text" class="form-control" name="department" value="Administration" disabled>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Address</label>
+                                <input type="text" class="form-control" name="address" placeholder="Enter your address" disabled>
+                            </div>
+                            <div class="form-actions" id="formActions" style="display: none;">
+                                <button type="submit" class="btn btn-primary">
+                                    <i class="bi bi-check"></i> Save Changes
+                                </button>
+                                <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
+                                    <i class="bi bi-x"></i> Cancel
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Change Password Section -->
+                <div id="change-password" class="settings-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Change Password</h2>
+                            <p class="card-subtitle">Update your account password</p>
+                        </div>
+                        <form id="passwordForm" method="POST" action="/api/password/change">
+                            <div class="form-group">
+                                <label class="form-label">Current Password</label>
+                                <input type="password" class="form-control" name="current_password" autocomplete="current-password" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">New Password</label>
+                                <input type="password" class="form-control" name="new_password" id="newPassword" autocomplete="new-password" required>
+                                <div class="password-strength">
+                                    <div class="password-strength-bar" id="strengthBar"></div>
+                                </div>
+                                <p class="password-hint">Password must be at least 8 characters long</p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" name="confirm_password" autocomplete="new-password" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-lock"></i> Update Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Appearance Section -->
+                <div id="appearance" class="settings-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Appearance</h2>
+                            <p class="card-subtitle">Customize your dashboard appearance</p>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div class="appearance-option">
+                                <div class="appearance-info">
+                                    <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Dark Mode</h3>
+                                    <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">Switch between light and dark theme</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="appearance-option" style="margin-top: 20px;">
+                                <div class="appearance-info">
+                                    <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Compact Mode</h3>
+                                    <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">Reduce spacing for more content</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="compactModeToggle" onchange="toggleCompactMode()">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script>
+        // Wait for DOM to be fully loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Profile dropdown toggle
+            const userProfile = document.querySelector('.user-profile');
+            if (userProfile) {
+                userProfile.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const dropdown = this.querySelector('.user-dropdown');
+                    if (dropdown) {
+                        dropdown.classList.toggle('active');
+                    }
+                });
+            }
+
+            document.addEventListener('click', function(e) {
+                const userProfile = document.querySelector('.user-profile');
+                if (userProfile && !e.target.closest('.user-profile')) {
+                    const dropdown = userProfile.querySelector('.user-dropdown');
+                    if (dropdown) {
+                        dropdown.classList.remove('active');
+                    }
+                }
+            });
+
+            // Settings dropdown toggle
+            const dropdownTitle = document.querySelector('.dropdown-title');
+            const dropdownMenu = document.querySelector('.dropdown-menu-settings');
+
+            if (dropdownTitle && dropdownMenu) {
+                dropdownTitle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    dropdownMenu.classList.toggle('active');
+                    this.classList.toggle('active');
+                });
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.settings-dropdown-header')) {
+                    if (dropdownMenu) dropdownMenu.classList.remove('active');
+                    if (dropdownTitle) dropdownTitle.classList.remove('active');
+                }
+            });
+
+            // Form handlers
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    showNotification('Profile updated successfully!', 'success');
+                    toggleEditMode(); // Exit edit mode after saving
+                });
+            }
+
+            const passwordForm = document.getElementById('passwordForm');
+            if (passwordForm) {
+                passwordForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+                    
+                    if (newPassword !== confirmPassword) {
+                        showNotification('Passwords do not match!', 'error');
+                        return;
+                    }
+                    
+                    if (newPassword.length < 8) {
+                        showNotification('Password must be at least 8 characters!', 'error');
+                        return;
+                    }
+                    
+                    showNotification('Password updated successfully!', 'success');
+                    this.reset();
+                });
+            }
+
+            // Password strength indicator
+            const newPasswordInput = document.getElementById('newPassword');
+            if (newPasswordInput) {
+                newPasswordInput.addEventListener('input', function(e) {
+                    const password = e.target.value;
+                    const strengthBar = document.getElementById('strengthBar');
+                    
+                    if (!strengthBar) return;
+                    
+                    let strength = 0;
+                    if (password.length >= 8) strength++;
+                    if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
+                    if (password.match(/[0-9]/)) strength++;
+                    if (password.match(/[^a-zA-Z0-9]/)) strength++;
+                    
+                    strengthBar.className = 'password-strength-bar';
+                    if (strength <= 1) {
+                        strengthBar.classList.add('weak');
+                    } else if (strength <= 3) {
+                        strengthBar.classList.add('medium');
+                    } else {
+                        strengthBar.classList.add('strong');
+                    }
+                });
+            }
+
+            // Load saved preferences
+            const darkMode = localStorage.getItem('darkMode') === 'true';
+            const compactMode = localStorage.getItem('compactMode') === 'true';
+            
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const compactModeToggle = document.getElementById('compactModeToggle');
+            
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                if (darkModeToggle) darkModeToggle.checked = true;
+            }
+            
+            if (compactMode) {
+                document.body.classList.add('compact-mode');
+                if (compactModeToggle) compactModeToggle.checked = true;
+            }
+        });
+
+        // Logout handler
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userSession');
+                sessionStorage.removeItem('userSession');
+                window.location.href = '../../auth/login.html';
+            }
+        }
+
+        // Show section function
+        function showSection(sectionId, event) {
+            event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active from all dropdown items
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
+            }
+            
+            const clickedItem = event.target.closest('.dropdown-item');
+            if (clickedItem) {
+                clickedItem.classList.add('active');
+            }
+
+            // Update breadcrumb
+            updateBreadcrumb(sectionId);
+
+            // Close dropdown
+            const dropdownMenu = document.querySelector('.dropdown-menu-settings');
+            const dropdownTitle = document.querySelector('.dropdown-title');
+            if (dropdownMenu) dropdownMenu.classList.remove('active');
+            if (dropdownTitle) dropdownTitle.classList.remove('active');
+        }
+        
+        // Update breadcrumb function
+        function updateBreadcrumb(sectionId) {
+            const dropdownTitleText = document.getElementById('dropdownTitleText');
+            if (!dropdownTitleText) return;
+            
+            const sectionNames = {
+                'manage-profile': 'Settings / Manage Profile',
+                'change-password': 'Settings / Change Password',
+                'appearance': 'Settings / Appearance'
+            };
+            
+            if (sectionId && sectionNames[sectionId]) {
+                dropdownTitleText.textContent = sectionNames[sectionId];
+            } else {
+                dropdownTitleText.textContent = 'Settings';
+            }
+        }
+
+        // Toggle edit mode for profile
+        let isEditMode = false;
+        let originalValues = {};
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            const form = document.getElementById('profileForm');
+            const editBtn = document.getElementById('editProfileBtn');
+            const formActions = document.getElementById('formActions');
+            
+            if (!form || !editBtn || !formActions) {
+                console.error('Required elements not found');
+                return;
+            }
+            
+            const inputs = form.querySelectorAll('.form-control');
+            
+            if (isEditMode) {
+                // Store original values and enable inputs
+                inputs.forEach(input => {
+                    originalValues[input.name] = input.value;
+                    input.disabled = false;
+                });
+                editBtn.innerHTML = '<i class="bi bi-x-circle"></i> Cancel Edit';
+                editBtn.classList.add('editing');
+                formActions.style.display = 'flex';
+            } else {
+                // Disable inputs
+                inputs.forEach(input => {
+                    input.disabled = true;
+                });
+                editBtn.innerHTML = '<i class="bi bi-pencil"></i> Edit Profile';
+                editBtn.classList.remove('editing');
+                formActions.style.display = 'none';
+            }
+        }
+
+        function cancelEdit() {
+            const form = document.getElementById('profileForm');
+            if (!form) return;
+            
+            const inputs = form.querySelectorAll('.form-control');
+            
+            // Restore original values
+            inputs.forEach(input => {
+                if (originalValues[input.name] !== undefined) {
+                    input.value = originalValues[input.name];
+                }
+            });
+            
+            // Exit edit mode
+            if (isEditMode) {
+                toggleEditMode();
+            }
+        }
+
+        // Change avatar function
+        function changeAvatar() {
+            showNotification('Avatar upload functionality coming soon', 'info');
+        }
+
+        // Notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#27AE60',
+                error: '#E74C3C',
+                info: '#3498DB'
+            };
+            notification.style.cssText = `position: fixed; top: 20px; right: 20px; background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000; border-left: 4px solid ${colors[type] || colors.info}; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease;`;
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle';
+            notification.innerHTML = `<i class="bi bi-${icon}" style="font-size: 18px; color: ${colors[type] || colors.info}"></i><span>${message}</span>`;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Dark Mode Functions
+        function toggleDarkMode() {
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (!darkModeToggle) return;
+            
+            const isDark = darkModeToggle.checked;
+            document.body.classList.toggle('dark-mode', isDark);
+            localStorage.setItem('darkMode', isDark);
+        }
+
+        function toggleCompactMode() {
+            const compactModeToggle = document.getElementById('compactModeToggle');
+            if (!compactModeToggle) return;
+            
+            const isCompact = compactModeToggle.checked;
+            document.body.classList.toggle('compact-mode', isCompact);
+            localStorage.setItem('compactMode', isCompact);
+        }
+    </script>
+</body>
+</html>
+

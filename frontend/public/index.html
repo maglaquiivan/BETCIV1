@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- IMMEDIATE Extension Error Suppression - Must be first -->
+  <script>
+    // Ultra-aggressive console suppression - runs immediately
+    (function() {
+      // Completely disable extension-related console output
+      const filter = (args) => {
+        const str = args.join(' ');
+        return str.includes('chrome-extension') || str.includes('dngmlblcodfobpdpecaadgfbcggfjfnm') || 
+               str.includes('web_accessible_resources') || str.includes('lockdown-install') ||
+               str.includes('SES Removing') || str.includes('ERR_FAILED') || str.includes('Extension context');
+      };
+    
+      const originalError = console.error;
+      const originalWarn = console.warn;
+      const originalLog = console.log;
+  
+      console.error = (...args) => filter(args) ? undefined : originalError(...args);
+      console.warn = (...args) => filter(args) ? undefined : originalWarn(...args);
+      console.log = (...args) => filter(args) ? undefined : originalLog(...args);
+      
+      // Block at browser level
+      window.addEventListener('error', (e) => {
+        if (e.filename?.includes('chrome-extension')) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          return false;
+        }
+      }, true);
+      
+      // Override document.write to prevent extension injection
+      const originalWrite = document.write;
+      document.write = function(content) {
+        if (content && content.includes('chrome-extension')) return;
+        return originalWrite.call(this, content);
+      };
+      
+    })();
+  </script>
+
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>BETCI</title>
+  <meta name="description" content="">
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+
+  
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../assets/vendor/animate.css/animate.min.css" rel="stylesheet">
+  <link href="../assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="../assets/css/main.css" rel="stylesheet">
+
+</head>
+<body class="index-page">
+
+  <header id="header" class="header d-flex align-items-center fixed-top">
+    <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
+
+      <a href="index.html" class="logo d-flex align-items-center">
+        <img src="../assets/img/logo.png" alt="BETCI Logo" class="logo-img">
+        <div class="logo-text">
+          <h1 class="sitename">BETCI</h1>
+          <p class="logo-subtitle">Builders Education & Training Center Inc.</p>
+        </div>
+      </a>
+
+      <nav id="navmenu" class="navmenu">
+        <ul>
+          <li><a href="#hero" class="active">Home</a></li>
+          <li><a href="#about">About</a></li>
+           <li><a href="#features-2 ">Features</a></li>
+          <li><a href="#services">Courses</a></li>
+          <li><a href="#contact">Contact</a></li>
+          <li id="loginLi"><a href="../auth/login.html" class="login-btn">Login</a></li>
+          <li id="profileLi" style="display: none;">
+            <div class="profile-dropdown-header">
+              <button class="profile-btn-header">
+                <div class="profile-avatar-header">U</div>
+                <span id="userNameDisplay">User</span>
+                <i class="bi bi-chevron-down"></i>
+              </button>
+              <div class="profile-menu-header">
+                <a href="#" class="profile-menu-item-header" data-action="profile"><i class="bi bi-person"></i><span>My Profile</span></a>
+                <a href="#" class="profile-menu-item-header"><i class="bi bi-gear"></i><span>Settings</span></a>
+                <div class="profile-menu-divider-header"></div>
+                <a href="#" class="profile-menu-item-header" data-action="logout"><i class="bi bi-box-arrow-right"></i><span>Logout</span></a>
+              </div>
+            </div>
+          </li>
+        </ul>
+        <i class="mobile-nav-toggle d-xl-none bi bi-list"></i>
+      </nav>
+
+    </div>
+  </header>
+
+  <main class="main">
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero section">
+
+      <div class="container hero-container">
+        <div class="hero-content">
+          <div class="hero-logos animate__animated animate__fadeInDown">
+            <img src="../assets/img/logo.png" alt="BETCI Logo 1" class="hero-logo hero-logo-1">
+            <img src="../assets/img/TESDALOGONOBG.png" alt="TESDA Logo" class="hero-logo">
+          </div>
+          <h1 class="hero-title animate__animated animate__fadeInDown">
+            Welcome to 
+            <span>Builders Education & Training Center Inc.</span>
+          </h1>
+          <p class="hero-description animate__animated animate__fadeInUp">
+            Discover TESDA-accredited programs, industry-qualified trainers, and a learning community committed to developing your skills and advancing your career in heavy equipment operation.
+          </p>
+          <div class="hero-stats animate__animated animate__fadeInUp" data-aos-delay="400">
+            <div class="stat-item">
+              <div class="stat-number" id="visitorCount">0</div>
+              <div class="stat-label">Visitors</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">6</div>
+              <div class="stat-label">Courses</div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-number">95%</div>
+              <div class="stat-label">Job Placement</div>
+            </div>
+          </div>
+          <div class="hero-buttons">
+            <a href="#services" class="btn-get-started animate__animated animate__fadeInUp scrollto">View Courses</a>
+            <a href="#about" class="btn-get-started animate__animated animate__fadeInUp scrollto">Learn More</a>
+          </div>
+        </div>
+      </div>
+      <svg class="hero-waves" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 24 150 28 " preserveAspectRatio="none">
+        <defs>
+          <path id="wave-path" d="M-160 44c30 0 58-18 88-18s 58 18 88 18 58-18 88-18 58 18 88 18 v44h-352z"></path>
+        </defs>
+        <g class="wave1">
+          <use xlink:href="#wave-path" x="50" y="3"></use>
+        </g>
+        <g class="wave2">
+          <use xlink:href="#wave-path" x="50" y="0"></use>
+        </g>
+        <g class="wave3">
+          <use xlink:href="#wave-path" x="50" y="9"></use>
+        </g>
+      </svg>
+
+    </section><!-- /Hero Section -->
+
+    <!-- About Section -->
+    <section id="about" class="about section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>About BETCI</h2>
+        <p>Your pathway to professional heavy equipment operation certification</p>
+      </div>
+      <div class="about-container">
+        <div class="container">
+
+          <div class="row position-relative">
+
+            <div class="col-lg-8 mx-auto" data-aos="fade-up" data-aos-delay="100">
+              <div class="our-story">
+                <h4>Established 2026</h4>
+                <h3>MISSION & VISION</h3>
+                
+                <div class="mission-vision-grid">
+                  <div class="mission-box">
+                    <div class="icon-box">
+                      <i class="bi bi-bullseye"></i>
+                    </div>
+                    <h5>Our Mission</h5>
+                    <p>To provide world-class TESDA-accredited training programs that equip individuals with the skills and knowledge needed to excel in heavy equipment operation, contributing to the growth of the construction and industrial sectors.</p>
+                  </div>
+                  
+                  <div class="vision-box">
+                    <div class="icon-box">
+                      <i class="bi bi-eye"></i>
+                    </div>
+                    <h5>Our Vision</h5>
+                    <p>To be the leading heavy equipment training institution in the Philippines, recognized for excellence in education, innovation in training methodologies, and commitment to student success and industry advancement.</p>
+                  </div>
+                </div>
+
+                <div class="values-section">
+                  <h5>Core Values</h5>
+                  <div class="values-grid">
+                    <div class="value-item">
+                      <i class="bi bi-shield-check"></i>
+                      <span>Safety First</span>
+                    </div>
+                    <div class="value-item">
+                      <i class="bi bi-award"></i>
+                      <span>Excellence</span>
+                    </div>
+                    <div class="value-item">
+                      <i class="bi bi-people"></i>
+                      <span>Integrity</span>
+                    </div>
+                    <div class="value-item">
+                      <i class="bi bi-lightbulb"></i>
+                      <span>Innovation</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="about-buttons">
+                  <a href="../auth/login.html" class="about-btn about-btn-primary">Enroll Now</a>
+                  <a href="#services" class="about-btn about-btn-secondary">View Courses</a>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </section><!-- /About Section -->
+
+    
+    <!-- Features 2 Section -->
+    <section id="features-2" class="features section features-2">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Features</h2>
+      </div><!-- End Section Title -->
+
+      <div class="features-container">
+        <div class="container">
+
+          <div class="row gy-4 justify-content-between">
+            <div class="features-image col-lg-4 d-flex align-items-center" data-aos="fade-up">
+              <img src="../assets/img/logo.png" class="img-fluid" alt="Features">
+            </div>
+            <div class="col-lg-7 d-flex flex-column justify-content-center">
+
+              <div class="features-item d-flex" data-aos="fade-up" data-aos-delay="200">
+                <i class="bi bi-award flex-shrink-0"></i>
+                <div>
+                  <h4>TESDA Accredited Programs</h4>
+                  <p>All our courses are officially accredited by TESDA, ensuring industry-standard training and recognized certifications</p>
+                </div>
+              </div><!-- End Features Item-->
+
+              <div class="features-item d-flex mt-5" data-aos="fade-up" data-aos-delay="300">
+                <i class="bi bi-people flex-shrink-0"></i>
+                <div>
+                  <h4>Expert Instructors</h4>
+                  <p>Learn from industry professionals with years of hands-on experience in heavy equipment operation</p>
+                </div>
+              </div><!-- End Features Item-->
+
+              <div class="features-item d-flex mt-5" data-aos="fade-up" data-aos-delay="400">
+                <i class="bi bi-tools flex-shrink-0"></i>
+                <div>
+                  <h4>Modern Equipment</h4>
+                  <p>Train on the latest heavy equipment models used in today's construction and industrial sectors</p>
+                </div>
+              </div><!-- End Features Item-->
+
+              <div class="features-item d-flex mt-5 " data-aos="fade-up" data-aos-delay="500">
+                <i class="bi bi-briefcase flex-shrink-0"></i>
+                <div>
+                  <h4>Job Placement Assistance</h4>
+                  <p>Get career support and job placement assistance to help you start your career in heavy equipment operation</p>
+                </div>
+              </div><!-- End Features Item-->
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </section><!-- /Features 2 Section -->
+
+    <!-- Services Section -->
+    <section id="services" class="services section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Our Courses</h2>
+        <p>TESDA-Accredited Heavy Equipment Operation Programs</p>
+      </div><!-- End Section Title -->
+
+      <div class="courses-container">
+        <div class="container">
+
+          <div class="row gy-4">
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="100">
+              <div class="service-item position-relative" data-course-id="forklift-operation">
+                <div class="course-icon">
+                  <img src="../assets/img/fork.png" alt="Forklift Operation" class="img-fluid course-image">
+                </div>
+                <h3 class="course-title">Forklift Operation NC II</h3>
+                <p class="course-description">Master forklift operation, safety protocols, and material handling techniques for industrial and warehouse environments.</p>
+                <a href="../auth/login.html?tab=register&course=forklift" class="btn-enroll">Enroll Now</a>
+              </div>
+            </div><!-- End Course Item -->
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+              <div class="service-item position-relative" data-course-id="bulldozer-operation">
+                <div class="course-icon">
+                  <img src="../assets/img/bulldozer.png" alt="Bulldozer Operation" class="img-fluid course-image">
+                </div>
+                <h3 class="course-title">Bulldozer Operation NC II</h3>
+                <p class="course-description">Learn bulldozer operation, earthmoving techniques, and site preparation for construction and mining projects.</p>
+                <a href="../auth/login.html?tab=register&course=bulldozer" class="btn-enroll">Enroll Now</a>
+              </div>
+            </div><!-- End Course Item -->
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+              <div class="service-item position-relative" data-course-id="dump-truck-operation">
+                <div class="course-icon">
+                  <img src="../assets/img/dump truck.png" alt="Dump Truck Operation" class="img-fluid course-image">
+                </div>
+                <h3 class="course-title">Dump Truck Operation NC II</h3>
+                <p class="course-description">Professional training for rigid on-highway dump truck operation, hauling, and transportation safety.</p>
+                <a href="../auth/login.html?tab=register&course=dump-truck" class="btn-enroll">Enroll Now</a>
+              </div>
+            </div><!-- End Course Item -->
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+              <div class="service-item position-relative" data-course-id="hydraulic-excavator">
+                <div class="course-icon">
+                  <img src="../assets/img/hydraulic excavator.png" alt="Hydraulic Excavator" class="img-fluid course-image">
+                </div>
+                <h3 class="course-title">Hydraulic Excavator NC II</h3>
+                <p class="course-description">Advanced excavator operation, digging techniques, and hydraulic system maintenance for construction sites.</p>
+                <a href="../auth/login.html?tab=register&course=excavator" class="btn-enroll">Enroll Now</a>
+              </div>
+            </div><!-- End Course Item -->
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="500">
+              <div class="service-item position-relative" data-course-id="wheel-loader">
+                <div class="course-icon">
+                  <img src="../assets/img/logo.png" alt="Wheel Loader" class="img-fluid course-image">
+                </div>
+                <h3 class="course-title">Wheel Loader NC II</h3>
+                <p class="course-description">Comprehensive wheel loader training, material handling, and loading techniques for various applications.</p>
+                <a href="../auth/login.html?tab=register&course=wheel-loader" class="btn-enroll">Enroll Now</a>
+              </div>
+            </div><!-- End Course Item -->
+
+            <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="600">
+              <div class="service-item position-relative" data-course-id="backhoe-loader">
+                <div class="course-icon">
+                  <img src="../assets/img/logo.png" alt="Backhoe Loader" class="img-fluid course-image">
+                </div>
+                <h3 class="course-title">Backhoe Loader NC II</h3>
+                <p class="course-description">Master backhoe loader operation, digging, trenching, and utility work for construction projects.</p>
+                <a href="../auth/login.html?tab=register&course=backhoe" class="btn-enroll">Enroll Now</a>
+              </div>
+            </div><!-- End Course Item -->
+
+          </div>
+
+        </div>
+      </div>
+
+    </section><!-- /Services Section -->
+
+    <!-- Gallery Section -->
+  
+    <!-- Contact Section -->
+    <section id="contact" class="contact section">
+
+      <!-- Section Title -->
+      <div class="container section-title" data-aos="fade-up">
+        <h2>Contact</h2>
+        <p>Get in touch with us for more information about our TESDA-accredited programs</p>
+      </div><!-- End Section Title -->
+
+      <div class="contact-container">
+        <div class="container" data-aos="fade" data-aos-delay="100">
+
+          <div class="row gy-4 justify-content-center">
+
+            <div class="col-lg-8">
+              <div class="row gy-4">
+                
+                <div class="col-md-6">
+                  <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="200">
+                    <i class="bi bi-geo-alt flex-shrink-0"></i>
+                    <div>
+                      <h3>Address</h3>
+                      <p>Builders Education & Training Center Inc.<br>
+                      123 Training Avenue, Manila, Philippines</p>
+                    </div>
+                  </div><!-- End Info Item -->
+                </div>
+
+                <div class="col-md-6">
+                  <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="300">
+                    <i class="bi bi-telephone flex-shrink-0"></i>
+                    <div>
+                      <h3>Call Us</h3>
+                      <p>+63 2 8123 4567<br>
+                      +63 917 123 4567</p>
+                    </div>
+                  </div><!-- End Info Item -->
+                </div>
+
+                <div class="col-md-6">
+                  <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="400">
+                    <i class="bi bi-envelope flex-shrink-0"></i>
+                    <div>
+                      <h3>Email Us</h3>
+                      <p>info@betci.edu.ph<br>
+                      admissions@betci.edu.ph</p>
+                    </div>
+                  </div><!-- End Info Item -->
+                </div>
+
+                <div class="col-md-6">
+                  <div class="info-item d-flex" data-aos="fade-up" data-aos-delay="500">
+                    <i class="bi bi-clock flex-shrink-0"></i>
+                    <div>
+                      <h3>Office Hours</h3>
+                      <p>Monday - Friday: 8:00 AM - 5:00 PM<br>
+                      Saturday: 8:00 AM - 12:00 PM</p>
+                    </div>
+                  </div><!-- End Info Item -->
+                </div>
+
+              </div>
+
+              <!-- Social Media Links -->
+              <div class="social-media-section text-center" data-aos="fade-up" data-aos-delay="600">
+                <h3>Follow Us</h3>
+                <div class="social-links d-flex justify-content-center">
+                  <a href="https://www.facebook.com/caate.tesda.school" target="_blank"><i class="bi bi-facebook"></i></a>
+                  <a href="#" target="_blank"><i class="bi bi-twitter-x"></i></a>
+                  <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
+                  <a href="#" target="_blank"><i class="bi bi-linkedin"></i></a>
+                  <a href="#" target="_blank"><i class="bi bi-youtube"></i></a>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+    </section><!-- /Contact Section -->
+
+  </main>
+
+  <!-- Custom Chat Widget -->
+  <div class="chat-widget" id="chatWidget">
+    <button class="chat-bubble" id="chatBubble" onclick="toggleChatWidget()">
+      <i class="bi bi-chat-dots-fill"></i>
+      <span class="chat-badge">1</span>
+    </button>
+    
+    <div class="chat-window" id="chatWindow">
+      <div class="chat-window-header">
+        <div class="chat-header-info">
+          <div class="chat-avatar">
+            <img src="../assets/img/logo.png" alt="BETCI">
+          </div>
+          <div>
+            <h4>BETCI Support</h4>
+            <p class="chat-status"><span class="status-dot"></span> Online</p>
+          </div>
+        </div>
+        <button class="chat-close-btn" onclick="toggleChatWidget()">
+          <i class="bi bi-x"></i>
+        </button>
+      </div>
+      
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-msg bot-msg">
+          <div class="msg-avatar">
+            <img src="../assets/img/logo.png" alt="Bot">
+          </div>
+          <div class="msg-content">
+            <p>Hello! 👋 Welcome to BETCI. How can we help you today?</p>
+            <span class="msg-time">Just now</span>
+          </div>
+        </div>
+        
+        <div class="quick-replies">
+          <button class="quick-reply-btn" onclick="sendQuickReply('View Courses')">
+            <i class="bi bi-book"></i> View Courses
+          </button>
+          <button class="quick-reply-btn" onclick="sendQuickReply('Enrollment Info')">
+            <i class="bi bi-info-circle"></i> Enrollment Info
+          </button>
+          <button class="quick-reply-btn" onclick="sendQuickReply('Contact Us')">
+            <i class="bi bi-telephone"></i> Contact Us
+          </button>
+        </div>
+      </div>
+      
+      <div class="chat-input-area">
+        <input 
+          type="text" 
+          class="chat-input-field" 
+          id="chatInputField" 
+          placeholder="Type your message..."
+          onkeypress="handleChatKeyPress(event)"
+        >
+        <button class="chat-send-button" onclick="sendChatMessage()">
+          <i class="bi bi-send-fill"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footer" class="footer light-background">
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-info">
+          <h3 class="sitename">BETCI</h3>
+          <p>Discover TESDA-accredited programs, industry-qualified trainers, and a learning community committed to developing your skills and advancing your career.</p>
+        </div>
+        
+        <div class="footer-social">
+          <div class="social-links d-flex justify-content-center">
+            <a href="https://www.facebook.com/caate.tesda.school" target="_blank"><i class="bi bi-facebook"></i></a>
+            <a href="#" target="_blank"><i class="bi bi-twitter-x"></i></a>
+            <a href="#" target="_blank"><i class="bi bi-instagram"></i></a>
+            <a href="#" target="_blank"><i class="bi bi-linkedin"></i></a>
+            <a href="#" target="_blank"><i class="bi bi-youtube"></i></a>
+          </div>
+        </div>
+      </div>
+      
+      <div class="footer-bottom">
+        <div class="footer-bottom-content">
+          <span class="copyright">Copyright <strong>BETCI</strong> All Rights Reserved</span>
+          <span class="separator">|</span>
+          <span class="credits">Designed by <a href="https://www.instagram.com/yoivanishhh/">yoiveignr</a></span>
+          <span class="separator">|</span>
+          <span class="credits">Distributed by <a href="" target="_blank">BSIS Intern</a></span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scroll Top -->
+  <a href="#" id="scroll-top" class="scroll-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Preloader -->
+  <div id="preloader"></div>
+
+  <!-- Vendor JS Files -->
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <script src="../assets/vendor/php-email-form/validate.js"></script>
+  <script src="../assets/vendor/aos/aos.js"></script>
+  <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
+  <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
+
+  <!-- Main JS File -->
+  <script src="../assets/js/main.js"></script>
+
+  <!-- API Service -->
+  <script src="../js/api.js"></script>
+
+  <!-- Logout Handler & Course Loading from API -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Reset visitor count if ?reset=1 in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('reset') === '1') {
+        localStorage.removeItem('betci_visitor_data');
+        localStorage.removeItem('betci_simple_count');
+        localStorage.removeItem('betci_global_visitors');
+        localStorage.removeItem('betci_has_visited');
+        sessionStorage.clear();
+        console.log('Visitor count reset to 0');
+        // Remove the reset parameter from URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+      
+      // Visitor Counter - Track unique visitors globally with device fingerprinting
+      async function updateVisitorCount() {
+        try {
+          // Generate a unique device fingerprint
+          const getDeviceFingerprint = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+            ctx.textBaseline = 'top';
+            ctx.font = '14px Arial';
+            ctx.fillText('fingerprint', 2, 2);
+            const fingerprint = canvas.toDataURL();
+            
+            const deviceInfo = [
+              navigator.userAgent,
+              navigator.language,
+              screen.width,
+              screen.height,
+              screen.colorDepth,
+              new Date().getTimezoneOffset(),
+              fingerprint
+            ].join('|');
+            
+            // Create a simple hash
+            let hash = 0;
+            for (let i = 0; i < deviceInfo.length; i++) {
+              const char = deviceInfo.charCodeAt(i);
+              hash = ((hash << 5) - hash) + char;
+              hash = hash & hash;
+            }
+            return 'device_' + Math.abs(hash).toString(36);
+          };
+          
+          const deviceId = getDeviceFingerprint();
+          
+          // Try to use a simple counter with GitHub API
+          const pageId = 'betciv1-visitors';
+          
+          // Get current count from localStorage (shared across sessions)
+          let visitorData = JSON.parse(localStorage.getItem('betci_visitor_data') || '{"count": 0, "devices": []}');
+          
+          // Check if this device has visited before
+          if (!visitorData.devices.includes(deviceId)) {
+            visitorData.count += 1;
+            visitorData.devices.push(deviceId);
+            
+            // Keep only last 1000 device IDs to prevent storage overflow
+            if (visitorData.devices.length > 1000) {
+              visitorData.devices = visitorData.devices.slice(-1000);
+            }
+            
+            localStorage.setItem('betci_visitor_data', JSON.stringify(visitorData));
+          }
+          
+          // Try to sync with a simple hit counter API
+          try {
+            const response = await fetch(`https://api.github.com/repos/maglaquiivan/BETCIV1`, {
+              method: 'GET',
+              headers: {
+                'Accept': 'application/vnd.github.v3+json'
+              }
+            });
+            
+            if (response.ok) {
+              const data = await response.json();
+              // Use GitHub stars + watchers as a base number, then add our count
+              const baseCount = (data.stargazers_count || 0) + (data.watchers_count || 0);
+              visitorData.count = Math.max(visitorData.count, baseCount);
+            }
+          } catch (e) {
+            console.log('GitHub API not available, using local count');
+          }
+          
+          // Display the count with animation
+          const visitorCountElement = document.getElementById('visitorCount');
+          if (visitorCountElement) {
+            animateCount(visitorCountElement, 0, visitorData.count, 1500);
+          }
+          
+        } catch (error) {
+          console.log('Visitor counter error:', error);
+          // Simple fallback
+          let count = parseInt(localStorage.getItem('betci_simple_count') || '0');
+          const hasVisited = sessionStorage.getItem('betci_visited_this_session');
+          
+          if (!hasVisited) {
+            count += 1;
+            localStorage.setItem('betci_simple_count', count.toString());
+            sessionStorage.setItem('betci_visited_this_session', 'true');
+          }
+          
+          const visitorCountElement = document.getElementById('visitorCount');
+          if (visitorCountElement) {
+            animateCount(visitorCountElement, 0, count, 1500);
+          }
+        }
+      }
+      
+      // Animate number counting
+      function animateCount(element, start, end, duration) {
+        const range = end - start;
+        const increment = range / (duration / 16); // 60fps
+        let current = start;
+        
+        const timer = setInterval(() => {
+          current += increment;
+          if (current >= end) {
+            element.textContent = end.toLocaleString();
+            clearInterval(timer);
+          } else {
+            element.textContent = Math.floor(current).toLocaleString();
+          }
+        }, 16);
+      }
+      
+      // Initialize visitor counter
+      updateVisitorCount();
+      
+      // Initialize profile dropdown
+      const profileBtnHeader = document.querySelector('.profile-btn-header');
+      const profileMenuHeader = document.querySelector('.profile-menu-header');
+      
+      if (profileBtnHeader && profileMenuHeader) {
+        profileBtnHeader.addEventListener('click', function(e) {
+          e.stopPropagation();
+          profileMenuHeader.classList.toggle('active');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+          if (!e.target.closest('.profile-dropdown-header')) {
+            profileMenuHeader.classList.remove('active');
+          }
+        });
+      }
+      
+      // Handle logout from profile menu
+      const logoutLinks = document.querySelectorAll('[data-action="logout"]');
+      logoutLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+          e.preventDefault();
+          if (confirm('Are you sure you want to logout?')) {
+            // Clear session/localStorage if needed
+            localStorage.removeItem('userSession');
+            sessionStorage.removeItem('userSession');
+            window.location.href = '../auth/login.html';
+          }
+        });
+      });
+      
+      // Check if user is logged in and show profile dropdown
+      const isLoggedIn = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
+      const loginLi = document.getElementById('loginLi');
+      const profileLi = document.getElementById('profileLi');
+      
+      if (isLoggedIn && loginLi && profileLi) {
+        loginLi.style.display = 'none';
+        profileLi.style.display = 'block';
+      }
+    });
+  </script>
+
+</body>
+
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Appointments - BETCI Admin</title>
+    <meta name="description" content="BETCI Admin - Appointments Management" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../../assets/img/logo.png" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Admin Dashboard CSS -->
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
+    
+    <!-- Appointments Page CSS -->
+    <link rel="stylesheet" href="../assets/css/appointments.css" />
+    
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-image">
+                    <img src="../../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
+                </div>
+                <div class="logo-text">
+                    <h3>BETCI</h3>
+                    <p>Admin</p>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="bi bi-house-door"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="trainees.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Trainees</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts.html" class="nav-link">
+                            <i class="bi bi-person-badge"></i>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="training-catalog.html" class="nav-link">
+                            <i class="bi bi-book"></i>
+                            <span>Training Catalog</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="appointments.html" class="nav-link">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Appointments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="records.html" class="nav-link">
+                            <i class="bi bi-file-earmark"></i>
+                            <span>Records</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <div class="search-container">
+                        <i class="bi bi-search"></i>
+                        <input type="text" placeholder="Search appointments..." class="search-input">
+                    </div>
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+
+                <div class="header-right">
+                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                        <span class="user-name">Admin</span>
+                        <i class="bi bi-chevron-down dropdown-arrow"></i>
+                        
+                        <div class="user-dropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                                <div class="dropdown-user-info">
+                                    <h4>Admin User</h4>
+                                    <p>admin@betci.edu.ph</p>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <ul class="dropdown-menu">
+                                <li><a href="#"><i class="bi bi-person"></i>My Profile</a></li>
+                                <li><a href="#"><i class="bi bi-gear"></i>Settings</a></li>
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-footer">
+                                <button class="logout-btn" onclick="handleLogout()">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content appointments-content">
+                <!-- Appointments Dropdown Header -->
+                <div class="appointments-dropdown-header">
+                    <div class="dropdown-title">
+                        <i class="bi bi-calendar-check"></i>
+                        <span id="dropdownTitleText">Appointments</span>
+                        <i class="bi bi-chevron-down dropdown-chevron"></i>
+                    </div>
+                    <div class="dropdown-menu-appointments">
+                        <a href="#" class="dropdown-item active" onclick="showSection('requests', event)">
+                            <span>Requests</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="showSection('schedule', event)">
+                            <span>Schedule</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Requests Section -->
+                <div id="requests" class="appointments-section active">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">Appointment Requests</h2>
+                                <p class="card-subtitle">Manage appointment requests</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="openAddRequestModal()">
+                                <i class="bi bi-plus"></i> New Request
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Trainee</th>
+                                        <th>Course</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>#APT001</td>
+                                        <td>John Doe</td>
+                                        <td>Forklift Operation</td>
+                                        <td>Jan 20, 2024</td>
+                                        <td><span class="badge badge-warning">Pending</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-success" onclick="approveRequest(this)">Approve</button>
+                                                <button class="btn btn-sm btn-danger" onclick="rejectRequest(this)">Reject</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>#APT002</td>
+                                        <td>Jane Smith</td>
+                                        <td>Bulldozer Operation</td>
+                                        <td>Jan 22, 2024</td>
+                                        <td><span class="badge badge-warning">Pending</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-success" onclick="approveRequest(this)">Approve</button>
+                                                <button class="btn btn-sm btn-danger" onclick="rejectRequest(this)">Reject</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Schedule Section -->
+                <div id="schedule" class="appointments-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">Appointment Schedule</h2>
+                                <p class="card-subtitle">View and manage schedules</p>
+                            </div>
+                            <button class="btn btn-primary" onclick="openScheduleModal()">
+                                <i class="bi bi-calendar-plus"></i> Add Schedule
+                            </button>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Trainee</th>
+                                        <th>Course</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Jan 20, 2024</td>
+                                        <td>09:00 AM</td>
+                                        <td>John Doe</td>
+                                        <td>Forklift Operation</td>
+                                        <td><span class="badge badge-success">Scheduled</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-secondary" onclick="editSchedule(this)">Edit</button>
+                                                <button class="btn btn-sm btn-danger" onclick="cancelSchedule(this)">Cancel</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Jan 22, 2024</td>
+                                        <td>02:00 PM</td>
+                                        <td>Jane Smith</td>
+                                        <td>Bulldozer Operation</td>
+                                        <td><span class="badge badge-success">Scheduled</span></td>
+                                        <td>
+                                            <div class="action-buttons">
+                                                <button class="btn btn-sm btn-secondary" onclick="editSchedule(this)">Edit</button>
+                                                <button class="btn btn-sm btn-danger" onclick="cancelSchedule(this)">Cancel</button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script>
+        // Profile dropdown toggle
+        document.querySelector('.user-profile').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = this.querySelector('.user-dropdown');
+            dropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            const userProfile = document.querySelector('.user-profile');
+            if (!e.target.closest('.user-profile')) {
+                const dropdown = userProfile.querySelector('.user-dropdown');
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Logout handler
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userSession');
+                sessionStorage.removeItem('userSession');
+                window.location.href = '../../auth/login.html';
+            }
+        }
+
+        // Appointments dropdown toggle
+        const dropdownTitle = document.querySelector('.dropdown-title');
+        const dropdownMenu = document.querySelector('.dropdown-menu-appointments');
+
+        dropdownTitle.addEventListener('click', function(e) {
+            e.preventDefault();
+            dropdownMenu.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.appointments-dropdown-header')) {
+                dropdownMenu.classList.remove('active');
+                dropdownTitle.classList.remove('active');
+            }
+        });
+
+        // Show section function
+        function showSection(sectionId, event) {
+            event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.appointments-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active from all dropdown items
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.dropdown-item').classList.add('active');
+
+            // Update breadcrumb
+            updateBreadcrumb(sectionId);
+
+            // Close dropdown
+            dropdownMenu.classList.remove('active');
+            dropdownTitle.classList.remove('active');
+        }
+        
+        // Update breadcrumb function
+        function updateBreadcrumb(sectionId) {
+            const dropdownTitleText = document.getElementById('dropdownTitleText');
+            
+            const sectionNames = {
+                'requests': 'Appointments / Requests',
+                'schedule': 'Appointments / Schedule'
+            };
+            
+            if (sectionId && sectionNames[sectionId]) {
+                dropdownTitleText.textContent = sectionNames[sectionId];
+            } else {
+                dropdownTitleText.textContent = 'Appointments';
+            }
+        }
+
+        // Appointment management functions
+        function openAddRequestModal() {
+            showNotification('Add Request modal coming soon', 'info');
+        }
+
+        function approveRequest(button) {
+            const row = button.closest('tr');
+            const trainee = row.cells[1].textContent;
+            const badge = row.querySelector('.badge');
+            badge.className = 'badge badge-success';
+            badge.textContent = 'Approved';
+            showNotification(`Request for ${trainee} approved successfully`, 'success');
+        }
+
+        function rejectRequest(button) {
+            const row = button.closest('tr');
+            const trainee = row.cells[1].textContent;
+            row.remove();
+            showNotification(`Request for ${trainee} rejected`, 'error');
+        }
+
+        function openScheduleModal() {
+            showNotification('Add Schedule modal coming soon', 'info');
+        }
+
+        function editSchedule(button) {
+            const row = button.closest('tr');
+            const trainee = row.cells[2].textContent;
+            showNotification(`Edit schedule for ${trainee}`, 'info');
+        }
+
+        function cancelSchedule(button) {
+            const row = button.closest('tr');
+            const trainee = row.cells[2].textContent;
+            row.remove();
+            showNotification(`Appointment for ${trainee} cancelled`, 'error');
+        }
+
+        // Notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#27AE60',
+                error: '#E74C3C',
+                info: '#3498DB'
+            };
+            notification.style.cssText = `position: fixed; top: 20px; right: 20px; background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000; border-left: 4px solid ${colors[type] || colors.info}; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease;`;
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle';
+            notification.innerHTML = `<i class="bi bi-${icon}" style="font-size: 18px; color: ${colors[type] || colors.info}"></i><span>${message}</span>`;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none'; base-uri 'self';">
+    <title>TESDA Application Form - BETCI</title>
+    
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Roboto', sans-serif; background: #f5f5f5; color: #333; }
+        
+        .form-wrapper { max-width: 1100px; margin: 20px auto; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        
+        .form-header { background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%); padding: 30px; text-align: center; color: white; }
+        .form-header h1 { font-size: 28px; font-weight: 700; margin: 0 0 10px 0; }
+        .form-header p { font-size: 14px; margin: 0; opacity: 0.95; }
+        
+        .form-content { padding: 30px; }
+        
+        .form-section { margin-bottom: 25px; border: 2px solid #333; padding: 20px; background: #fafafa; }
+        .form-section h2 { font-size: 16px; font-weight: 700; color: #2196F3; margin-bottom: 20px; padding-bottom: 10px; border-bottom: 2px solid #2196F3; }
+        .form-section h3 { font-size: 14px; font-weight: 600; color: #333; margin-top: 15px; margin-bottom: 12px; }
+        
+        .form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        .form-group { display: flex; flex-direction: column; }
+        .form-group label { font-weight: 600; font-size: 12px; margin-bottom: 6px; color: #333; }
+        .form-group input, .form-group textarea, .form-group select { padding: 8px; border: 1px solid #333; border-radius: 3px; font-size: 12px; font-family: inherit; }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus { outline: none; border-color: #E67E22; box-shadow: 0 0 0 2px rgba(230, 126, 34, 0.1); }
+        
+        .checkbox-group { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 15px; }
+        .checkbox-item { display: flex; align-items: center; gap: 8px; }
+        .checkbox-item input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .checkbox-item label { margin: 0; cursor: pointer; font-size: 13px; }
+        
+        .picture-box { border: 2px dashed #999; padding: 20px; text-align: center; min-height: 150px; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #fafafa; cursor: pointer; }
+        .picture-box:hover { background: #f0f0f0; }
+        
+        table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 15px; }
+        th { background: #2196F3; color: white; padding: 10px; text-align: left; font-weight: 600; border: 1px solid #333; }
+        td { padding: 8px; border: 1px solid #333; }
+        td input { width: 100%; padding: 6px; border: 1px solid #ddd; border-radius: 3px; font-size: 12px; }
+        
+        .btn-add { background: #2196F3; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; font-weight: 600; margin-top: 10px; }
+        .btn-add:hover { background: #1976D2; }
+        .btn-remove { background: #e74c3c; color: white; padding: 6px 12px; border: none; border-radius: 3px; cursor: pointer; font-size: 11px; }
+        .btn-remove:hover { background: #c0392b; }
+        
+        .action-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; margin-top: 30px; padding-top: 20px; border-top: 2px solid #ddd; }
+        .action-btn { display: inline-flex; align-items: center; gap: 8px; padding: 12px 24px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .save-pdf-btn { background: #E67E22; color: white; }
+        .save-pdf-btn:hover { background: #D35400; transform: translateY(-2px); }
+        .print-btn { background: #2196F3; color: white; }
+        .print-btn:hover { background: #1976D2; transform: translateY(-2px); }
+        .submit-btn { background: #4CAF50; color: white; }
+        .submit-btn:hover { background: #45a049; transform: translateY(-2px); }
+        .back-btn-form { background: #757575; color: white; }
+        .back-btn-form:hover { background: #616161; transform: translateY(-2px); }
+        
+        .required::after { content: ' *'; color: red; }
+        
+        /* Review Modal Styles */
+        .review-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+
+        .review-modal-full {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            max-width: 900px;
+            width: 100%;
+            max-height: 90vh;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .review-modal-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .review-modal-header h2 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .review-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .review-modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+
+        .review-modal-form-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: white;
+        }
+
+        .review-modal-form-content form {
+            max-width: 100%;
+        }
+
+        .review-modal-form-content .form-section {
+            margin-bottom: 15px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            background: #fafafa;
+        }
+
+        .review-modal-form-content input:disabled,
+        .review-modal-form-content textarea:disabled,
+        .review-modal-form-content select:disabled {
+            background: #f0f0f0;
+            color: #333;
+            cursor: not-allowed;
+        }
+
+        .review-modal-footer {
+            padding: 20px;
+            background: #f5f5f5;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            border-radius: 0 0 8px 8px;
+            border-top: 1px solid #ddd;
+        }
+
+        .review-btn-cancel {
+            padding: 12px 24px;
+            background: #757575;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .review-btn-cancel:hover {
+            background: #616161;
+            transform: translateY(-2px);
+        }
+
+        .review-btn-confirm {
+            padding: 12px 24px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .review-btn-confirm:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+        }
+        
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .form-wrapper {
+                max-width: 100%;
+                margin: 0;
+                box-shadow: none;
+                page-break-after: avoid;
+            }
+
+            .form-header {
+                padding: 8px;
+                margin: 0;
+            }
+
+            .form-header h1 {
+                font-size: 16px;
+                margin: 0 0 3px 0;
+            }
+
+            .form-header p {
+                font-size: 10px;
+                margin: 0;
+            }
+
+            .form-content {
+                padding: 8px;
+            }
+
+            .form-section {
+                margin-bottom: 4px;
+                padding: 8px;
+                page-break-inside: avoid;
+                border: 1px solid #333;
+            }
+
+            .form-section h2 {
+                font-size: 12px;
+                margin-bottom: 6px;
+                padding-bottom: 3px;
+            }
+
+            .form-section h3 {
+                font-size: 11px;
+                margin-top: 4px;
+                margin-bottom: 4px;
+            }
+
+            .form-row {
+                gap: 8px;
+                margin-bottom: 6px;
+            }
+
+            .form-group {
+                margin-bottom: 4px;
+            }
+
+            .form-group label {
+                font-size: 10px;
+                margin-bottom: 2px;
+            }
+
+            .form-group input,
+            .form-group textarea,
+            .form-group select {
+                font-size: 10px;
+                padding: 4px;
+            }
+
+            .checkbox-group {
+                gap: 10px;
+                margin-bottom: 6px;
+            }
+
+            .checkbox-item {
+                font-size: 10px;
+            }
+
+            .checkbox-item input[type="checkbox"] {
+                width: 12px;
+                height: 12px;
+            }
+
+            table {
+                font-size: 9px;
+                margin-bottom: 4px;
+            }
+
+            th {
+                padding: 4px;
+                font-size: 9px;
+            }
+
+            td {
+                padding: 3px;
+                font-size: 9px;
+            }
+
+            td input {
+                font-size: 9px;
+                padding: 2px;
+            }
+
+            .btn-add,
+            .action-buttons {
+                display: none !important;
+            }
+
+            .picture-box {
+                min-height: 60px;
+                font-size: 9px;
+            }
+
+            #signatureCanvas {
+                max-height: 50px;
+            }
+
+            small {
+                font-size: 8px;
+            }
+        }
+    </style>
+    
+    <script>
+        (function() {
+          const originalError = console.error;
+          console.error = function(...args) {
+            if (String(args[0] || '').includes('chrome-extension://')) return;
+            originalError.apply(console, args);
+          };
+          window.addEventListener('error', function(e) {
+            if (e.filename && e.filename.includes('chrome-extension://')) {
+              e.preventDefault();
+              return false;
+            }
+          }, true);
+        })();
+    </script>
+</head>
+<body>
+    <div class="form-wrapper">
+        <div class="form-header">
+            <h1>APPLICATION FORM</h1>
+            <p>TECHNICAL EDUCATION AND SKILLS DEVELOPMENT AUTHORITY (TESDA)</p>
+            <p style="font-size: 12px; margin-top: 10px;">TESDA-OP-CO-05-F26 | Rev. 00 - 03/08/17</p>
+        </div>
+        
+        <div class="form-content">
+            <form id="applicationForm">
+                <!-- REFERENCE NUMBER & PICTURE SECTION -->
+                <div class="form-section">
+                    <div style="display: grid; grid-template-columns: 1fr 150px; gap: 20px; align-items: start;">
+                        <div>
+                            <h3 style="margin-top: 0;">REFERENCE NUMBER:</h3>
+                            <div class="form-row" style="grid-template-columns: repeat(6, 1fr); gap: 8px;">
+                                <div class="form-group">
+                                    <label>Qualifiable</label>
+                                    <input type="text" name="refQual" maxlength="1" style="text-align: center;">
+                                </div>
+                                <div class="form-group">
+                                    <label>YY</label>
+                                    <input type="text" name="refYY" maxlength="2" style="text-align: center;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Region</label>
+                                    <input type="text" name="refRegion" maxlength="2" style="text-align: center;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Province</label>
+                                    <input type="text" name="refProvince" maxlength="2" style="text-align: center;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Number</label>
+                                    <input type="text" name="refNumber" maxlength="4" style="text-align: center;">
+                                </div>
+                                <div class="form-group">
+                                    <label>Series</label>
+                                    <input type="text" name="refSeries" maxlength="2" style="text-align: center;">
+                                </div>
+                            </div>
+                            <h3>UNIQUE LEARNERS IDENTIFIER (ULI):</h3>
+                            <input type="text" name="uli" readonly placeholder="To be filled by Processing Officer" style="width: 100%; padding: 8px; border: 1px solid #333;">
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; display: block; margin-bottom: 8px; font-size: 12px;">PICTURE</label>
+                            <div class="picture-box" onclick="document.getElementById('pictureUpload').click()" style="min-height: 120px; border: 2px dashed #999;">
+                                <div style="font-size: 11px; color: #999;">Click To Insert</div>
+                                <div style="font-size: 10px; color: #999; margin-top: 3px;">colored,<br>passport size</div>
+                                <img id="picturePreview" style="display: none; max-width: 100%; max-height: 100px; margin-top: 5px;">
+                            </div>
+                            <input type="file" id="pictureUpload" accept="image/*" style="display: none;" onchange="handlePictureUpload(event)">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- APPLICANT SIGNATURE & DATE -->
+                <div class="form-section">
+                    <div class="form-row" style="grid-template-columns: 1fr 1fr;">
+                        <div>
+                            <label style="font-weight: 600; display: block; margin-bottom: 10px;">Applicant's Signature</label>
+                            <div style="border: 1px solid #333; padding: 10px; background: #fafafa; min-height: 80px; position: relative;">
+                                <canvas id="signatureCanvas" width="300" height="80" style="border: 1px solid #ddd; display: block; cursor: crosshair; background: white;"></canvas>
+                                <div style="display: flex; gap: 10px; margin-top: 8px;">
+                                    <button type="button" onclick="clearSignature()" style="padding: 6px 12px; background: #e74c3c; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">Clear</button>
+                                    <button type="button" onclick="document.getElementById('signatureUpload').click()" style="padding: 6px 12px; background: #2196F3; color: white; border: none; border-radius: 3px; cursor: pointer; font-size: 11px;">Upload</button>
+                                </div>
+                                <input type="file" id="signatureUpload" accept="image/*" style="display: none;" onchange="handleSignatureUpload(event)">
+                            </div>
+                        </div>
+                        <div>
+                            <label style="font-weight: 600; display: block; margin-bottom: 10px;">Date of Application</label>
+                            <input type="date" name="applicationDate" style="width: 100%;">
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- SCHOOL/TRAINING CENTER INFO -->
+                <div class="form-section">
+                    <div class="form-group">
+                        <label class="required">Name of School/Training Center/Company:</label>
+                        <input type="text" name="schoolName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Address:</label>
+                        <textarea name="schoolAddress" rows="2" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Title of Assessment applied for:</label>
+                        <input type="text" name="assessmentTitle" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="required">Assessment Type:</label>
+                        <div class="checkbox-group">
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="assessmentType" value="full">
+                                <label>Full Qualification</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="assessmentType" value="coc">
+                                <label>COC</label>
+                            </div>
+                            <div class="checkbox-item">
+                                <input type="checkbox" name="assessmentType" value="renewal">
+                                <label>Renewal</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- CLIENT TYPE -->
+                <div class="form-section">
+                    <h2>1. CLIENT TYPE</h2>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="clientType" value="tvet-graduating">
+                            <label>TVET Graduating Student</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="clientType" value="tvet-graduate">
+                            <label>TVET graduate</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="clientType" value="industry-worker">
+                            <label>Industry worker</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="clientType" value="k12">
+                            <label>K-12</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="clientType" value="owf">
+                            <label>OWF</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PROFILE SECTION -->
+                <div class="form-section">
+                    <h2>2. PROFILE</h2>
+                    
+                    <h3>2.1 Name</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="required">SURNAME</label>
+                            <input type="text" name="surname" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">FIRSTNAME</label>
+                            <input type="text" name="firstname" required>
+                        </div>
+                        <div class="form-group">
+                            <label>MIDDLE NAME</label>
+                            <input type="text" name="middleName">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>MIDDLE INITIAL</label>
+                            <input type="text" name="middleInitial" maxlength="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Name Extension (Jr, Sr, III)</label>
+                            <input type="text" name="nameExtension">
+                        </div>
+                    </div>
+                    
+                    <h3>2.2 Mailing Address</h3>
+                    <div class="form-group">
+                        <label>Number Street</label>
+                        <input type="text" name="mailingNumber">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Barangay</label>
+                            <input type="text" name="barangay">
+                        </div>
+                        <div class="form-group">
+                            <label>District</label>
+                            <input type="text" name="district">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" name="city">
+                        </div>
+                        <div class="form-group">
+                            <label>Province</label>
+                            <input type="text" name="province">
+                        </div>
+                        <div class="form-group">
+                            <label>Region</label>
+                            <input type="text" name="region">
+                        </div>
+                        <div class="form-group">
+                            <label>Zip</label>
+                            <input type="text" name="zip">
+                        </div>
+                    </div>
+                    
+                    <h3>2.3 Mother's Name & 2.4 Father's Name</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Mother's Name</label>
+                            <input type="text" name="mothersName">
+                        </div>
+                        <div class="form-group">
+                            <label>Father's Name</label>
+                            <input type="text" name="fathersName">
+                        </div>
+                    </div>
+                    
+                    <h3>2.5 Sex & 2.6 Civil Status</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Sex</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="sex" value="male">
+                                    <label>Male</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="sex" value="female">
+                                    <label>Female</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Civil Status</label>
+                            <div class="checkbox-group">
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="civilStatus" value="single">
+                                    <label>Single</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="civilStatus" value="married">
+                                    <label>Married</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="civilStatus" value="widower">
+                                    <label>Widower</label>
+                                </div>
+                                <div class="checkbox-item">
+                                    <input type="checkbox" name="civilStatus" value="separated">
+                                    <label>Separated</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3>2.7 Contact Number(s)</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Tel:</label>
+                            <input type="tel" name="tel">
+                        </div>
+                        <div class="form-group">
+                            <label class="required">Mobile:</label>
+                            <input type="tel" name="mobile" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="required">E-mail:</label>
+                            <input type="email" name="email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Fax:</label>
+                            <input type="tel" name="fax">
+                        </div>
+                        <div class="form-group">
+                            <label>Others:</label>
+                            <input type="text" name="otherContact">
+                        </div>
+                    </div>
+                    
+                    <h3>2.8 Highest Educational Attainment</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="education" value="elementary">
+                            <label>Elementary Graduate</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="education" value="highschool">
+                            <label>High School Graduate</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="education" value="tvet">
+                            <label>TVET Graduate</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="education" value="college-level">
+                            <label>College Level</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="education" value="college-graduate">
+                            <label>College Graduate</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="education" value="others">
+                            <label>Others</label>
+                        </div>
+                    </div>
+                    
+                    <h3>2.9 Employment Status</h3>
+                    <div class="checkbox-group">
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="employmentStatus" value="casual">
+                            <label>Casual</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="employmentStatus" value="job-order">
+                            <label>Job Order</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="employmentStatus" value="probationary">
+                            <label>Probationary</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="employmentStatus" value="permanent">
+                            <label>Permanent</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="employmentStatus" value="self-employed">
+                            <label>Self-Employed</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="checkbox" name="employmentStatus" value="ofw">
+                            <label>OFW</label>
+                        </div>
+                    </div>
+                    
+                    <h3>2.10 Birth date, 2.11 Birth place & 2.12 Age</h3>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="required">Birth date (mm/dd/yyyy)</label>
+                            <input type="date" name="birthDate" required onchange="calculateAge()">
+                        </div>
+                        <div class="form-group">
+                            <label>Birth place</label>
+                            <input type="text" name="birthPlace">
+                        </div>
+                        <div class="form-group">
+                            <label>Age</label>
+                            <input type="number" name="age" readonly>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- WORK EXPERIENCE -->
+                <div class="form-section">
+                    <h2>3. WORK EXPERIENCE (National Qualification-related)</h2>
+                    <table id="workTable">
+                        <thead>
+                            <tr>
+                                <th>3.1 Name of Company</th>
+                                <th>3.2 Position</th>
+                                <th>3.3 Inclusive Dates</th>
+                                <th>3.4 Monthly Salary</th>
+                                <th>3.5 Status of Appointment</th>
+                                <th>3.6 No. of Yrs. Working Exp.</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workBody">
+                            <tr>
+                                <td><input type="text" name="workCompany[]"></td>
+                                <td><input type="text" name="workPosition[]"></td>
+                                <td><input type="text" name="workDates[]" placeholder="MM/YYYY-MM/YYYY"></td>
+                                <td><input type="text" name="workSalary[]"></td>
+                                <td><input type="text" name="workStatus[]"></td>
+                                <td><input type="number" name="workYears[]" step="0.1"></td>
+                                <td><button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn-add" onclick="addWorkRow()">+ Add Work Experience Row</button>
+                    <small style="display: block; margin-top: 8px; color: #666;">(For more information, please use separate sheet)</small>
+                </div>
+                
+                <!-- TRAINING/SEMINARS -->
+                <div class="form-section">
+                    <h2>4. OTHER TRAINING/SEMINARS ATTENDED (National Qualification-related)</h2>
+                    <table id="trainingTable">
+                        <thead>
+                            <tr>
+                                <th>4.1 Title</th>
+                                <th>4.2 Venue</th>
+                                <th>4.3 Inclusive Dates</th>
+                                <th>4.4 No. of Hours</th>
+                                <th>4.5 Conducted By</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trainingBody">
+                            <tr>
+                                <td><input type="text" name="trainingTitle[]"></td>
+                                <td><input type="text" name="trainingVenue[]"></td>
+                                <td><input type="text" name="trainingDates[]" placeholder="MM/YYYY-MM/YYYY"></td>
+                                <td><input type="number" name="trainingHours[]"></td>
+                                <td><input type="text" name="trainingConductedBy[]"></td>
+                                <td><button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn-add" onclick="addTrainingRow()">+ Add Training/Seminar Row</button>
+                    <small style="display: block; margin-top: 8px; color: #666;">(For more information, please use separate sheet)</small>
+                </div>
+                
+                <!-- LICENSURE EXAMS -->
+                <div class="form-section">
+                    <h2>5. LICENSURE EXAMINATION(S) PASSED</h2>
+                    <table id="licensureTable">
+                        <thead>
+                            <tr>
+                                <th>5.1 Title</th>
+                                <th>5.2 Year Taken</th>
+                                <th>5.3 Examination Venue</th>
+                                <th>5.4 Rating</th>
+                                <th>5.5 Remarks</th>
+                                <th>5.6 Expiry Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licensureBody">
+                            <tr>
+                                <td><input type="text" name="licensureTitle[]"></td>
+                                <td><input type="number" name="licensureYear[]" min="1900" max="2100"></td>
+                                <td><input type="text" name="licensureVenue[]"></td>
+                                <td><input type="text" name="licensureRating[]"></td>
+                                <td><input type="text" name="licensureRemarks[]"></td>
+                                <td><input type="date" name="licensureExpiry[]"></td>
+                                <td><button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn-add" onclick="addLicensureRow()">+ Add Licensure Exam Row</button>
+                    <small style="display: block; margin-top: 8px; color: #666;">(For more information, please use separate sheet)</small>
+                </div>
+                
+                <!-- COMPETENCY ASSESSMENTS -->
+                <div class="form-section">
+                    <h2>6. COMPETENCY ASSESSMENT(S) PASSED</h2>
+                    <table id="competencyTable">
+                        <thead>
+                            <tr>
+                                <th>6.1 Title</th>
+                                <th>6.2 Qualification Level</th>
+                                <th>6.3 Industry Sector</th>
+                                <th>6.4 Certificate Number</th>
+                                <th>6.5 Date of Issuance</th>
+                                <th>6.6 Expiration Date</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="competencyBody">
+                            <tr>
+                                <td><input type="text" name="competencyTitle[]"></td>
+                                <td><input type="text" name="competencyLevel[]"></td>
+                                <td><input type="text" name="competencySector[]"></td>
+                                <td><input type="text" name="competencyCert[]"></td>
+                                <td><input type="date" name="competencyIssuance[]"></td>
+                                <td><input type="date" name="competencyExpiry[]"></td>
+                                <td><button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="btn-add" onclick="addCompetencyRow()">+ Add Competency Assessment Row</button>
+                    <small style="display: block; margin-top: 8px; color: #666;">(For more information, please use separate sheet)</small>
+                </div>
+                
+                <!-- ACTION BUTTONS -->
+                <div class="action-buttons">
+                    <button type="button" class="action-btn save-pdf-btn" onclick="savePDF()">
+                        <i class="bi bi-download"></i> Save as PDF
+                    </button>
+                    <button type="button" class="action-btn print-btn" onclick="printForm()">
+                        <i class="bi bi-printer"></i> Print
+                    </button>
+                    <button type="button" class="action-btn submit-btn" onclick="submitForm()">
+                        <i class="bi bi-check-circle"></i> Submit
+                    </button>
+                    <button type="button" class="action-btn back-btn-form" onclick="window.location.href='dashboard-fixed.html'">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        let isDrawing = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // Initialize signature canvas
+        const canvas = document.getElementById('signatureCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.addEventListener('mousedown', (e) => {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            lastX = e.clientX - rect.left;
+            lastY = e.clientY - rect.top;
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            
+            ctx.strokeStyle = '#333';
+            ctx.lineWidth = 2;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            ctx.moveTo(lastX, lastY);
+            ctx.lineTo(x, y);
+            ctx.stroke();
+            
+            lastX = x;
+            lastY = y;
+        });
+
+        canvas.addEventListener('mouseup', () => {
+            isDrawing = false;
+        });
+
+        canvas.addEventListener('mouseleave', () => {
+            isDrawing = false;
+        });
+
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function handleSignatureUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.clearRect(0, 0, canvas.width, canvas.height);
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function handlePictureUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('picturePreview').src = e.target.result;
+                    document.getElementById('picturePreview').style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function calculateAge() {
+            const birthDate = new Date(document.querySelector('input[name="birthDate"]').value);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            document.querySelector('input[name="age"]').value = age;
+        }
+        
+        function addWorkRow() {
+            const tbody = document.getElementById('workBody');
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td><input type="text" name="workCompany[]"></td>
+                <td><input type="text" name="workPosition[]"></td>
+                <td><input type="text" name="workDates[]" placeholder="MM/YYYY-MM/YYYY"></td>
+                <td><input type="text" name="workSalary[]"></td>
+                <td><input type="text" name="workStatus[]"></td>
+                <td><input type="number" name="workYears[]" step="0.1"></td>
+                <td><button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button></td>
+            `;
+        }
+        
+        function addTrainingRow() {
+            const tbody = document.getElementById('trainingBody');
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td><input type="text" name="trainingTitle[]"></td>
+                <td><input type="text" name="trainingVenue[]"></td>
+                <td><input type="text" name="trainingDates[]" placeholder="MM/YYYY-MM/YYYY"></td>
+                <td><input type="number" name="trainingHours[]"></td>
+                <td><input type="text" name="trainingConductedBy[]"></td>
+                <td><button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button></td>
+            `;
+        }
+        
+        function addLicensureRow() {
+            const tbody = document.getElementById('licensureBody');
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td><input type="text" name="licensureTitle[]"></td>
+                <td><input type="number" name="licensureYear[]" min="1900" max="2100"></td>
+                <td><input type="text" name="licensureVenue[]"></td>
+                <td><input type="text" name="licensureRating[]"></td>
+                <td><input type="text" name="licensureRemarks[]"></td>
+                <td><input type="date" name="licensureExpiry[]"></td>
+                <td><button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button></td>
+            `;
+        }
+        
+        function addCompetencyRow() {
+            const tbody = document.getElementById('competencyBody');
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td><input type="text" name="competencyTitle[]"></td>
+                <td><input type="text" name="competencyLevel[]"></td>
+                <td><input type="text" name="competencySector[]"></td>
+                <td><input type="text" name="competencyCert[]"></td>
+                <td><input type="date" name="competencyIssuance[]"></td>
+                <td><input type="date" name="competencyExpiry[]"></td>
+                <td><button type="button" class="btn-remove" onclick="removeRow(this)">Remove</button></td>
+            `;
+        }
+        
+        function removeRow(btn) {
+            btn.closest('tr').remove();
+        }
+        
+        function savePDF() {
+            // Collect all form data first
+            const formData = new FormData(document.getElementById('applicationForm'));
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    if (Array.isArray(data[key])) {
+                        data[key].push(value);
+                    } else {
+                        data[key] = [data[key], value];
+                    }
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // Add signature
+            data['signature'] = canvas.toDataURL();
+            
+            // Save to localStorage
+            localStorage.setItem('applicationData', JSON.stringify(data));
+            
+            // Generate PDF with all data
+            const element = document.querySelector('.form-wrapper');
+            const opt = {
+                margin: 3,
+                filename: 'TESDA_Application_Form_Complete.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true, logging: false },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+            
+            html2pdf().set(opt).from(element).save().then(() => {
+                alert('Application form saved as PDF with all data!');
+            });
+        }
+        
+        function printForm() {
+            window.print();
+        }
+        
+        function submitForm() {
+            // Collect all form data
+            const formData = new FormData(document.getElementById('applicationForm'));
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                if (data[key]) {
+                    if (Array.isArray(data[key])) {
+                        data[key].push(value);
+                    } else {
+                        data[key] = [data[key], value];
+                    }
+                } else {
+                    data[key] = value;
+                }
+            }
+            
+            // Add signature
+            data['signature'] = canvas.toDataURL();
+            
+            // Show review modal with filled form
+            showReviewModal(data);
+        }
+        
+        function showReviewModal(data) {
+            // Clone the entire form for review
+            const formClone = document.getElementById('applicationForm').cloneNode(true);
+            
+            // Disable all inputs in the clone
+            formClone.querySelectorAll('input, textarea, select, button').forEach(el => {
+                if (el.tagName !== 'BUTTON' || !el.classList.contains('btn-remove')) {
+                    el.disabled = true;
+                }
+            });
+            
+            // Hide add row buttons and action buttons
+            formClone.querySelectorAll('.btn-add').forEach(btn => btn.style.display = 'none');
+            formClone.querySelectorAll('.action-buttons').forEach(btn => btn.style.display = 'none');
+            
+            // Create modal HTML
+            const modalHTML = `
+                <div class="review-modal-overlay" id="reviewModalOverlay">
+                    <div class="review-modal-full">
+                        <div class="review-modal-header">
+                            <h2>Review Your Application Before Submitting</h2>
+                            <button class="review-modal-close" onclick="closeReviewModal()">&times;</button>
+                        </div>
+                        <div class="review-modal-form-content" id="formReviewContent">
+                        </div>
+                        <div class="review-modal-footer">
+                            <button class="review-btn-cancel" onclick="closeReviewModal()">Back to Edit</button>
+                            <button class="review-btn-confirm" onclick="confirmSubmit()">Confirm & Submit</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Remove existing modal if any
+            const existingModal = document.getElementById('reviewModalOverlay');
+            if (existingModal) existingModal.remove();
+            
+            // Add modal to page
+            document.body.insertAdjacentHTML('beforeend', modalHTML);
+            
+            // Insert the cloned form into the modal
+            const reviewContent = document.getElementById('formReviewContent');
+            reviewContent.appendChild(formClone);
+            
+            // Store data for confirmation
+            window.pendingSubmitData = data;
+        }
+        
+        function closeReviewModal() {
+            const modal = document.getElementById('reviewModalOverlay');
+            if (modal) modal.remove();
+        }
+        
+        function confirmSubmit() {
+            if (window.pendingSubmitData) {
+                // Show confirmation dialog
+                if (confirm('Are you sure you want to submit this application? Please review all information before confirming.')) {
+                    // Collect all current form data to ensure we have the latest
+                    const formData = new FormData(document.getElementById('applicationForm'));
+                    const completeData = {};
+                    
+                    for (let [key, value] of formData.entries()) {
+                        if (completeData[key]) {
+                            if (Array.isArray(completeData[key])) {
+                                completeData[key].push(value);
+                            } else {
+                                completeData[key] = [completeData[key], value];
+                            }
+                        } else {
+                            completeData[key] = value;
+                        }
+                    }
+                    
+                    // Add signature
+                    completeData['signature'] = canvas.toDataURL();
+                    
+                    // Add submission timestamp
+                    completeData['submittedAt'] = new Date().toISOString();
+                    
+                    // Save to localStorage
+                    localStorage.setItem('applicationData', JSON.stringify(completeData));
+                    
+                    // Also save to a submissions array for history
+                    let submissions = JSON.parse(localStorage.getItem('applicationSubmissions') || '[]');
+                    submissions.push({
+                        id: Date.now(),
+                        data: completeData,
+                        submittedAt: new Date().toISOString()
+                    });
+                    localStorage.setItem('applicationSubmissions', JSON.stringify(submissions));
+                    
+                    // Close modal
+                    closeReviewModal();
+                    
+                    // Show success message
+                    alert('Application submitted successfully! Your reference number is: ' + (completeData.refNumber || 'PENDING'));
+                    
+                    // Redirect to dashboard
+                    window.location.href = 'dashboard-fixed.html';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

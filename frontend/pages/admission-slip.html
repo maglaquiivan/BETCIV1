@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none'; base-uri 'self';">
+    <title>BETCI Admission Slip</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&display=swap" rel="stylesheet">
+    
+    <!-- Vendor CSS Files -->
+    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body.admission-page {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+
+        .back-button-container {
+            display: none;
+        }
+
+        .admission-slip-container {
+            background: white;
+            max-width: 900px;
+            margin: 0 auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 2px solid #333;
+            overflow: hidden;
+        }
+
+        /* Title */
+        .slip-title {
+            text-align: center;
+            background: #B0E0E6;
+            border-bottom: 2px solid #333;
+            padding: 8px;
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            color: #333;
+        }
+
+        /* Form Content */
+        .form-content {
+            padding: 12px;
+        }
+
+        /* Reference Number Section */
+        .ref-section {
+            margin-bottom: 8px;
+            border: 1px solid #333;
+            padding: 8px;
+        }
+
+        .ref-label {
+            font-weight: 700;
+            margin-bottom: 5px;
+            display: block;
+            font-size: 11px;
+        }
+
+        .ref-boxes {
+            display: flex;
+            gap: 2px;
+            flex-wrap: wrap;
+        }
+
+        .ref-input {
+            width: 32px;
+            height: 28px;
+            border: 1px solid #333;
+            padding: 1px;
+            text-align: center;
+            font-weight: 700;
+            font-size: 10px;
+            font-family: 'Roboto', sans-serif;
+            cursor: pointer;
+        }
+
+        .ref-input:focus {
+            outline: none;
+            background: #fffef0;
+        }
+
+        .ref-yellow { background: #FFFF99; }
+        .ref-light-blue { background: #ADD8E6; }
+        .ref-pink { background: #FFB6C1; }
+        .ref-green { background: #90EE90; }
+        .ref-orange { background: #FFD580; }
+        .ref-purple { background: #DDA0DD; }
+
+        /* Main Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 140px;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .field-label {
+            font-weight: 700;
+            font-size: 11px;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .field-input {
+            border: 1px solid #333;
+            padding: 6px;
+            font-size: 11px;
+            font-family: 'Roboto', sans-serif;
+            min-height: 28px;
+            background: white;
+        }
+
+        .field-input:focus {
+            outline: none;
+            background: #fffef0;
+        }
+
+        /* Picture Box */
+        .picture-box {
+            border: 1px dashed #999;
+            padding: 6px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 110px;
+            position: relative;
+            background: #fafafa;
+            cursor: pointer;
+        }
+
+        .picture-text {
+            font-weight: 700;
+            font-size: 11px;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .picture-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .picture-placeholder-text {
+            font-size: 10px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .picture-subtext {
+            font-size: 9px;
+            color: #999;
+        }
+
+        #picturePreview {
+            display: none;
+            width: 80px;
+            height: 100px;
+            object-fit: cover;
+            border: 1px solid #333;
+        }
+
+        #pictureUpload {
+            display: none;
+        }
+
+        /* Assessment Applied Section */
+        .assessment-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .assessment-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .assessment-label {
+            font-weight: 700;
+            font-size: 11px;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .assessment-input {
+            border: 1px solid #333;
+            padding: 6px;
+            font-size: 11px;
+            font-family: 'Roboto', sans-serif;
+            min-height: 28px;
+            background: white;
+        }
+
+        .assessment-input:focus {
+            outline: none;
+            background: #fffef0;
+        }
+
+        /* Processing Officer Section */
+        .officer-section {
+            border: 1px solid #333;
+            padding: 8px;
+            margin-bottom: 8px;
+        }
+
+        .officer-header {
+            font-weight: 700;
+            font-style: italic;
+            margin-bottom: 6px;
+            font-size: 11px;
+            color: #333;
+        }
+
+        .officer-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .officer-label {
+            font-weight: 700;
+            font-size: 11px;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .officer-input {
+            border: 1px solid #333;
+            padding: 6px;
+            font-size: 11px;
+            font-family: 'Roboto', sans-serif;
+            min-height: 28px;
+            background: white;
+        }
+
+        .officer-input:focus {
+            outline: none;
+            background: #fffef0;
+        }
+
+        /* Checklist Section */
+        .checklist-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #333;
+            padding: 8px;
+        }
+
+        .checklist-box {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .checklist-title {
+            font-weight: 700;
+            font-size: 11px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-bottom: 4px;
+            font-size: 10px;
+        }
+
+        .checklist-item input[type="checkbox"] {
+            width: 12px;
+            height: 12px;
+            cursor: pointer;
+        }
+
+        /* Date and Time Section */
+        .datetime-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #333;
+            padding: 8px;
+        }
+
+        .datetime-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .datetime-label {
+            font-weight: 700;
+            font-size: 11px;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .datetime-input {
+            border: 1px solid #333;
+            padding: 6px;
+            font-size: 11px;
+            font-family: 'Roboto', sans-serif;
+            min-height: 28px;
+            background: white;
+        }
+
+        .datetime-input:focus {
+            outline: none;
+            background: #fffef0;
+        }
+
+        /* Signature Section */
+        .signature-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 8px;
+            border: 1px solid #333;
+            padding: 8px;
+        }
+
+        .signature-box {
+            text-align: center;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            height: 28px;
+            margin-bottom: 3px;
+        }
+
+        .signature-label {
+            font-weight: 700;
+            font-size: 9px;
+            color: #333;
+        }
+
+        .date-label {
+            font-weight: 700;
+            font-size: 9px;
+            text-align: left;
+            margin-top: 3px;
+            color: #333;
+        }
+
+        .date-input {
+            border: none;
+            border-bottom: 1px solid #333;
+            width: 100%;
+            padding: 1px;
+            font-size: 9px;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        /* Note Section */
+        .note-section {
+            border: 1px solid #333;
+            padding: 5px;
+            text-align: center;
+            color: #2196F3;
+            font-style: italic;
+            font-weight: 500;
+            font-size: 10px;
+            margin-bottom: 8px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 6px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 14px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .save-btn {
+            background: #E67E22;
+            color: white;
+        }
+
+        .save-btn:hover {
+            background: #D35400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+        }
+
+        .print-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .print-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .submit-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .back-btn {
+            background: #757575;
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: #616161;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .back-button-container,
+            .action-buttons {
+                display: none;
+            }
+
+            .admission-slip-container {
+                box-shadow: none;
+                max-width: 100%;
+                border-radius: 0;
+                margin: 0;
+                page-break-after: avoid;
+            }
+
+            .slip-title {
+                padding: 8px;
+                margin: 0;
+            }
+
+            .form-content {
+                padding: 10px;
+            }
+
+            .ref-section,
+            .assessment-section,
+            .officer-section,
+            .checklist-section,
+            .datetime-section,
+            .signature-section,
+            .note-section {
+                margin-bottom: 5px;
+                padding: 8px;
+                page-break-inside: avoid;
+            }
+
+            .form-grid {
+                gap: 5px;
+                margin-bottom: 5px;
+            }
+
+            .picture-box {
+                min-height: 80px;
+            }
+
+            table {
+                font-size: 10px;
+            }
+
+            th, td {
+                padding: 4px;
+            }
+
+            .action-buttons {
+                display: none !important;
+            }
+        }
+    </style>
+
+    <!-- Extension Error Suppression -->
+    <script>
+        (function() {
+          'use strict';
+          const originalError = console.error;
+          const originalWarn = console.warn;
+          const originalLog = console.log;
+          
+          console.error = function(...args) {
+            const message = String(args[0] || '');
+            if (message.includes('chrome-extension://') || message.includes('lockdown-install') || 
+                message.includes('SES Removing') || message.includes('ERR_FAILED') ||
+                args.some(arg => String(arg).includes('chrome-extension://'))) {
+              return;
+            }
+            originalError.apply(console, args);
+          };
+          
+          console.warn = function(...args) {
+            const message = String(args[0] || '');
+            if (message.includes('chrome-extension://') || args.some(arg => String(arg).includes('chrome-extension://'))) {
+              return;
+            }
+            originalWarn.apply(console, args);
+          };
+          
+          console.log = function(...args) {
+            const message = String(args[0] || '');
+            if (message.includes('chrome-extension://') || args.some(arg => String(arg).includes('chrome-extension://'))) {
+              return;
+            }
+            originalLog.apply(console, args);
+          };
+          
+          window.addEventListener('error', function(e) {
+            if (e.filename && e.filename.includes('chrome-extension://')) {
+              e.preventDefault();
+              return false;
+            }
+          }, true);
+        })();
+    </script>
+</head>
+<body class="admission-page">
+    <main class="main">
+        <div class="admission-slip-container">
+            <!-- Title -->
+            <div class="slip-title">ADMISSION SLIP</div>
+
+            <!-- Form Content -->
+            <div class="form-content">
+                <!-- Reference Number -->
+                <div class="ref-section">
+                    <label class="ref-label">REFERENCE NUMBER :</label>
+                    <div class="ref-boxes">
+                        <input type="text" class="ref-input ref-yellow" maxlength="1">
+                        <input type="text" class="ref-input ref-yellow" maxlength="1">
+                        <input type="text" class="ref-input ref-light-blue" maxlength="1">
+                        <input type="text" class="ref-input ref-light-blue" maxlength="1">
+                        <input type="text" class="ref-input ref-pink" maxlength="1">
+                        <input type="text" class="ref-input ref-pink" maxlength="1">
+                        <input type="text" class="ref-input ref-green" maxlength="1">
+                        <input type="text" class="ref-input ref-green" maxlength="1">
+                        <input type="text" class="ref-input ref-orange" maxlength="1">
+                        <input type="text" class="ref-input ref-orange" maxlength="1">
+                        <input type="text" class="ref-input ref-orange" maxlength="1">
+                        <input type="text" class="ref-input ref-purple" maxlength="1">
+                        <input type="text" class="ref-input ref-purple" maxlength="1">
+                        <input type="text" class="ref-input ref-purple" maxlength="1">
+                        <input type="text" class="ref-input ref-purple" maxlength="1">
+                    </div>
+                </div>
+
+                <!-- Main Information Grid -->
+                <div class="form-grid">
+                    <!-- Name of Applicant -->
+                    <div class="form-field">
+                        <label class="field-label">Name of Applicant:</label>
+                        <input type="text" id="applicantName" class="field-input" placeholder="">
+                    </div>
+
+                    <!-- Tel. Number -->
+                    <div class="form-field">
+                        <label class="field-label">Tel. Number:</label>
+                        <input type="text" id="telNumber" class="field-input" placeholder="">
+                    </div>
+
+                    <!-- Picture Box -->
+                    <div class="picture-box" onclick="document.getElementById('pictureUpload').click()">
+                        <div class="picture-text">PICTURE</div>
+                        <div id="pictureTextBox" class="picture-placeholder">
+                            <div class="picture-placeholder-text">Click To Insert Picture</div>
+                            <div class="picture-subtext">(Passport size)</div>
+                        </div>
+                        <img id="picturePreview">
+                        <input type="file" id="pictureUpload" accept="image/*" onchange="handlePictureUpload(event)">
+                    </div>
+                </div>
+
+                <!-- Assessment Applied Section -->
+                <div class="assessment-section">
+                    <div class="assessment-field">
+                        <label class="assessment-label">Assessment applied for:</label>
+                        <input type="text" id="assessmentApplied" class="assessment-input" placeholder="">
+                    </div>
+
+                    <div class="assessment-field">
+                        <label class="assessment-label">Official Receipt Number:</label>
+                        <input type="text" id="receiptNumber" class="assessment-input" placeholder="">
+                    </div>
+                </div>
+
+                <!-- Date Issued -->
+                <div class="assessment-section">
+                    <div class="assessment-field">
+                        <label class="assessment-label">Date Issued:</label>
+                        <input type="date" id="dateIssued" class="assessment-input">
+                    </div>
+                </div>
+
+                <!-- Processing Officer Section -->
+                <div class="officer-section">
+                    <div class="officer-header">To be accomplished by the Processing Officer</div>
+                    <div class="officer-field">
+                        <label class="officer-label">Name of Assessment Center:</label>
+                        <input type="text" id="assessmentCenter" class="officer-input" placeholder="">
+                    </div>
+                </div>
+
+                <!-- Checklist Section -->
+                <div class="checklist-section">
+                    <div class="checklist-box">
+                        <div class="checklist-title">Check submitted requirements:</div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="selfAssessment">
+                            <label for="selfAssessment">Accomplished Self-Assessment Guide</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="pictures">
+                            <label for="pictures">Three (3) pieces colored passport size pictures</label>
+                        </div>
+                    </div>
+
+                    <div class="checklist-box">
+                        <div class="checklist-title">Remarks:</div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="ppe">
+                            <label for="ppe">Bring own Personal Protective Equipment</label>
+                        </div>
+                        <div class="checklist-item">
+                            <input type="checkbox" id="others">
+                            <label for="others">Others: Pls. specify</label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Date and Time Section -->
+                <div class="datetime-section">
+                    <div class="datetime-field">
+                        <label class="datetime-label">Assessment Date:</label>
+                        <input type="date" id="assessmentDate" class="datetime-input">
+                    </div>
+                    <div class="datetime-field">
+                        <label class="datetime-label">Assessment Time:</label>
+                        <input type="time" id="assessmentTime" class="datetime-input">
+                    </div>
+                </div>
+
+                <!-- Signature Section -->
+                <div class="signature-section">
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">Printed Name & Signature of Processing Officer</div>
+                        <div class="date-label">Date: <input type="date" class="date-input"></div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        <div class="signature-label">Printed Name & Signature of Applicant</div>
+                        <div class="date-label">Date: <input type="date" class="date-input"></div>
+                    </div>
+                </div>
+
+                <!-- Note -->
+                <div class="note-section">
+                    Note: Please bring this Admission Slip on your assessment date.
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="button" class="action-btn save-btn" onclick="saveAdmissionSlip()">
+                        <i class="bi bi-download"></i> Save as PDF
+                    </button>
+                    <button type="button" class="action-btn print-btn" onclick="printAdmissionSlip()">
+                        <i class="bi bi-printer"></i> Print
+                    </button>
+                    <button type="button" class="action-btn submit-btn" onclick="submitAdmissionSlip()">
+                        <i class="bi bi-check-circle"></i> Submit
+                    </button>
+                    <button type="button" class="action-btn back-btn" onclick="window.location.href='dashboard-fixed.html'">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Vendor JS Files -->
+    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- HTML2PDF Library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <script>
+        // Handle picture upload
+        function handlePictureUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('picturePreview');
+                    const textBox = document.getElementById('pictureTextBox');
+                    
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    textBox.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Load applicant data from localStorage
+        document.addEventListener('DOMContentLoaded', function() {
+            const applicationData = localStorage.getItem('applicationData');
+            if (applicationData) {
+                try {
+                    const data = JSON.parse(applicationData);
+                    document.getElementById('applicantName').value = `${data.surname || ''} ${data.firstname || ''}`.trim() || '';
+                    document.getElementById('telNumber').value = data.tel || data.mobile || '';
+                    document.getElementById('assessmentApplied').value = data.assessmentTitle || '';
+                    document.getElementById('assessmentCenter').value = data.schoolName || '';
+                    
+                    window.applicantData = data;
+                } catch (e) {
+                    console.log('No application data found');
+                }
+            }
+        });
+
+        function saveAdmissionSlip() {
+            const element = document.querySelector('.admission-slip-container');
+            const applicantName = document.getElementById('applicantName').value || 'Admission_Slip';
+            
+            const opt = {
+                margin: 5,
+                filename: `Admission_Slip_${applicantName.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+
+            const backButton = document.querySelector('.back-button-container');
+            const actionButtons = document.querySelector('.action-buttons');
+            
+            backButton.style.display = 'none';
+            actionButtons.style.display = 'none';
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                backButton.style.display = 'block';
+                actionButtons.style.display = 'flex';
+            });
+        }
+
+        function printAdmissionSlip() {
+            const backButton = document.querySelector('.back-button-container');
+            const actionButtons = document.querySelector('.action-buttons');
+            
+            backButton.style.display = 'none';
+            actionButtons.style.display = 'none';
+
+            window.print();
+
+            setTimeout(() => {
+                backButton.style.display = 'block';
+                actionButtons.style.display = 'flex';
+            }, 500);
+        }
+
+        function submitAdmissionSlip() {
+            alert('Admission Slip submitted successfully!');
+            window.location.href = 'dashboard-fixed.html';
+        }
+    </script>
+</body>
+</html>

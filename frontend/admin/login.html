@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Admin Login - BETCI</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <!-- Content Security Policy to block extension scripts -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none';">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="../assets/css/login.css" rel="stylesheet">
+
+</head>
+
+<body class="login-page">
+
+  <!-- IMMEDIATE Extension Error Suppression - Must be first -->
+  <script>
+    // Ultra-aggressive console suppression - runs immediately
+    (function() {
+      // Completely disable extension-related console output
+      const filter = (args) => {
+        const str = args.join(' ');
+        return str.includes('chrome-extension') || str.includes('dngmlblcodfobpdpecaadgfbcggfjfnm') || 
+               str.includes('web_accessible_resources') || str.includes('lockdown-install') ||
+               str.includes('SES Removing') || str.includes('ERR_FAILED') || str.includes('Extension context');
+      };
+      
+      const originalError = console.error;
+      const originalWarn = console.warn;
+      const originalLog = console.log;
+  
+      console.error = (...args) => filter(args) ? undefined : originalError(...args);
+      console.warn = (...args) => filter(args) ? undefined : originalWarn(...args);
+      console.log = (...args) => filter(args) ? undefined : originalLog(...args);
+      
+      // Block at browser level
+      window.addEventListener('error', (e) => {
+        if (e.filename?.includes('chrome-extension')) {
+          e.preventDefault();
+          e.stopPropagation();
+          e.stopImmediatePropagation();
+          return false;
+        }
+      }, true);
+      
+      // Override document.write to prevent extension injection
+      const originalWrite = document.write;
+      document.write = function(content) {
+        if (content && content.includes('chrome-extension')) return;
+        return originalWrite.call(this, content);
+      };
+      
+    })();
+  </script>
+
+  <div class="login-container">
+    <!-- Left Side - Welcome Section -->
+    <div class="login-left">
+      <div class="welcome-content">
+        <div class="welcome-logo">
+          <img src="../assets/img/logo.png" alt="BETCI Logo">
+        </div>
+        <h1>Admin Portal</h1>
+        <p class="subtitle">Building Equipment Training and Certification Institute</p>
+
+        <div class="welcome-features">
+          <h3>ADMIN ACCESS</h3>
+          <ul>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Manage Trainees & Enrollments</span>
+            </li>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Monitor Course Progress</span>
+            </li>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Generate Reports & Analytics</span>
+            </li>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>System Administration</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side - Login Form -->
+    <div class="login-right">
+      <div class="login-form-container">
+        <!-- Admin Login Form -->
+        <div class="tab-content active" id="admin-login-tab">
+          <h2>Admin Login</h2>
+          <p class="form-subtitle">Access the administrator dashboard</p>
+
+          <form class="login-form" id="admin-login-form">
+            <div class="form-group">
+              <label for="admin-email">Admin Email</label>
+              <input type="email" id="admin-email" class="form-control" placeholder="Enter your admin email" autocomplete="email" required>
+            </div>
+
+            <div class="form-group">
+              <label for="admin-password">Admin Password</label>
+              <input type="password" id="admin-password" class="form-control" placeholder="Enter your admin password" autocomplete="current-password" required>
+            </div>
+
+            <div class="form-footer">
+              <a href="#" class="forgot-password">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn-signin btn-admin">Sign In as Admin</button>
+
+            <div class="back-home">
+              <a href="../../public/index.html">← Back to Home</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Container -->
+  <div class="chat-container minimized" id="chatContainer">
+    <div class="chat-header">
+      <span>Chat with us</span>
+      <button class="chat-toggle" onclick="toggleChat()">
+        <i class="bi bi-chat-dots" id="chatIcon"></i>
+      </button>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <div class="chat-message bot">
+        <div>Hello! Need help with admin login?</div>
+      </div>
+      <div class="chat-message user">
+        <div>Yes, I'm having trouble logging in.</div>
+      </div>
+      <div class="chat-message bot">
+        <div>I can help you with that! Please make sure you're using the correct admin email and password. If you forgot your password, click "Forgot Password?" link.</div>
+      </div>
+    </div>
+    <div class="chat-input-container">
+      <div class="chat-input-group">
+        <input type="text" class="chat-input" placeholder="Type your message..." id="chatInput">
+        <button class="chat-send-btn" onclick="sendMessage()">
+          <i class="bi bi-send"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vendor JS Files -->
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Login JS -->
+  <script src="../assets/js/login.js"></script>
+
+  <!-- Admin Login Script -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const adminForm = document.getElementById('admin-login-form');
+
+      if (adminForm) {
+        adminForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          const email = document.getElementById('admin-email').value;
+          const password = document.getElementById('admin-password').value;
+
+          if (!email || !password) {
+            alert('Please fill in all fields');
+            return;
+          }
+
+          console.log('Admin login attempt:', { email, password });
+          alert('Admin login successful! Redirecting to dashboard...');
+          window.location.href = './pages/dashboard.html';
+        });
+      }
+    });
+
+    /**
+     * Chat Container Functionality
+     */
+    function toggleChat() {
+      const chatContainer = document.getElementById('chatContainer');
+      const chatIcon = document.getElementById('chatIcon');
+      
+      chatContainer.classList.toggle('minimized');
+      
+      if (chatContainer.classList.contains('minimized')) {
+        chatIcon.className = 'bi bi-chat-dots';
+      } else {
+        chatIcon.className = 'bi bi-x';
+      }
+    }
+
+    function sendMessage() {
+      const chatInput = document.getElementById('chatInput');
+      const chatBody = document.getElementById('chatBody');
+      const message = chatInput.value.trim();
+      
+      if (message) {
+        // Add user message
+        const userMessage = document.createElement('div');
+        userMessage.className = 'chat-message user';
+        userMessage.innerHTML = `<div>${message}</div>`;
+        chatBody.appendChild(userMessage);
+        
+        // Clear input
+        chatInput.value = '';
+        
+        // Scroll to bottom
+        chatBody.scrollTop = chatBody.scrollHeight;
+        
+        // Simulate bot response after a delay
+        setTimeout(() => {
+          const botMessage = document.createElement('div');
+          botMessage.className = 'chat-message bot';
+          botMessage.innerHTML = `<div>Thank you for your message! Our support team will assist you shortly.</div>`;
+          chatBody.appendChild(botMessage);
+          chatBody.scrollTop = chatBody.scrollHeight;
+        }, 1000);
+      }
+    }
+
+    // Chat functionality initialization
+    document.addEventListener('DOMContentLoaded', function() {
+      const chatInput = document.getElementById('chatInput');
+      if (chatInput) {
+        chatInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            sendMessage();
+          }
+        });
+      }
+    });
+  </script>
+
+  <!-- Console Error Suppression for Chrome Extensions -->
+  <script>
+    (function() {
+      'use strict';
+      
+      // Store original console methods
+      const originalConsole = {
+        error: console.error,
+        warn: console.warn,
+        log: console.log
+      };
+      
+      // Extension-related error patterns to suppress
+      const suppressPatterns = [
+        /chrome-extension:/,
+        /extension/i,
+        /lockdown-install/,
+        /SES Removing/,
+        /web_accessible_resources/,
+        /Failed to load resource.*chrome-extension/,
+        /Denying load of chrome-extension/,
+        /ERR_FAILED.*chrome-extension/,
+        /inpage\.js/,
+        /content.*script/i,
+        /dngmlblcodfobpdpecaadgfbcggfjfnm/
+      ];
+      
+      // Function to check if message should be suppressed
+      function shouldSuppress(message) {
+        const msgStr = String(message);
+        return suppressPatterns.some(pattern => pattern.test(msgStr));
+      }
+      
+      // Override console methods
+      console.error = function(...args) {
+        if (!args.some(shouldSuppress)) {
+          originalConsole.error.apply(console, args);
+        }
+      };
+      
+      console.warn = function(...args) {
+        if (!args.some(shouldSuppress)) {
+          originalConsole.warn.apply(console, args);
+        }
+      };
+      
+      console.log = function(...args) {
+        if (!args.some(shouldSuppress)) {
+          originalConsole.log.apply(console, args);
+        }
+      };
+      
+      // Suppress window error events from extensions
+      window.addEventListener('error', function(e) {
+        if (shouldSuppress(e.message) || shouldSuppress(e.filename)) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      }, true);
+      
+      // Suppress unhandled promise rejections from extensions
+      window.addEventListener('unhandledrejection', function(e) {
+        if (shouldSuppress(e.reason)) {
+          e.preventDefault();
+          return false;
+        }
+      });
+      
+      // Block extension script injection attempts
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === 1 && node.tagName === 'SCRIPT') {
+              if (node.src && shouldSuppress(node.src)) {
+                node.remove();
+              }
+            }
+          });
+        });
+      });
+      
+      observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    })();
+  </script>
+
+</body>
+
+</html>

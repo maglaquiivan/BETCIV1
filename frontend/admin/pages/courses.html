@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Courses - BETCI Admin</title>
+    <meta name="description" content="BETCI Admin - Courses" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../../assets/img/logo.png" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Admin Dashboard CSS -->
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
+    
+    <!-- Courses Styles -->
+    <style>
+        .catalog-content {
+            padding: 30px;
+        }
+
+        .catalog-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+            color: var(--text-primary);
+        }
+
+        .courses-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 24px;
+        }
+
+        .course-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-image {
+            width: 100%;
+            height: 200px;
+            object-fit: contain;
+            background: linear-gradient(135deg, #f5f5f5 0%, #e0e0e0 100%);
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .course-body {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+        }
+
+        .course-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            line-height: 1.4;
+        }
+
+        .course-description {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            flex: 1;
+            line-height: 1.5;
+            white-space: pre-line;
+        }
+
+        .course-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .course-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .course-btn:hover {
+            background: #d66f1a;
+            transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f5f5f5;
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d66f1a;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        /* Image Upload Styles */
+        .image-upload-container {
+            margin-top: 8px;
+        }
+
+        .image-upload-container input[type="file"] {
+            display: none;
+        }
+
+        .image-preview {
+            width: 100%;
+            height: 200px;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f9f9f9;
+        }
+
+        .image-preview:hover {
+            border-color: var(--primary-color);
+            background: #fff;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+        }
+
+        .image-preview p {
+            margin: 8px 0 0 0;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 1024px) {
+            .courses-grid {
+                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .catalog-content {
+                padding: 16px;
+            }
+
+            .courses-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .catalog-title {
+                font-size: 20px;
+            }
+
+            .modal-content {
+                width: 95%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-image">
+                    <img src="../../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
+                </div>
+                <div class="logo-text">
+                    <h3>BETCI</h3>
+                    <p>Admin</p>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="bi bi-house-door"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="trainees.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Trainees</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="accounts.html" class="nav-link">
+                            <i class="bi bi-person-badge"></i>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="javascript:void(0);" class="nav-link nav-toggle" onclick="toggleTrainingCatalog(event)">
+                            <i class="bi bi-book"></i>
+                            <span>Training Catalog</span>
+                            <i class="bi bi-chevron-down nav-chevron"></i>
+                        </a>
+                        <ul class="nav-submenu active" id="trainingSubmenu">
+                            <li class="nav-item">
+                                <a href="courses.html" class="nav-link nav-submenu-link active">
+                                    <i class="bi bi-mortarboard"></i>
+                                    <span>Courses</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a href="competencies.html" class="nav-link nav-submenu-link">
+                                    <i class="bi bi-star"></i>
+                                    <span>Competencies</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="appointments.html" class="nav-link">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Appointments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="records.html" class="nav-link">
+                            <i class="bi bi-file-earmark"></i>
+                            <span>Records</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <div class="search-container">
+                        <i class="bi bi-search"></i>
+                        <input type="text" placeholder="Search courses..." class="search-input">
+                    </div>
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+
+                <div class="header-right">
+                    <div class="user-profile">
+                        <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                        <span class="user-name">Admin</span>
+                        <i class="bi bi-chevron-down dropdown-arrow"></i>
+                        
+                        <div class="user-dropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                                <div class="dropdown-user-info">
+                                    <h4>Admin User</h4>
+                                    <p>admin@betci.edu.ph</p>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <ul class="dropdown-menu">
+                                <li><a href="#"><i class="bi bi-person"></i>My Profile</a></li>
+                                <li><a href="#"><i class="bi bi-gear"></i>Settings</a></li>
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-footer">
+                                <button class="logout-btn" onclick="handleLogout()">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Courses Content -->
+            <div class="dashboard-content catalog-content">
+                <h1 class="catalog-title">Training Courses</h1>
+
+                <div class="courses-grid">
+                    <!-- Course 1: Forklift -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="../../../assets/img/fork.png" alt="Forklift Operation" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                        <div class="course-body">
+                            <h3 class="course-title">Forklift Operation NC II</h3>
+                            <p class="course-description">Master forklift operation, safety protocols, and material handling techniques for industrial and warehouse environments.</p>
+                            <div class="course-footer">
+                                <button class="course-btn" onclick="editCourse(this)"><i class="bi bi-pencil"></i> Edit</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course 2: Bulldozer -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="../../assets/img/bulldozer.png" alt="Bulldozer Operation" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                        <div class="course-body">
+                            <h3 class="course-title">Bulldozer Operation NC II</h3>
+                            <p class="course-description">Learn bulldozer operation, earthmoving techniques, and site preparation for construction and mining projects.</p>
+                            <div class="course-footer">
+                                <button class="course-btn" onclick="editCourse(this)"><i class="bi bi-pencil"></i> Edit</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course 3: Dump Truck -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="../../assets/img/dump truck.png" alt="Dump Truck Operation" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                        <div class="course-body">
+                            <h3 class="course-title">Dump Truck Operation NC II</h3>
+                            <p class="course-description">Professional training for rigid on-highway dump truck operation, hauling, and transportation safety.</p>
+                            <div class="course-footer">
+                                <button class="course-btn" onclick="editCourse(this)"><i class="bi bi-pencil"></i> Edit</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course 4: Hydraulic Excavator -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="../../assets/img/hydraulic excavator.png" alt="Hydraulic Excavator" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                        <div class="course-body">
+                            <h3 class="course-title">Hydraulic Excavator NC II</h3>
+                            <p class="course-description">Advanced excavator operation, digging techniques, and hydraulic system maintenance for construction sites.</p>
+                            <div class="course-footer">
+                                <button class="course-btn" onclick="editCourse(this)"><i class="bi bi-pencil"></i> Edit</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course 5: Wheel Loader -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="../../assets/img/logo.png" alt="Wheel Loader" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                        <div class="course-body">
+                            <h3 class="course-title">Wheel Loader NC II</h3>
+                            <p class="course-description">Comprehensive wheel loader training, material handling, and loading techniques for various applications.</p>
+                            <div class="course-footer">
+                                <button class="course-btn" onclick="editCourse(this)"><i class="bi bi-pencil"></i> Edit</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Course 6: Backhoe Loader -->
+                    <div class="course-card">
+                        <div class="course-image">
+                            <img src="../../assets/img/logo.png" alt="Backhoe Loader" style="max-width: 100%; max-height: 100%;">
+                        </div>
+                        <div class="course-body">
+                            <h3 class="course-title">Backhoe Loader NC II</h3>
+                            <p class="course-description">Master backhoe loader operation, digging, trenching, and utility work for construction projects.</p>
+                            <div class="course-footer">
+                                <button class="course-btn" onclick="editCourse(this)"><i class="bi bi-pencil"></i> Edit</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../js/api.js"></script>
+    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script>
+        // Store course MongoDB IDs for editing/deleting
+        let coursesMap = new Map();
+
+        // Profile dropdown toggle
+        document.querySelector('.user-profile').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = this.querySelector('.user-dropdown');
+            dropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            const userProfile = document.querySelector('.user-profile');
+            if (!e.target.closest('.user-profile')) {
+                const dropdown = userProfile.querySelector('.user-dropdown');
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Toggle Training Catalog submenu
+        function toggleTrainingCatalog(event) {
+            event.preventDefault();
+            const link = event.currentTarget;
+            const submenu = document.getElementById('trainingSubmenu');
+            
+            link.classList.toggle('active');
+            submenu.classList.toggle('active');
+        }
+
+        // Modal helper functions
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            if (e.target.classList.contains('modal')) {
+                e.target.classList.remove('active');
+            }
+        });
+
+        // Edit course - LocalStorage version
+        function editCourse(button) {
+            const card = button.closest('.course-card');
+            const courseId = card.dataset.courseId;
+            const title = card.querySelector('.course-title').textContent;
+            const description = card.querySelector('.course-description').textContent;
+            const imageUrl = card.querySelector('.course-image img').src;
+            
+            console.log('Editing course:', { courseId, title });
+            
+            // Populate modal
+            document.getElementById('modalTitle').textContent = 'Edit Course';
+            document.getElementById('editCourseId').value = courseId;
+            document.getElementById('editCourseTitle').value = title;
+            document.getElementById('editCourseDescription').value = description;
+            document.getElementById('editCourseImage').value = imageUrl;
+            
+            // Show image preview
+            const imagePreview = document.getElementById('imagePreview');
+            imagePreview.innerHTML = '<img src="' + imageUrl + '" alt="Preview">';
+            
+            openModal('editCourseModal');
+        }
+
+        // Preview uploaded image file
+        let currentImageData = null;
+        function previewImageFile(event) {
+            const file = event.target.files[0];
+            if (file) {
+                // Check file size (limit to 5MB)
+                if (file.size > 5 * 1024 * 1024) {
+                    alert('Image size should be less than 5MB');
+                    return;
+                }
+                
+                // Check file type
+                if (!file.type.startsWith('image/')) {
+                    alert('Please upload an image file');
+                    return;
+                }
+                
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentImageData = e.target.result;
+                    document.getElementById('imagePreview').innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
+                    // Clear the URL input when file is uploaded
+                    document.getElementById('editCourseImage').value = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Save course changes - LocalStorage version
+        async function saveCourseChanges() {
+            const courseId = document.getElementById('editCourseId').value;
+            const title = document.getElementById('editCourseTitle').value;
+            const description = document.getElementById('editCourseDescription').value;
+            let image = document.getElementById('editCourseImage').value;
+            
+            // Use uploaded image data if available, otherwise use URL
+            if (currentImageData) {
+                image = currentImageData;
+            }
+            
+            try {
+                console.log('Updating course:', { courseId, title, description });
+                
+                const updatedCourse = await CourseAPI.updateCourse(courseId, {
+                    title,
+                    description,
+                    image
+                });
+                
+                console.log('Course updated:', updatedCourse);
+                
+                closeModal('editCourseModal');
+                showNotification('Course updated successfully!', 'success');
+                
+                // Reset image data
+                currentImageData = null;
+                
+                // Reload courses to show updated data
+                loadCoursesFromLocalStorage();
+            } catch (error) {
+                console.error('Error updating course:', error);
+                alert('Failed to update course: ' + error.message);
+            }
+        }
+
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification notification-' + type;
+            notification.innerHTML = '<i class="bi bi-check-circle"></i> ' + message;
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000;';
+            
+            if (type === 'success') {
+                notification.style.borderLeft = '4px solid #27AE60';
+            } else if (type === 'error') {
+                notification.style.borderLeft = '4px solid #E74C3C';
+            }
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+
+        // Load courses from localStorage
+        async function loadCoursesFromLocalStorage() {
+            try {
+                const courses = await CourseAPI.getAllCourses();
+                console.log('Loaded courses from localStorage:', courses);
+                
+                const coursesGrid = document.querySelector('.courses-grid');
+                coursesGrid.innerHTML = '';
+                
+                courses.forEach(course => {
+                    const courseCard = createCourseCard(course);
+                    coursesGrid.appendChild(courseCard);
+                });
+            } catch (error) {
+                console.error('Error loading courses:', error);
+                alert('Failed to load courses. Make sure the backend is running on http://localhost:5000');
+            }
+        }
+
+        // Create course card element
+        function createCourseCard(course) {
+            const card = document.createElement('div');
+            card.className = 'course-card';
+            card.dataset.courseId = course.courseId;
+            card.dataset.mongoId = course._id;
+            
+            card.innerHTML = `
+                <div class="course-image">
+                    <img src="${course.image}" alt="${course.title}" style="max-width: 100%; max-height: 100%;">
+                </div>
+                <div class="course-body">
+                    <h3 class="course-title">${course.title}</h3>
+                    <p class="course-description">${course.description}</p>
+                    <div class="course-footer">
+                        <button class="course-btn" onclick="editCourse(this)">
+                            <i class="bi bi-pencil"></i> Edit
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        // Load courses when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCoursesFromAPI();
+            
+            // Highlight active submenu item
+            const currentPage = window.location.pathname.split('/').pop();
+            const submenuLinks = document.querySelectorAll('.nav-submenu-link');
+            
+            submenuLinks.forEach(link => {
+                link.classList.remove('active');
+                const href = link.getAttribute('href');
+                if (href && href.includes(currentPage)) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Ensure submenu is expanded
+            const trainingSubmenu = document.getElementById('trainingSubmenu');
+            if (trainingSubmenu) {
+                trainingSubmenu.classList.add('active');
+            }
+        });
+
+        // Logout handler
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userSession');
+                sessionStorage.removeItem('userSession');
+                window.location.href = '../login.html';
+            }
+        }
+    </script>
+
+    <!-- Edit Course Modal -->
+    <div class="modal" id="editCourseModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Edit Course</h3>
+                <button class="modal-close" onclick="closeModal('editCourseModal')">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form onsubmit="event.preventDefault(); saveCourseChanges();">
+                    <input type="hidden" id="editCourseId">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Course Image</label>
+                        <p style="font-size: 12px; color: #999; margin-bottom: 8px;">
+                            Upload an image (max 5MB) or enter image URL below
+                        </p>
+                        <div class="image-upload-container">
+                            <input type="file" id="courseImageFile" accept="image/*" onchange="previewImageFile(event)">
+                            <div class="image-preview" id="imagePreview" onclick="document.getElementById('courseImageFile').click()">
+                                <i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i>
+                                <p>Click to upload course image</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Or Image URL</label>
+                        <input type="text" id="editCourseImage" class="form-control" placeholder="Enter image URL (e.g., ../assets/img/fork.png)">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Course Title *</label>
+                        <input type="text" id="editCourseTitle" class="form-control" placeholder="e.g., Forklift Operation NC II" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Course Description *</label>
+                        <textarea id="editCourseDescription" class="form-control" rows="4" placeholder="Enter course description..." required></textarea>
+                    </div>
+                    
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editCourseModal')">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-check"></i> Save Changes
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

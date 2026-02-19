@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Accounts - BETCI Admin</title>
+    <meta name="description" content="BETCI Admin - Accounts Management" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../../assets/img/logo.png" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Admin Dashboard CSS -->
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
+    
+    <!-- Accounts Page Styles -->
+    <style>
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+        
+        .accounts-content {
+            padding: 30px;
+        }
+
+        /* Dropdown Header */
+        .accounts-dropdown-header {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .dropdown-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        /* Breadcrumb */
+        .page-breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        
+        .page-breadcrumb .breadcrumb-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .page-breadcrumb .breadcrumb-link:hover {
+            text-decoration: underline;
+        }
+        
+        .page-breadcrumb .breadcrumb-separator {
+            color: var(--text-secondary);
+        }
+        
+        .page-breadcrumb .breadcrumb-current {
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .dropdown-title:hover {
+            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
+        }
+
+        .dropdown-title i:first-child {
+            font-size: 24px;
+        }
+
+        .dropdown-chevron {
+            margin-left: auto;
+            transition: transform 0.3s ease;
+        }
+
+        .dropdown-title.active .dropdown-chevron {
+            transform: rotate(180deg);
+        }
+
+        .dropdown-menu-accounts {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 0 0 8px 8px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            display: none;
+            z-index: 100;
+            margin-top: -8px;
+            padding-top: 8px;
+        }
+
+        .dropdown-menu-accounts.active {
+            display: block;
+        }
+
+        .dropdown-item {
+            display: block;
+            padding: 16px 20px;
+            color: #666;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-left: 4px solid transparent;
+            font-size: 16px;
+        }
+
+        .dropdown-item:hover {
+            background: #f5f5f5;
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+        }
+
+        .dropdown-item.active {
+            background: rgba(230, 126, 34, 0.1);
+            color: var(--primary-color);
+            border-left-color: var(--primary-color);
+            font-weight: 600;
+        }
+
+        /* Accounts Sections */
+        .accounts-section {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .accounts-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+        }
+
+        .card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+            color: var(--text-primary);
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin: 4px 0 0 0;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: var(--bg-white);
+        }
+
+        .btn-primary:hover {
+            background: #d66f1a;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--bg-light);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--border-color);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .table thead {
+            background: var(--bg-light);
+        }
+
+        .table th {
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-primary);
+        }
+
+        .table tbody tr:hover {
+            background: var(--bg-light);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .badge-primary {
+            background: rgba(230, 126, 34, 0.1);
+            color: var(--primary-color);
+        }
+
+        .badge-success {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        .badge-danger {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .action-buttons .btn {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .accounts-content {
+                padding: 16px;
+            }
+
+            .dropdown-title {
+                font-size: 16px;
+                padding: 16px;
+            }
+
+            .card-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+
+            .table {
+                font-size: 12px;
+            }
+
+            .table th,
+            .table td {
+                padding: 8px 12px;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 9999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-content.modal-small {
+            max-width: 450px;
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .modal-close:hover {
+            background: #f5f5f5;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d66f1a;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .delete-warning {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .delete-warning i {
+            font-size: 48px;
+            color: var(--danger);
+            margin-bottom: 16px;
+        }
+
+        .delete-trainee-name {
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-image">
+                    <img src="../../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
+                </div>
+                <div class="logo-text">
+                    <h3>BETCI</h3>
+                    <p>Admin</p>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="bi bi-house-door"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="trainees.html" class="nav-link">
+                            <i class="bi bi-people"></i>
+                            <span>Trainees</span>
+                        </a>
+                    </li>
+                    <li class="nav-item active">
+                        <a href="accounts.html" class="nav-link">
+                            <i class="bi bi-person-badge"></i>
+                            <span>Accounts</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="training-catalog.html" class="nav-link">
+                            <i class="bi bi-book"></i>
+                            <span>Training Catalog</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="appointments.html" class="nav-link">
+                            <i class="bi bi-calendar-check"></i>
+                            <span>Appointments</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="records.html" class="nav-link">
+                            <i class="bi bi-file-earmark"></i>
+                            <span>Records</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <div class="search-container">
+                        <i class="bi bi-search"></i>
+                        <input type="text" placeholder="Search..." class="search-input">
+                    </div>
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+
+                <div class="header-right">
+                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                    <div class="user-profile">
+                        <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                        <span class="user-name">Admin</span>
+                        <i class="bi bi-chevron-down dropdown-arrow"></i>
+                        
+                        <div class="user-dropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                                <div class="dropdown-user-info">
+                                    <h4>Admin User</h4>
+                                    <p>admin@betci.edu.ph</p>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <ul class="dropdown-menu">
+                                <li><a href="#"><i class="bi bi-person"></i>My Profile</a></li>
+                                <li><a href="#"><i class="bi bi-gear"></i>Settings</a></li>
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-footer">
+                                <button class="logout-btn" onclick="handleLogout()">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    Logout
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content accounts-content">
+                <!-- Accounts Dropdown Header -->
+                <div class="accounts-dropdown-header">
+                    <div class="dropdown-title">
+                        <i class="bi bi-person-badge"></i>
+                        <span id="dropdownTitleText">Accounts</span>
+                        <i class="bi bi-chevron-down dropdown-chevron"></i>
+                    </div>
+                    <div class="dropdown-menu-accounts">
+                        <a href="#" class="dropdown-item active" onclick="showSection('manage-accounts', event)">
+                            <span>Manage Accounts</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="showSection('user-roles', event)">
+                            <span>User Roles</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="showSection('permissions', event)">
+                            <span>Permissions</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- User Accounts Section -->
+                <div id="manage-accounts" class="accounts-section active">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">User Accounts</h2>
+                            <p class="card-subtitle">Manage system user accounts and permissions</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddAccountModal()">
+                            <i class="bi bi-plus"></i> Add Account
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Username</th>
+                                    <th>Email</th>
+                                    <th>Role</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>#A001</td>
+                                    <td>admin_user</td>
+                                    <td>admin@betci.edu.ph</td>
+                                    <td><span class="badge badge-primary">Administrator</span></td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-secondary" onclick="editAccount(this)">Edit</button>
+                                            <button class="btn btn-sm btn-secondary" onclick="deleteAccount(this)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#A002</td>
+                                    <td>trainer_user</td>
+                                    <td>trainer@betci.edu.ph</td>
+                                    <td><span class="badge badge-primary">Trainer</span></td>
+                                    <td><span class="badge badge-success">Active</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-secondary" onclick="editAccount(this)">Edit</button>
+                                            <button class="btn btn-sm btn-secondary" onclick="deleteAccount(this)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>#A003</td>
+                                    <td>staff_user</td>
+                                    <td>staff@betci.edu.ph</td>
+                                    <td><span class="badge badge-primary">Staff</span></td>
+                                    <td><span class="badge badge-warning">Inactive</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-secondary" onclick="editAccount(this)">Edit</button>
+                                            <button class="btn btn-sm btn-secondary" onclick="deleteAccount(this)">Delete</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </div>
+
+                <!-- User Roles Section -->
+                <div id="user-roles" class="accounts-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">User Roles</h2>
+                            <p class="card-subtitle">Define and manage user roles and permissions</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddRoleModal()">
+                            <i class="bi bi-plus"></i> Add Role
+                        </button>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Role Name</th>
+                                    <th>Description</th>
+                                    <th>Users</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Administrator</td>
+                                    <td>Full system access and control</td>
+                                    <td><span class="badge badge-primary">1</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-secondary" onclick="editRole(this)">Edit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Trainer</td>
+                                    <td>Can manage courses and trainees</td>
+                                    <td><span class="badge badge-primary">2</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-secondary" onclick="editRole(this)">Edit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>Staff</td>
+                                    <td>Limited access to records</td>
+                                    <td><span class="badge badge-primary">1</span></td>
+                                    <td>
+                                        <div class="action-buttons">
+                                            <button class="btn btn-sm btn-secondary" onclick="editRole(this)">Edit</button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </div>
+
+                <!-- System Permissions Section -->
+                <div id="permissions" class="accounts-section">
+                <div class="card">
+                    <div class="card-header">
+                        <div>
+                            <h2 class="card-title">System Permissions</h2>
+                            <p class="card-subtitle">Manage system-wide permissions</p>
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Permission</th>
+                                    <th>Description</th>
+                                    <th>Roles</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>View Dashboard</td>
+                                    <td>Access to admin dashboard</td>
+                                    <td><span class="badge badge-primary">Admin</span> <span class="badge badge-primary">Trainer</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Manage Trainees</td>
+                                    <td>Add, edit, delete trainee records</td>
+                                    <td><span class="badge badge-primary">Admin</span> <span class="badge badge-primary">Trainer</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Manage Courses</td>
+                                    <td>Create and manage training courses</td>
+                                    <td><span class="badge badge-primary">Admin</span> <span class="badge badge-primary">Trainer</span></td>
+                                </tr>
+                                <tr>
+                                    <td>View Reports</td>
+                                    <td>Access to system reports</td>
+                                    <td><span class="badge badge-primary">Admin</span> <span class="badge badge-primary">Staff</span></td>
+                                </tr>
+                                <tr>
+                                    <td>Manage Accounts</td>
+                                    <td>Create and manage user accounts</td>
+                                    <td><span class="badge badge-primary">Admin</span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script>
+        // Profile dropdown toggle
+        document.querySelector('.user-profile').addEventListener('click', function(e) {
+            e.stopPropagation();
+            const dropdown = this.querySelector('.user-dropdown');
+            dropdown.classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            const userProfile = document.querySelector('.user-profile');
+            if (!e.target.closest('.user-profile')) {
+                const dropdown = userProfile.querySelector('.user-dropdown');
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Logout handler
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userSession');
+                sessionStorage.removeItem('userSession');
+                window.location.href = '../../auth/login.html';
+            }
+        }
+
+        // Accounts dropdown toggle
+        const dropdownTitle = document.querySelector('.dropdown-title');
+        const dropdownMenu = document.querySelector('.dropdown-menu-accounts');
+
+        dropdownTitle.addEventListener('click', function(e) {
+            e.preventDefault();
+            dropdownMenu.classList.toggle('active');
+            this.classList.toggle('active');
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.accounts-dropdown-header')) {
+                dropdownMenu.classList.remove('active');
+                dropdownTitle.classList.remove('active');
+            }
+        });
+
+        // Show section function
+        function showSection(sectionId, event) {
+            event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.accounts-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active from all dropdown items
+            document.querySelectorAll('.dropdown-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            event.target.closest('.dropdown-item').classList.add('active');
+
+            // Update breadcrumb
+            updateBreadcrumb(sectionId);
+
+            // Close dropdown
+            dropdownMenu.classList.remove('active');
+            dropdownTitle.classList.remove('active');
+        }
+        
+        // Update breadcrumb function
+        function updateBreadcrumb(sectionId) {
+            const dropdownTitleText = document.getElementById('dropdownTitleText');
+            
+            const sectionNames = {
+                'manage-accounts': 'Accounts / Manage Accounts',
+                'user-roles': 'Accounts / User Roles',
+                'permissions': 'Accounts / Permissions'
+            };
+            
+            if (sectionId && sectionNames[sectionId]) {
+                dropdownTitleText.textContent = sectionNames[sectionId];
+            } else {
+                dropdownTitleText.textContent = 'Accounts';
+            }
+        }
+
+        // Account management functions
+        let currentEditRow = null;
+        
+        function openAddAccountModal() {
+            currentEditRow = null;
+            document.getElementById('accountModalTitle').textContent = 'Add New Account';
+            document.getElementById('accountForm').reset();
+            document.getElementById('accountModal').classList.add('active');
+        }
+
+        function editAccount(button) {
+            currentEditRow = button.closest('tr');
+            const username = currentEditRow.cells[1].textContent;
+            const email = currentEditRow.cells[2].textContent;
+            const role = currentEditRow.cells[3].textContent;
+            
+            document.getElementById('accountModalTitle').textContent = 'Edit Account';
+            document.getElementById('accountUsername').value = username;
+            document.getElementById('accountEmail').value = email;
+            document.getElementById('accountRole').value = role;
+            document.getElementById('accountPassword').required = false;
+            
+            document.getElementById('accountModal').classList.add('active');
+        }
+
+        function deleteAccount(button) {
+            const row = button.closest('tr');
+            const username = row.cells[1].textContent;
+            
+            document.getElementById('deleteAccountName').textContent = username;
+            document.getElementById('deleteAccountConfirmInput').value = '';
+            document.getElementById('deleteAccountConfirmInput').placeholder = 'Please enter "' + username + '" to delete';
+            document.getElementById('deleteAccountErrorMsg').style.display = 'none';
+            currentEditRow = row;
+            document.getElementById('deleteAccountModal').classList.add('active');
+        }
+
+        function closeAccountModal() {
+            document.getElementById('accountModal').classList.remove('active');
+            currentEditRow = null;
+        }
+
+        function closeDeleteAccountModal() {
+            document.getElementById('deleteAccountModal').classList.remove('active');
+            document.getElementById('deleteAccountConfirmInput').value = '';
+            document.getElementById('deleteAccountErrorMsg').style.display = 'none';
+            currentEditRow = null;
+        }
+
+        function confirmDeleteAccount() {
+            if (currentEditRow) {
+                const username = currentEditRow.cells[1].textContent;
+                const inputValue = document.getElementById('deleteAccountConfirmInput').value.trim();
+                const errorMsg = document.getElementById('deleteAccountErrorMsg');
+                
+                // Check if input matches the username
+                if (inputValue !== username) {
+                    errorMsg.style.display = 'block';
+                    document.getElementById('deleteAccountConfirmInput').style.borderColor = 'var(--danger)';
+                    document.getElementById('deleteAccountConfirmInput').focus();
+                    return;
+                }
+                
+                currentEditRow.remove();
+                closeDeleteAccountModal();
+                showNotification('Account deleted successfully', 'success');
+            }
+        }
+
+        function saveAccount(event) {
+            event.preventDefault();
+            
+            const username = document.getElementById('accountUsername').value;
+            const email = document.getElementById('accountEmail').value;
+            const role = document.getElementById('accountRole').value;
+            
+            if (currentEditRow) {
+                // Update existing account
+                currentEditRow.cells[1].textContent = username;
+                currentEditRow.cells[2].textContent = email;
+                currentEditRow.cells[3].textContent = role;
+                showNotification('Account updated successfully', 'success');
+            } else {
+                // Add new account (you can implement this)
+                showNotification('Account added successfully', 'success');
+            }
+            
+            closeAccountModal();
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#27AE60',
+                error: '#E74C3C',
+                info: '#3498DB'
+            };
+            notification.style.cssText = `position: fixed; top: 20px; right: 20px; background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000; border-left: 4px solid ${colors[type] || colors.info}; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease;`;
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle';
+            notification.innerHTML = `<i class="bi bi-${icon}" style="font-size: 18px; color: ${colors[type] || colors.info}"></i><span>${message}</span>`;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Role management functions
+        function openAddRoleModal() {
+            showNotification('Role management feature coming soon', 'info');
+        }
+
+        function editRole(button) {
+            const row = button.closest('tr');
+            const roleName = row.cells[0].textContent;
+            showNotification('Edit role: ' + roleName, 'info');
+        }
+
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        };
+        
+        // Reset delete confirmation input styling on input
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteInput = document.getElementById('deleteAccountConfirmInput');
+            if (deleteInput) {
+                deleteInput.addEventListener('input', function() {
+                    this.style.borderColor = '';
+                    document.getElementById('deleteAccountErrorMsg').style.display = 'none';
+                });
+            }
+        });
+    </script>
+
+    <!-- Add/Edit Account Modal -->
+    <div class="modal" id="accountModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="accountModalTitle">Add New Account</h3>
+                <button class="modal-close" onclick="closeAccountModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <form id="accountForm" onsubmit="saveAccount(event)">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="form-label">Username *</label>
+                        <input type="text" id="accountUsername" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" id="accountEmail" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password *</label>
+                        <input type="password" id="accountPassword" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Role *</label>
+                        <select id="accountRole" class="form-control" required>
+                            <option value="Admin">Admin</option>
+                            <option value="Trainer">Trainer</option>
+                            <option value="Staff">Staff</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" onclick="closeAccountModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check"></i> Save Account
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Account Modal -->
+    <div class="modal" id="deleteAccountModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <button class="modal-close" onclick="closeDeleteAccountModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="bi bi-exclamation-triangle"></i>
+                    <p>Are you sure you want to delete this account?</p>
+                    <p class="delete-trainee-name" id="deleteAccountName"></p>
+                    <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">This action cannot be undone.</p>
+                    
+                    <div class="form-group" style="text-align: left;">
+                        <label class="form-label">Type the username to confirm:</label>
+                        <input type="text" id="deleteAccountConfirmInput" class="form-control" placeholder="Enter username" autocomplete="off">
+                        <p id="deleteAccountErrorMsg" style="color: var(--danger); font-size: 12px; margin-top: 8px; display: none;">Username does not match. Please try again.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteAccountModal()">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteAccount()">
+                    <i class="bi bi-trash"></i> Delete Account
+                </button>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- IMMEDIATE Extension Error Suppression - Must be first -->
+    <script>
+        // Comprehensive console suppression for browser extensions
+        (function() {
+          'use strict';
+          
+          // Store original console methods
+          const originalError = console.error;
+          const originalWarn = console.warn;
+          const originalLog = console.log;
+          
+          // Filter function for extension-related messages
+          const isExtensionError = (args) => {
+            const str = String(args).toLowerCase();
+            return str.includes('chrome-extension') || 
+                   str.includes('dngmlblcodfobpdpecaadgfbcggfjfnm') || 
+                   str.includes('web_accessible_resources') || 
+                   str.includes('lockdown-install') ||
+                   str.includes('ses removing') || 
+                   str.includes('err_failed') || 
+                   str.includes('extension context') ||
+                   str.includes('metamask') ||
+                   str.includes('receiving end does not exist') ||
+                   str.includes('could not establish connection') ||
+                   str.includes('inpage.js');
+          };
+          
+          // Override console.error
+          console.error = function(...args) {
+            if (!isExtensionError(args)) {
+              originalError.apply(console, args);
+            }
+          };
+          
+          // Override console.warn
+          console.warn = function(...args) {
+            if (!isExtensionError(args)) {
+              originalWarn.apply(console, args);
+            }
+          };
+          
+          // Override console.log
+          console.log = function(...args) {
+            if (!isExtensionError(args)) {
+              originalLog.apply(console, args);
+            }
+          };
+          
+          // Block extension errors at window level
+          window.addEventListener('error', function(e) {
+            if (e.filename && (e.filename.includes('chrome-extension') || 
+                e.filename.includes('inpage.js') ||
+                e.filename.includes('lockdown'))) {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              return false;
+            }
+          }, true);
+          
+          // Block unhandled promise rejections from extensions
+          window.addEventListener('unhandledrejection', function(e) {
+            const message = String(e.reason || '').toLowerCase();
+            if (message.includes('metamask') || 
+                message.includes('extension') ||
+                message.includes('receiving end') ||
+                message.includes('could not establish')) {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              return false;
+            }
+          }, true);
+          
+          // Override fetch to suppress extension requests
+          const originalFetch = window.fetch;
+          window.fetch = function(...args) {
+            const url = String(args[0] || '').toLowerCase();
+            if (url.includes('chrome-extension') || url.includes('metamask')) {
+              return Promise.reject(new Error('Extension request blocked'));
+            }
+            return originalFetch.apply(this, args);
+          };
+          
+          // Prevent extension script injection
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) {
+                  if (node.tagName === 'SCRIPT' && node.src && 
+                      (node.src.includes('chrome-extension') || 
+                       node.src.includes('inpage.js') ||
+                       node.src.includes('lockdown'))) {
+                    node.remove();
+                  }
+                }
+              });
+            });
+          });
+          
+          observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+          });
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none'; base-uri 'self';">
+    <title>BETCI - Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="./assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Sidebar Container -->
+    <div id="sidebar-container"></div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="search-container">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search..." class="search-input">
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            <div class="header-right">
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
+                                <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
+                                <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
+                            </svg>
+                        </svg>
+                    </div>
+                    <span class="user-name">KELI</span>
+                    <i class="bi bi-chevron-down dropdown-arrow"></i>
+                    
+                    <!-- User Dropdown Menu -->
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-avatar">
+                                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
+                                        <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
+                                        <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
+                                    </svg>
+                                </svg>
+                            </div>
+                            <div class="dropdown-user-info">
+                                <h4>KELI STUDENT</h4>
+                                <p>keli.student@betci.edu.ph</p>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="manage-profile.html">
+                                    <i class="bi bi-person"></i>
+                                    <span>My Profile</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="manage-profile.html">
+                                    <i class="bi bi-gear"></i>
+                                    <span>Settings</span>
+                                </a>
+                            </li>
+                            <li class="theme-toggle-item">
+                                <div class="theme-toggle-wrapper">
+                                    <i class="bi bi-palette"></i>
+                                    <span>Dark Mode</span>
+                                    <label class="theme-switch">
+                                        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                                        <span class="theme-slider"></span>
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-footer">
+                            <button class="logout-btn" onclick="logout()">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Log Out</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Settings Section -->
+        <div class="dashboard-content">
+            <div class="section-header">
+                <h2><i class="bi bi-gear"></i> Settings</h2>
+            </div>
+            
+            <div class="settings-container">
+                <div class="settings-card">
+                    <h3>Manage Your Profile</h3>
+                    <p>Update your personal information, view login history, and manage your account settings.</p>
+                    <a href="manage-profile.html" class="settings-link-btn">
+                        <i class="bi bi-arrow-right"></i> Go to Manage Profile
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./assets/js/script.js"></script>
+</body>
+</html>

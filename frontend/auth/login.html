@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <title>Login - BETCI</title>
+  <meta name="description" content="">
+  <meta name="keywords" content="">
+  
+  <!-- Content Security Policy to block extension scripts -->
+  <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; object-src 'none';">
+
+  <!-- Favicons -
+  <link href="assets/img/logo.png" rel="icon">
+  <link href="assets/img/logo.png" rel="apple-touch-icon">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- Main CSS File -->
+  <link href="../assets/css/login.css" rel="stylesheet">
+
+</head>
+
+<body class="login-page">
+
+  <div class="login-container">
+    <!-- Left Side - Welcome Section -->
+    <div class="login-left">
+      <div class="welcome-content">
+        <div class="welcome-logo">
+          <img src="../assets/img/logo.png" alt="BETCI Logo">
+        </div>
+        <h1>Welcome to BETCI</h1>
+        <p class="subtitle">Building Equipment Training and Certification Institute</p>
+
+        <div class="welcome-features">
+          <h3>WELCOME TO</h3>
+          <ul>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Professional Heavy Equipment Training</span>
+            </li>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Nationally Recognized Certification</span>
+            </li>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Expert Instructors & Modern Facilities</span>
+            </li>
+            <li>
+              <i class="bi bi-check-circle-fill"></i>
+              <span>Job Placement Assistance</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side - Login Form -->
+    <div class="login-right">
+      <div class="login-form-container">
+        <!-- Tab Navigation -->
+        <div class="login-tabs">
+          <button class="tab-btn active" data-tab="login">Login</button>
+          <button class="tab-btn" data-tab="register">Register</button>
+        </div>
+
+        <!-- Login Tab -->
+        <div class="tab-content active" id="login-tab">
+          <h2>Welcome Back</h2>
+          <p class="form-subtitle">Sign in to access your account</p>
+
+          <form class="login-form">
+            <div class="form-group">
+              <label for="login-email">Email Address</label>
+              <input type="email" id="login-email" class="form-control" placeholder="Enter your email address" autocomplete="email" required>
+            </div>
+
+            <div class="form-group">
+              <label for="login-password">Password</label>
+              <input type="password" id="login-password" class="form-control" placeholder="Enter your password" autocomplete="current-password" required>
+            </div>
+
+            <div class="form-footer">
+              <a href="forgot-password.html" class="forgot-password">Forgot Password?</a>
+            </div>
+
+            <button type="submit" class="btn-signin">Sign In</button>
+
+            <div class="back-home">
+              <a href="../public/index.html">← Back to Home</a>
+            </div>
+          </form>
+        </div>
+
+        <!-- Register Tab -->
+        <div class="tab-content" id="register-tab">
+          <h2>Create Account</h2>
+          <p class="form-subtitle">Join BETCI and start your learning journey</p>
+
+          <form class="login-form">
+            <div class="form-group">
+              <label for="register-name">Full Name</label>
+              <input type="text" id="register-name" class="form-control" placeholder="Enter your full name" autocomplete="name" required>
+            </div>
+
+            <div class="form-group">
+              <label for="register-email">Email Address</label>
+              <input type="email" id="register-email" class="form-control" placeholder="Enter your email address" autocomplete="email" required>
+            </div>
+
+            <div class="form-group">
+              <label for="register-course">Select your course (optional)</label>
+              <select id="register-course" class="form-control">
+                <option value="">Select your course (optional)</option>
+                <option value="forklift">Heavy Equipment Operation Forklift NC II</option>
+                <option value="bulldozer">Heavy Equipment Operation Bulldozer NC II</option>
+                <option value="dump-truck">Heavy Equipment Operation Rigid on Highway Dump Truck NC II</option>
+                <option value="excavator">Heavy Equipment Operation Hydraulic Excavator NC II</option>
+                <option value="wheel-loader">Heavy Equipment Operation Wheel Loader NC II</option>
+                <option value="backhoe">Heavy Equipment Operation Backhoe Loader NC II</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="register-password">Password</label>
+              <input type="password" id="register-password" class="form-control" placeholder="Enter your password" autocomplete="new-password" required>
+            </div>
+
+            <div class="form-group">
+              <label for="register-confirm">Confirm Password</label>
+              <input type="password" id="register-confirm" class="form-control" placeholder="Confirm your password" autocomplete="new-password" required>
+            </div>
+
+            <button type="submit" class="btn-signin">Create Account</button>
+
+            <div class="back-home">
+              <a href="../public/index.html">← Back to Home</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Container -->
+  <div class="chat-container minimized" id="chatContainer">
+    <div class="chat-header">
+      <span>Chat with us</span>
+      <button class="chat-toggle" onclick="toggleChat()">
+        <i class="bi bi-chat-dots" id="chatIcon"></i>
+      </button>
+    </div>
+    <div class="chat-body" id="chatBody">
+      <div class="chat-message bot">
+        <div>Hello! Need help with login or registration?</div>
+      </div>
+      <div class="chat-message user">
+        <div>Yes, I'm having trouble logging in.</div>
+      </div>
+      <div class="chat-message bot">
+        <div>I can help you with that! Please make sure you're using the correct email and password. If you forgot your password, click "Forgot Password?" link.</div>
+      </div>
+    </div>
+    <div class="chat-input-container">
+      <div class="chat-input-group">
+        <input type="text" class="chat-input" placeholder="Type your message..." id="chatInput">
+        <button class="chat-send-btn" onclick="sendMessage()">
+          <i class="bi bi-send"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Vendor JS Files -->
+  <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Login JS -->
+  <script src="../assets/js/login.js"></script>
+
+  <!-- Console Error Suppression for Chrome Extensions -->
+  <script>
+    (function() {
+      'use strict';
+      
+      // Store original console methods
+      const originalConsole = {
+        error: console.error,
+        warn: console.warn,
+        log: console.log
+      };
+      
+      // Extension-related error patterns to suppress
+      const suppressPatterns = [
+        /chrome-extension:/,
+        /extension/i,
+        /lockdown-install/,
+        /SES Removing/,
+        /web_accessible_resources/,
+        /Failed to load resource.*chrome-extension/,
+        /Denying load of chrome-extension/,
+        /ERR_FAILED.*chrome-extension/,
+        /inpage\.js/,
+        /content.*script/i
+      ];
+      
+      // Function to check if message should be suppressed
+      function shouldSuppress(message) {
+        const msgStr = String(message);
+        return suppressPatterns.some(pattern => pattern.test(msgStr));
+      }
+      
+      // Override console methods
+      console.error = function(...args) {
+        if (!args.some(shouldSuppress)) {
+          originalConsole.error.apply(console, args);
+        }
+      };
+      
+      console.warn = function(...args) {
+        if (!args.some(shouldSuppress)) {
+          originalConsole.warn.apply(console, args);
+        }
+      };
+      
+      console.log = function(...args) {
+        if (!args.some(shouldSuppress)) {
+          originalConsole.log.apply(console, args);
+        }
+      };
+      
+      // Suppress window error events from extensions
+      window.addEventListener('error', function(e) {
+        if (shouldSuppress(e.message) || shouldSuppress(e.filename)) {
+          e.preventDefault();
+          e.stopPropagation();
+          return false;
+        }
+      }, true);
+      
+      // Suppress unhandled promise rejections from extensions
+      window.addEventListener('unhandledrejection', function(e) {
+        if (shouldSuppress(e.reason)) {
+          e.preventDefault();
+          return false;
+        }
+      });
+      
+      // Block extension script injection attempts
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          mutation.addedNodes.forEach(function(node) {
+            if (node.nodeType === 1 && node.tagName === 'SCRIPT') {
+              if (node.src && shouldSuppress(node.src)) {
+                node.remove();
+              }
+            }
+          });
+        });
+      });
+      
+      observer.observe(document.documentElement, {
+        childList: true,
+        subtree: true
+      });
+    })();
+  </script>
+
+</body>
+
+</html>
