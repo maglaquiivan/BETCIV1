@@ -375,6 +375,10 @@
     <!-- Scripts -->
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
+        // Ensure functions are available globally
+        window.toggleDarkMode = toggleDarkMode;
+        window.handleLogout = handleLogout;
+        
         // Profile dropdown toggle
         document.querySelector('.user-profile').addEventListener('click', function(e) {
             e.stopPropagation();
@@ -469,7 +473,74 @@
         }
 
         function exportRecords(type) {
-            alert('Exporting ' + type + ' records...');
+            // Get the active section
+            const activeSection = document.querySelector('.records-section.active');
+            const table = activeSection.querySelector('table');
+            
+            if (!table) {
+                alert('No data to export');
+                return;
+            }
+
+            // Get table data
+            const rows = table.querySelectorAll('tr');
+            let csvContent = [];
+            
+            // Get headers
+            const headers = [];
+            table.querySelectorAll('thead th').forEach(th => {
+                headers.push(th.textContent.trim());
+            });
+            csvContent.push(headers.join(','));
+            
+            // Get body rows (exclude Actions column)
+            table.querySelectorAll('tbody tr').forEach(tr => {
+                const cells = [];
+                tr.querySelectorAll('td').forEach((td, index) => {
+                    // Skip the last column (Actions)
+                    if (index < tr.cells.length - 1) {
+                        cells.push('"' + td.textContent.trim().replace(/"/g, '""') + '"');
+                    }
+                });
+                csvContent.push(cells.join(','));
+            });
+            
+            // Create CSV blob
+            const csvString = csvContent.join('\n');
+            const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+            
+            // Create download link
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', `${type}_records_${new Date().toISOString().split('T')[0]}.csv`);
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Show success notification
+            showNotification(`${type.charAt(0).toUpperCase() + type.slice(1)} records exported successfully!`, 'success');
+        }
+
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#27AE60',
+                error: '#E74C3C',
+                info: '#3498DB'
+            };
+            notification.style.cssText = `position: fixed; top: 20px; right: 20px; background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000; border-left: 4px solid ${colors[type] || colors.info}; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease;`;
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle';
+            notification.innerHTML = `<i class="bi bi-${icon}" style="font-size: 18px; color: ${colors[type] || colors.info}"></i><span>${message}</span>`;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
         }
     </script>
 </body>
