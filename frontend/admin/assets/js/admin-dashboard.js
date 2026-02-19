@@ -187,8 +187,8 @@ function updateBreadcrumb(sectionId) {
    ============================================ */
 
 function initializeProfileDropdown() {
-    const profileBtn = document.querySelector('.profile-btn');
-    const profileMenu = document.querySelector('.profile-menu');
+    const profileBtn = document.querySelector('.user-profile');
+    const profileMenu = document.querySelector('.user-dropdown');
     
     if (profileBtn && profileMenu) {
         profileBtn.addEventListener('click', function(e) {
@@ -198,23 +198,18 @@ function initializeProfileDropdown() {
         
         // Close menu when clicking outside
         document.addEventListener('click', function(e) {
-            if (!e.target.closest('.profile-dropdown')) {
+            if (!e.target.closest('.user-profile')) {
                 profileMenu.classList.remove('active');
             }
         });
         
         // Handle menu items
-        const menuItems = profileMenu.querySelectorAll('.profile-menu-item');
+        const menuItems = profileMenu.querySelectorAll('a');
         menuItems.forEach(item => {
             item.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                const action = this.getAttribute('data-action');
-                if (action === 'logout') {
-                    handleLogout();
-                } else if (action === 'profile') {
+                const href = this.getAttribute('href');
+                if (href === 'settings.html') {
                     profileMenu.classList.remove('active');
-                    showSection('manage-profile');
                 }
             });
         });
@@ -551,7 +546,7 @@ function initializeDarkMode() {
 
 function toggleDarkMode() {
     const isDark = document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', isDark);
+    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
     
     const darkModeBtn = document.getElementById('darkModeBtn');
     if (darkModeBtn) {
@@ -562,5 +557,38 @@ function toggleDarkMode() {
     const darkModeToggle = document.getElementById('darkModeToggle');
     if (darkModeToggle) {
         darkModeToggle.checked = isDark;
+    }
+}
+
+/* ============================================
+   TABS NAVIGATION
+   ============================================ */
+
+function switchTab(tabName, event) {
+    if (event) {
+        event.preventDefault();
+    }
+    
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Remove active class from all tabs
+    const tabs = document.querySelectorAll('.tab-item');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show selected tab content
+    const selectedTab = document.getElementById(tabName + '-tab');
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+    
+    // Add active class to clicked tab
+    if (event && event.target) {
+        event.target.closest('.tab-item').classList.add('active');
     }
 }

@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- IMMEDIATE Extension Error Suppression - Must be first -->
+    <script>
+        // Comprehensive console suppression for browser extensions
+        (function() {
+          'use strict';
+          
+          // Store original console methods
+          const originalError = console.error;
+          const originalWarn = console.warn;
+          const originalLog = console.log;
+          
+          // Filter function for extension-related messages
+          const isExtensionError = (args) => {
+            const str = String(args).toLowerCase();
+            return str.includes('chrome-extension') || 
+                   str.includes('dngmlblcodfobpdpecaadgfbcggfjfnm') || 
+                   str.includes('web_accessible_resources') || 
+                   str.includes('lockdown-install') ||
+                   str.includes('ses removing') || 
+                   str.includes('err_failed') || 
+                   str.includes('extension context') ||
+                   str.includes('metamask') ||
+                   str.includes('receiving end does not exist') ||
+                   str.includes('could not establish connection') ||
+                   str.includes('inpage.js');
+          };
+          
+          // Override console.error
+          console.error = function(...args) {
+            if (!isExtensionError(args)) {
+              originalError.apply(console, args);
+            }
+          };
+          
+          // Override console.warn
+          console.warn = function(...args) {
+            if (!isExtensionError(args)) {
+              originalWarn.apply(console, args);
+            }
+          };
+          
+          // Override console.log
+          console.log = function(...args) {
+            if (!isExtensionError(args)) {
+              originalLog.apply(console, args);
+            }
+          };
+          
+          // Block extension errors at window level
+          window.addEventListener('error', function(e) {
+            if (e.filename && (e.filename.includes('chrome-extension') || 
+                e.filename.includes('inpage.js') ||
+                e.filename.includes('lockdown'))) {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              return false;
+            }
+          }, true);
+          
+          // Block unhandled promise rejections from extensions
+          window.addEventListener('unhandledrejection', function(e) {
+            const message = String(e.reason || '').toLowerCase();
+            if (message.includes('metamask') || 
+                message.includes('extension') ||
+                message.includes('receiving end') ||
+                message.includes('could not establish')) {
+              e.preventDefault();
+              e.stopPropagation();
+              e.stopImmediatePropagation();
+              return false;
+            }
+          }, true);
+          
+          // Override fetch to suppress extension requests
+          const originalFetch = window.fetch;
+          window.fetch = function(...args) {
+            const url = String(args[0] || '').toLowerCase();
+            if (url.includes('chrome-extension') || url.includes('metamask')) {
+              return Promise.reject(new Error('Extension request blocked'));
+            }
+            return originalFetch.apply(this, args);
+          };
+          
+          // Prevent extension script injection
+          const observer = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+              mutation.addedNodes.forEach(function(node) {
+                if (node.nodeType === 1) {
+                  if (node.tagName === 'SCRIPT' && node.src && 
+                      (node.src.includes('chrome-extension') || 
+                       node.src.includes('inpage.js') ||
+                       node.src.includes('lockdown'))) {
+                    node.remove();
+                  }
+                }
+              });
+            });
+          });
+          
+          observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true
+          });
+        })();
+    </script>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none'; base-uri 'self';">
+    <title>BETCI - Settings</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="../assets/css/dashboard.css" rel="stylesheet">
+    <link href="../assets/css/styles.css" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- Sidebar Container -->
+        <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-image">
+                <img src="../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
+            </div>
+            <div class="logo-text">
+                <h3>BETCI</h3>
+                <p>Trainee</p>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="bi bi-house-door"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="courses.html" class="nav-link">
+                        <i class="bi bi-book"></i>
+                        <span>Courses</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="assessment.html" class="nav-link">
+                        <i class="bi bi-clipboard-check"></i>
+                        <span>Assessment</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="settings.html" class="nav-link">
+                        <i class="bi bi-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Top Header -->
+        <header class="top-header">
+            <div class="header-left">
+                <div class="search-container">
+                    <i class="bi bi-search"></i>
+                    <input type="text" placeholder="Search..." class="search-input">
+                </div>
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            <div class="header-right">
+                <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
+                <div class="user-profile" id="userProfile">
+                    <div class="user-avatar">
+                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
+                                <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
+                                <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
+                            </svg>
+                        </svg>
+                    </div>
+                    <span class="user-name">KELI</span>
+                    <i class="bi bi-chevron-down dropdown-arrow"></i>
+                    
+                    <!-- User Dropdown Menu -->
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="dropdown-avatar">
+                                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
+                                        <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
+                                        <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
+                                    </svg>
+                                </svg>
+                            </div>
+                            <div class="dropdown-user-info">
+                                <h4>KELI STUDENT</h4>
+                                <p>keli.student@betci.edu.ph</p>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a href="manage-profile.html">
+                                    <i class="bi bi-person"></i>
+                                    <span>My Profile</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="settings.html">
+                                    <i class="bi bi-gear"></i>
+                                    <span>Settings</span>
+                                </a>
+                            </li>
+                            <li class="theme-toggle-item">
+                                <div class="theme-toggle-wrapper">
+                                    <i class="bi bi-palette"></i>
+                                    <span>Dark Mode</span>
+                                    <label class="theme-switch">
+                                        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                                        <span class="theme-slider"></span>
+                                    </label>
+                                </div>
+                            </li>
+                        </ul>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-footer">
+                            <button class="logout-btn" onclick="handleLogout()">
+                                <i class="bi bi-box-arrow-right"></i>
+                                <span>Log Out</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Settings Section -->
+        <div class="dashboard-content">
+            <div class="section-header">
+                <h2><i class="bi bi-gear"></i> Settings</h2>
+            </div>
+            
+            <div class="settings-tabs">
+                <button class="settings-tab active" onclick="switchTab('profile', event)">
+                    <i class="bi bi-person"></i> My Profile
+                </button>
+                <button class="settings-tab" onclick="switchTab('password', event)">
+                    <i class="bi bi-lock"></i> Change Password
+                </button>
+                <button class="settings-tab" onclick="switchTab('appearance', event)">
+                    <i class="bi bi-palette"></i> Appearance
+                </button>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profile-tab" class="settings-tab-content active">
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div>
+                            <h3>My Profile</h3>
+                            <p>Update your personal information</p>
+                        </div>
+                        <button class="btn-edit" onclick="toggleEditMode()">
+                            <i class="bi bi-pencil"></i> Edit Profile
+                        </button>
+                    </div>
+
+                    <div class="profile-section">
+                        <div class="profile-avatar-container">
+                            <div class="profile-avatar-large">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="profile-avatar-info">
+                                <h4>KELI STUDENT</h4>
+                                <p>Trainee</p>
+                                <button class="btn-secondary" onclick="changePhoto()" style="margin-top: 8px;">
+                                    <i class="bi bi-camera"></i> Change Photo
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <form id="profileForm" class="profile-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>First Name</label>
+                                <input type="text" class="form-control" value="KELI" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Last Name</label>
+                                <input type="text" class="form-control" value="STUDENT" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Email Address</label>
+                                <input type="email" class="form-control" value="keli.student@betci.edu.ph" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Phone Number</label>
+                                <input type="tel" class="form-control" value="+63 912 345 6789" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Course</label>
+                                <input type="text" class="form-control" value="Forklift Operation NC II" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label>Enrollment Date</label>
+                                <input type="text" class="form-control" value="January 15, 2024" disabled>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Address</label>
+                            <textarea class="form-control" rows="2" disabled>Building Equipment Training and Certification Institute, Philippines</textarea>
+                        </div>
+                        <div class="form-actions" id="formActions" style="display: none;">
+                            <button type="submit" class="btn-primary">
+                                <i class="bi bi-check"></i> Save Changes
+                            </button>
+                            <button type="button" class="btn-secondary" onclick="cancelEdit()">
+                                <i class="bi bi-x"></i> Cancel
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Password Tab -->
+            <div id="password-tab" class="settings-tab-content">
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div>
+                            <h3>Change Password</h3>
+                            <p>Update your account password for security</p>
+                        </div>
+                    </div>
+
+                    <form id="passwordForm" class="profile-form">
+                        <div class="form-group">
+                            <label>Current Password</label>
+                            <input type="password" class="form-control" placeholder="Enter your current password" required>
+                        </div>
+                        <div class="form-group">
+                            <label>New Password</label>
+                            <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" required>
+                            <p class="form-hint">Password must be at least 8 characters long</p>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirm Password</label>
+                            <input type="password" class="form-control" placeholder="Confirm new password" required>
+                        </div>
+                        <button type="submit" class="btn-primary">
+                            <i class="bi bi-lock"></i> Update Password
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Appearance Tab -->
+            <div id="appearance-tab" class="settings-tab-content">
+                <div class="settings-card">
+                    <div class="settings-card-header">
+                        <div>
+                            <h3>Appearance</h3>
+                            <p>Customize your dashboard appearance</p>
+                        </div>
+                    </div>
+
+                    <div class="appearance-options">
+                        <div class="appearance-option">
+                            <div class="appearance-info">
+                                <h4>Dark Mode</h4>
+                                <p>Switch between light and dark theme</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="appearance-option">
+                            <div class="appearance-info">
+                                <h4>Notifications</h4>
+                                <p>Enable or disable notifications</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="appearance-option">
+                            <div class="appearance-info">
+                                <h4>Email Alerts</h4>
+                                <p>Receive email notifications for important updates</p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" checked>
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../assets/js/script.js"></script>
+    <script>
+        // Initialize dark mode on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadTheme();
+        });
+
+        // Load theme from localStorage
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const darkModeBtn = document.getElementById('darkModeBtn');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                if (darkModeToggle) darkModeToggle.checked = true;
+                if (darkModeBtn) darkModeBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (darkModeToggle) darkModeToggle.checked = false;
+                if (darkModeBtn) darkModeBtn.innerHTML = '<i class="bi bi-moon-fill"></i>';
+            }
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            
+            const darkModeBtn = document.getElementById('darkModeBtn');
+            if (darkModeBtn) {
+                darkModeBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+            }
+            
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                darkModeToggle.checked = isDark;
+            }
+        }
+
+        // User profile dropdown
+        document.getElementById('userProfile').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.user-profile')) {
+                document.getElementById('userDropdown').classList.remove('active');
+            }
+        });
+
+        // Sidebar toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('expanded');
+        });
+
+        // Handle logout
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userSession');
+                sessionStorage.removeItem('userSession');
+                window.location.href = '../auth/login.html';
+            }
+        }
+
+        // Settings tab switching
+        function switchTab(tabName, event) {
+            if (event) {
+                event.preventDefault();
+            }
+            
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.settings-tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.settings-tab');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.closest('.settings-tab').classList.add('active');
+            }
+        }
+
+        // Profile edit mode
+        function toggleEditMode() {
+            const form = document.getElementById('profileForm');
+            const inputs = form.querySelectorAll('input, textarea');
+            const formActions = document.getElementById('formActions');
+            const editBtn = document.querySelector('.btn-edit');
+            
+            const isDisabled = inputs[0].disabled;
+            
+            inputs.forEach(input => {
+                input.disabled = !isDisabled;
+            });
+            
+            if (isDisabled) {
+                formActions.style.display = 'flex';
+                editBtn.innerHTML = '<i class="bi bi-x"></i> Cancel';
+            } else {
+                formActions.style.display = 'none';
+                editBtn.innerHTML = '<i class="bi bi-pencil"></i> Edit Profile';
+            }
+        }
+
+        function cancelEdit() {
+            const form = document.getElementById('profileForm');
+            const inputs = form.querySelectorAll('input, textarea');
+            const formActions = document.getElementById('formActions');
+            const editBtn = document.querySelector('.btn-edit');
+            
+            inputs.forEach(input => {
+                input.disabled = true;
+            });
+            
+            formActions.style.display = 'none';
+            editBtn.innerHTML = '<i class="bi bi-pencil"></i> Edit Profile';
+        }
+
+        function changePhoto() {
+            alert('Change photo functionality coming soon!');
+        }
+
+        // Form submission handlers
+        document.getElementById('profileForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Profile updated successfully!');
+            cancelEdit();
+        });
+
+        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Password updated successfully!');
+            this.reset();
+        });
+    </script>
+</body>
+</html>

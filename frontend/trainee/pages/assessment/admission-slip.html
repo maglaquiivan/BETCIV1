@@ -24,8 +24,9 @@
 
         body.admission-page {
             font-family: 'Roboto', sans-serif;
-            background: #f5f5f5;
+            background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%);
             padding: 20px;
+            min-height: 100vh;
         }
 
         .back-button-container {
@@ -723,7 +724,7 @@
                     <button type="button" class="action-btn submit-btn" onclick="submitAdmissionSlip()">
                         <i class="bi bi-check-circle"></i> Submit
                     </button>
-                    <button type="button" class="action-btn back-btn" onclick="window.location.href='dashboard-fixed.html'">
+                    <button type="button" class="action-btn back-btn" onclick="goBack()">
                         <i class="bi bi-arrow-left"></i> Back
                     </button>
                 </div>
@@ -814,7 +815,11 @@
 
         function submitAdmissionSlip() {
             alert('Admission Slip submitted successfully!');
-            window.location.href = 'dashboard-fixed.html';
+            goBack();
+        }
+
+        function goBack() {
+            window.location.href = '../dashboard.html';
         }
     </script>
 </body>

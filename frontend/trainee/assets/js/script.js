@@ -4,86 +4,11 @@
 
 // Load sidebar on page load
 document.addEventListener('DOMContentLoaded', function() {
-    loadSidebar();
+    initializeSidebarEvents();
     initializeEventListeners();
     setActiveNavLink();
     loadTheme();
 });
-
-// ============================================
-// SIDEBAR LOADING
-// ============================================
-
-function loadSidebar() {
-    const sidebarContainer = document.getElementById('sidebar-container');
-    
-    fetch('./sidebar.html')
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Failed to load sidebar');
-            }
-            return response.text();
-        })
-        .then(html => {
-            sidebarContainer.innerHTML = html;
-            initializeSidebarEvents();
-        })
-        .catch(error => {
-            console.error('Error loading sidebar:', error);
-            // Fallback: create a basic sidebar if fetch fails
-            createFallbackSidebar();
-        });
-}
-
-function createFallbackSidebar() {
-    const sidebarContainer = document.getElementById('sidebar-container');
-    sidebarContainer.innerHTML = `
-        <div class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-container">
-                    <img src="../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
-                    <div class="logo-text">
-                        <h3>BETCI</h3>
-                        <p>Trainee Dashboard</p>
-                    </div>
-                </div>
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="bi bi-list"></i>
-                </button>
-            </div>  
-            
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item active">
-                        <a href="index.html" class="nav-link" data-section="dashboard">
-                            <i class="bi bi-house-door"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="courses.html" class="nav-link" data-section="courses">
-                            <i class="bi bi-book"></i>
-                            <span>Course & Programs</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="assessment.html" class="nav-link" data-section="assessment">
-                            <i class="bi bi-clipboard-check"></i>
-                            <span>Assessment</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="settings.html" class="nav-link" data-section="settings">
-                            <i class="bi bi-gear"></i>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    `;
-    initializeSidebarEvents();
-}
 
 // ============================================
 // SIDEBAR EVENTS
@@ -92,17 +17,19 @@ function createFallbackSidebar() {
 function initializeSidebarEvents() {
     const sidebarToggle = document.getElementById('sidebarToggle');
     const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
+    const sidebar = document.querySelector('.sidebar');
     const mainContent = document.getElementById('mainContent');
     
-    if (sidebarToggle) {
+    if (sidebarToggle && sidebar) {
         sidebarToggle.addEventListener('click', function() {
             sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('expanded');
+            if (mainContent) {
+                mainContent.classList.toggle('expanded');
+            }
         });
     }
     
-    if (menuToggle) {
+    if (menuToggle && sidebar) {
         menuToggle.addEventListener('click', function() {
             sidebar.classList.toggle('active');
         });
@@ -112,7 +39,7 @@ function initializeSidebarEvents() {
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
+            if (window.innerWidth <= 768 && sidebar) {
                 sidebar.classList.remove('active');
             }
         });
@@ -234,7 +161,11 @@ function logout() {
 }
 
 function openApplicationForm() {
-    alert('Application Form feature coming soon!');
+    window.location.href = 'assessment/application-form.html';
+}
+
+function openAdmissionSlip() {
+    window.location.href = 'assessment/admission-slip.html';
 }
 
 function downloadCertificates() {
@@ -356,3 +287,93 @@ if ('IntersectionObserver' in window) {
 // ============================================
 
 console.log('Trainee Dashboard Script Loaded Successfully');
+
+// ============================================
+// SETTINGS PAGE FUNCTIONS
+// ============================================
+
+function switchTab(tabName, event) {
+    if (event) {
+        event.preventDefault();
+    }
+    
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.settings-tab-content');
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Remove active class from all tabs
+    const tabs = document.querySelectorAll('.settings-tab');
+    tabs.forEach(tab => {
+        tab.classList.remove('active');
+    });
+    
+    // Show selected tab content
+    const selectedTab = document.getElementById(tabName + '-tab');
+    if (selectedTab) {
+        selectedTab.classList.add('active');
+    }
+    
+    // Add active class to clicked tab
+    event.target.closest('.settings-tab').classList.add('active');
+}
+
+function toggleEditMode() {
+    const form = document.getElementById('profileForm');
+    const inputs = form.querySelectorAll('.form-control');
+    const formActions = document.getElementById('formActions');
+    const editBtn = document.querySelector('.btn-edit');
+    
+    const isDisabled = inputs[0].disabled;
+    
+    inputs.forEach(input => {
+        input.disabled = !isDisabled;
+    });
+    
+    if (isDisabled) {
+        formActions.style.display = 'flex';
+        editBtn.innerHTML = '<i class="bi bi-x"></i> Cancel Edit';
+    } else {
+        formActions.style.display = 'none';
+        editBtn.innerHTML = '<i class="bi bi-pencil"></i> Edit Profile';
+    }
+}
+
+function cancelEdit() {
+    const form = document.getElementById('profileForm');
+    const inputs = form.querySelectorAll('.form-control');
+    const formActions = document.getElementById('formActions');
+    const editBtn = document.querySelector('.btn-edit');
+    
+    inputs.forEach(input => {
+        input.disabled = true;
+    });
+    
+    formActions.style.display = 'none';
+    editBtn.innerHTML = '<i class="bi bi-pencil"></i> Edit Profile';
+}
+
+function changePhoto() {
+    alert('Photo upload functionality would be implemented here');
+}
+
+// Handle profile form submission
+const profileForm = document.getElementById('profileForm');
+if (profileForm) {
+    profileForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Profile updated successfully!');
+        cancelEdit();
+    });
+}
+
+// Handle password form submission
+const passwordForm = document.getElementById('passwordForm');
+if (passwordForm) {
+    passwordForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        alert('Password changed successfully!');
+        this.reset();
+    });
+}

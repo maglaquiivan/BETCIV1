@@ -12,7 +12,7 @@ function initializeCoursesData() {
         courseId: 'forklift-operation',
         title: 'Forklift Operation NC II',
         description: 'Master forklift operation, safety protocols, and material handling techniques for industrial and warehouse environments.',
-        image: '../../assets/img/fork.png',
+        image: '../assets/img/fork.png',
         level: 'NC II',
         duration: 40,
         status: 'active'
@@ -22,7 +22,7 @@ function initializeCoursesData() {
         courseId: 'bulldozer-operation',
         title: 'Bulldozer Operation NC II',
         description: 'Learn bulldozer operation, earthmoving techniques, and site preparation for construction and mining projects.',
-        image: '../../assets/img/bulldozer.png',
+        image: '../assets/img/bulldozer.png',
         level: 'NC II',
         duration: 40,
         status: 'active'
@@ -32,7 +32,7 @@ function initializeCoursesData() {
         courseId: 'dump-truck-operation',
         title: 'Dump Truck Operation NC II',
         description: 'Professional training for rigid on-highway dump truck operation, hauling, and transportation safety.',
-        image: '../../assets/img/dump truck.png',
+        image: '../assets/img/dump truck.png',
         level: 'NC II',
         duration: 40,
         status: 'active'
@@ -42,7 +42,7 @@ function initializeCoursesData() {
         courseId: 'hydraulic-excavator',
         title: 'Hydraulic Excavator NC II',
         description: 'Advanced excavator operation, digging techniques, and hydraulic system maintenance for construction sites.',
-        image: '../../assets/img/hydraulic excavator.png',
+        image: '../assets/img/hydraulic excavator.png',
         level: 'NC II',
         duration: 40,
         status: 'active'
@@ -52,7 +52,7 @@ function initializeCoursesData() {
         courseId: 'wheel-loader',
         title: 'Wheel Loader NC II',
         description: 'Comprehensive wheel loader training, material handling, and loading techniques for various applications.',
-        image: '../../assets/img/logo.png',
+        image: '../assets/img/logo.png',
         level: 'NC II',
         duration: 40,
         status: 'active'
@@ -62,7 +62,7 @@ function initializeCoursesData() {
         courseId: 'backhoe-loader',
         title: 'Backhoe Loader NC II',
         description: 'Master backhoe loader operation, digging, trenching, and utility work for construction projects.',
-        image: '../../assets/img/logo.png',
+        image: '../assets/img/logo.png',
         level: 'NC II',
         duration: 40,
         status: 'active'

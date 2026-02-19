@@ -111,14 +111,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none'; base-uri 'self';">
-    <title>BETCI - Courses & Programs</title>
+    <title>BETCI - Assessment Center</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="./assets/css/styles.css" rel="stylesheet">
+    <link href="../assets/css/dashboard.css" rel="stylesheet">
+    <link href="../assets/css/styles.css" rel="stylesheet">
 </head>
 <body>
-    <!-- Sidebar Container -->
-    <div id="sidebar-container"></div>
+    <div class="admin-container">
+        <!-- Sidebar Container -->
+        <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="logo-image">
+                <img src="../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
+            </div>
+            <div class="logo-text">
+                <h3>BETCI</h3>
+                <p>Trainee</p>
+            </div>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="bi bi-list"></i>
+            </button>
+        </div>
+        
+        <nav class="sidebar-nav">
+            <ul>
+                <li class="nav-item">
+                    <a href="dashboard.html" class="nav-link">
+                        <i class="bi bi-house-door"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="courses.html" class="nav-link">
+                        <i class="bi bi-book"></i>
+                        <span>Courses</span>
+                    </a>
+                </li>
+                <li class="nav-item active">
+                    <a href="assessment.html" class="nav-link">
+                        <i class="bi bi-clipboard-check"></i>
+                        <span>Assessment</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="settings.html" class="nav-link">
+                        <i class="bi bi-gear"></i>
+                        <span>Settings</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+    </aside>
 
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
@@ -134,6 +178,9 @@
                 </button>
             </div>
             <div class="header-right">
+                <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
                 <div class="user-profile" id="userProfile">
                     <div class="user-avatar">
                         <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -173,7 +220,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="manage-profile.html">
+                                <a href="settings.html">
                                     <i class="bi bi-gear"></i>
                                     <span>Settings</span>
                                 </a>
@@ -191,7 +238,7 @@
                         </ul>
                         <div class="dropdown-divider"></div>
                         <div class="dropdown-footer">
-                            <button class="logout-btn" onclick="logout()">
+                            <button class="logout-btn" onclick="handleLogout()">
                                 <i class="bi bi-box-arrow-right"></i>
                                 <span>Log Out</span>
                             </button>
@@ -201,71 +248,134 @@
             </div>
         </header>
 
-        <!-- Courses Section -->
+        <!-- Assessment Section -->
         <div class="dashboard-content">
             <div class="section-header">
-                <h2><i class="bi bi-book"></i> Course & Programs</h2>
-                <button class="add-course-btn">
-                    <i class="bi bi-plus-circle"></i> Enroll New Course
-                </button>
+                <h2><i class="bi bi-clipboard-check"></i> Assessment Center</h2>
             </div>
             
-            <div class="courses-filter">
-                <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filterCourses('all')">All Courses</button>
-                    <button class="filter-tab" onclick="filterCourses('active')">Active</button>
-                    <button class="filter-tab" onclick="filterCourses('completed')">Completed</button>
-                    <button class="filter-tab" onclick="filterCourses('available')">Available</button>
+            <div class="assessment-grid">
+                <div class="assessment-card">
+                    <div class="assessment-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <h3>Application Form</h3>
+                    <p>Submit your course application and required documents</p>
+                    <div class="assessment-status pending">
+                        <i class="bi bi-clock"></i> Ready to Apply
+                    </div>
+                    <button class="assessment-btn" onclick="openApplicationForm()">Start Application</button>
                 </div>
-            </div>
-            
-            <div class="courses-grid" id="all-courses-grid">
-                <!-- All courses will be loaded here -->
+                
+                <div class="assessment-card">
+                    <div class="assessment-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h3>Admission Slip</h3>
+                    <p>Generate and download your admission slip and exam schedule</p>
+                    <div class="assessment-status completed">
+                        <i class="bi bi-check-circle"></i> Ready for Download
+                    </div>
+                    <button class="assessment-btn" onclick="openAdmissionSlip()">Generate Slip</button>
+                </div>
+                
+                <div class="assessment-card">
+                    <div class="assessment-icon">
+                        <i class="bi bi-clipboard-data"></i>
+                    </div>
+                    <h3>Practical Assessment</h3>
+                    <p>Schedule your hands-on practical examination</p>
+                    <div class="assessment-status scheduled">
+                        <i class="bi bi-calendar"></i> Scheduled: March 15, 2024
+                    </div>
+                    <button class="assessment-btn">Reschedule</button>
+                </div>
+                
+                <div class="assessment-card">
+                    <div class="assessment-icon">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <h3>Certification</h3>
+                    <p>View and download your certificates</p>
+                    <div class="assessment-status available">
+                        <i class="bi bi-download"></i> 2 Certificates Available
+                    </div>
+                    <button class="assessment-btn">Download Certificates</button>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="../admin/assets/js/courses-data.js"></script>
-    <script src="./assets/js/script.js"></script>
+    <script src="../assets/js/script.js"></script>
     <script>
-        // Load courses for trainee (read-only)
-        function loadTraineeCourses() {
-            const courses = getCoursesData();
-            const coursesGrid = document.getElementById('all-courses-grid');
-            coursesGrid.innerHTML = '';
-            
-            courses.forEach(course => {
-                const card = document.createElement('div');
-                card.className = 'course-card';
-                card.innerHTML = `
-                    <div class="course-image">
-                        <img src="${course.image}" alt="${course.title}">
-                    </div>
-                    <div class="course-body">
-                        <h3 class="course-title">${course.title}</h3>
-                        <p class="course-description">${course.description}</p>
-                        <div class="course-meta">
-                            <span class="course-level"><i class="bi bi-award"></i> ${course.level}</span>
-                            <span class="course-duration"><i class="bi bi-clock"></i> ${course.duration} hours</span>
-                        </div>
-                        <button class="enroll-btn" onclick="enrollCourse(${course.id})">
-                            <i class="bi bi-plus-circle"></i> Enroll Now
-                        </button>
-                    </div>
-                `;
-                coursesGrid.appendChild(card);
-            });
-        }
-
-        function enrollCourse(courseId) {
-            const course = getCourseById(courseId);
-            alert('Enrolling in: ' + course.title + '\\n\\nThis would open the enrollment form.');
-        }
-
-        // Load courses on page load
+        // Initialize dark mode on page load
         document.addEventListener('DOMContentLoaded', function() {
-            loadTraineeCourses();
+            loadTheme();
         });
+
+        // Load theme from localStorage
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            const darkModeBtn = document.getElementById('darkModeBtn');
+            
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                if (darkModeToggle) darkModeToggle.checked = true;
+                if (darkModeBtn) darkModeBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            } else {
+                document.body.classList.remove('dark-mode');
+                if (darkModeToggle) darkModeToggle.checked = false;
+                if (darkModeBtn) darkModeBtn.innerHTML = '<i class="bi bi-moon-fill"></i>';
+            }
+        }
+
+        // Toggle dark mode
+        function toggleDarkMode() {
+            const isDark = document.body.classList.toggle('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            
+            const darkModeBtn = document.getElementById('darkModeBtn');
+            if (darkModeBtn) {
+                darkModeBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+            }
+            
+            const darkModeToggle = document.getElementById('darkModeToggle');
+            if (darkModeToggle) {
+                darkModeToggle.checked = isDark;
+            }
+        }
+
+        // User profile dropdown
+        document.getElementById('userProfile').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.user-profile')) {
+                document.getElementById('userDropdown').classList.remove('active');
+            }
+        });
+
+        // Sidebar toggle
+        document.getElementById('menuToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('active');
+        });
+
+        document.getElementById('sidebarToggle').addEventListener('click', function() {
+            document.querySelector('.sidebar').classList.toggle('collapsed');
+            document.querySelector('.main-content').classList.toggle('expanded');
+        });
+
+        // Handle logout
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userSession');
+                sessionStorage.removeItem('userSession');
+                window.location.href = '../auth/login.html';
+            }
+        }
     </script>
 </body>
 </html>
