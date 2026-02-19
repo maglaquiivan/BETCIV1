@@ -600,8 +600,9 @@
     function loadCoursesFromStorage() {
       const courses = JSON.parse(localStorage.getItem('betci_courses') || '{}');
       
-      // Map course IDs to their elements
-      const courseElement = document.querySelector(`[data-course-id="${courseId}"]`);
+      // Update each course element
+      Object.entries(courses).forEach(([courseId, courseData]) => {
+        const courseElement = document.querySelector(`[data-course-id="${courseId}"]`);
         
         if (courseElement) {
           // Update title
