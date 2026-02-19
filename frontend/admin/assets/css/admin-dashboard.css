@@ -871,8 +871,8 @@ body {
    ============================================ */
 
 body.dark-mode {
-  --text-primary: #e0e0e0;
-  --text-secondary: #b0b0b0;
+  --text-primary: #ffffff;
+  --text-secondary: #d0d0d0;
   --bg-light: #2a2a2a;
   --bg-white: #1e1e1e;
   --border-color: #3a3a3a;
@@ -952,17 +952,17 @@ body.dark-mode .modal-header {
 
 body.dark-mode .modal-close:hover {
   background: #2a2a2a;
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 body.dark-mode .form-label {
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 body.dark-mode .btn-action {
   background: #2a2a2a;
   border-color: #3a3a3a;
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 body.dark-mode .btn-action:hover {
@@ -984,27 +984,77 @@ body.dark-mode .trainee-meta {
 }
 
 body.dark-mode .section-header h2 {
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 body.dark-mode .action-card h4 {
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 body.dark-mode .action-card p {
-  color: #b0b0b0;
+  color: #d0d0d0;
 }
 
 body.dark-mode .trainee-info h4 {
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 body.dark-mode .stat-info h3 {
-  color: #e0e0e0;
+  color: #ffffff;
 }
 
 body.dark-mode .stat-info p {
-  color: #b0b0b0;
+  color: #d0d0d0;
+}
+
+body.dark-mode .welcome-text h1 {
+  color: #ffffff;
+}
+
+body.dark-mode .welcome-text p {
+  color: #d0d0d0;
+}
+
+body.dark-mode .meta-item {
+  color: #d0d0d0;
+}
+
+body.dark-mode .dropdown-user-info h4 {
+  color: #ffffff;
+}
+
+body.dark-mode .dropdown-user-info p {
+  color: #d0d0d0;
+}
+
+body.dark-mode .dropdown-menu a {
+  color: #ffffff;
+}
+
+body.dark-mode .dropdown-menu a:hover {
+  background: #2a2a2a;
+  color: var(--primary-color);
+}
+
+body.dark-mode .logout-btn {
+  color: #ffffff;
+}
+
+body.dark-mode .logout-btn:hover {
+  background: #2a2a2a;
+  color: var(--danger);
+}
+
+body.dark-mode .modal-header h3 {
+  color: #ffffff;
+}
+
+body.dark-mode .delete-warning p {
+  color: #d0d0d0;
+}
+
+body.dark-mode .delete-trainee-name {
+  color: #ffffff;
 }
 
 /* ============================================
