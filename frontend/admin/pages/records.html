@@ -375,9 +375,36 @@
     <!-- Scripts -->
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
-        // Ensure functions are available globally
-        window.toggleDarkMode = toggleDarkMode;
-        window.handleLogout = handleLogout;
+        // Wait for external script to load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure functions are available globally
+            window.toggleDarkMode = toggleDarkMode;
+            window.handleLogout = handleLogout;
+            
+            // Initialize dropdown
+            initializeRecordsDropdown();
+        });
+        
+        function initializeRecordsDropdown() {
+            const dropdownTitle = document.querySelector('.dropdown-title');
+            const dropdownMenu = document.querySelector('.dropdown-menu-records');
+
+            if (dropdownTitle && dropdownMenu) {
+                dropdownTitle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    dropdownMenu.classList.toggle('active');
+                    this.classList.toggle('active');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.records-dropdown-header')) {
+                        dropdownMenu.classList.remove('active');
+                        dropdownTitle.classList.remove('active');
+                    }
+                });
+            }
+        }
         
         // Profile dropdown toggle
         document.querySelector('.user-profile').addEventListener('click', function(e) {
@@ -402,24 +429,6 @@
                 window.location.href = '../../auth/login.html';
             }
         }
-
-        // Records dropdown toggle
-        const dropdownTitle = document.querySelector('.dropdown-title');
-        const dropdownMenu = document.querySelector('.dropdown-menu-records');
-
-        dropdownTitle.addEventListener('click', function(e) {
-            e.preventDefault();
-            dropdownMenu.classList.toggle('active');
-            this.classList.toggle('active');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.records-dropdown-header')) {
-                dropdownMenu.classList.remove('active');
-                dropdownTitle.classList.remove('active');
-            }
-        });
 
         // Show section function
         function showSection(sectionId, event) {
