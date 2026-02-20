@@ -24,7 +24,7 @@
 
         body.admission-page {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%);
+            background: #f5f5f5;
             padding: 20px;
             min-height: 100vh;
         }
@@ -35,69 +35,87 @@
 
         .admission-slip-container {
             background: white;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
-        /* Title */
+        /* Header - matching application form */
         .slip-title {
+            background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%);
+            padding: 30px 20px;
             text-align: center;
-            background: #B0E0E6;
-            border-bottom: 2px solid #333;
-            padding: 8px;
-            font-size: 18px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            color: #333;
+            color: white;
+            border: none;
+        }
+
+        .slip-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .slip-title p {
+            font-size: 14px;
+            margin: 0;
+            opacity: 0.95;
         }
 
         /* Form Content */
         .form-content {
-            padding: 12px;
+            padding: 30px;
         }
 
         /* Reference Number Section */
         .ref-section {
-            margin-bottom: 8px;
-            border: 1px solid #333;
-            padding: 8px;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fafafa;
         }
 
         .ref-label {
-            font-weight: 700;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 10px;
             display: block;
-            font-size: 11px;
+            font-size: 13px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .ref-boxes {
             display: flex;
-            gap: 2px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .ref-input {
-            width: 32px;
-            height: 28px;
-            border: 1px solid #333;
-            padding: 1px;
+            width: 45px;
+            height: 45px;
+            border: 1px solid #ddd;
+            padding: 5px;
             text-align: center;
-            font-weight: 700;
-            font-size: 10px;
+            font-weight: 600;
+            font-size: 14px;
             font-family: 'Roboto', sans-serif;
             cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
         }
 
         .ref-input:focus {
             outline: none;
-            background: #fffef0;
+            border-color: #E67E22;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
         }
 
-        .ref-yellow { background: #FFFF99; }
-        .ref-light-blue { background: #ADD8E6; }
+        .ref-yellow { background: #FFF9E6; }
+        .ref-light-blue { background: #E8F4F8; }
         .ref-pink { background: #FFB6C1; }
         .ref-green { background: #90EE90; }
         .ref-orange { background: #FFD580; }
@@ -573,7 +591,10 @@
     <main class="main">
         <div class="admission-slip-container">
             <!-- Title -->
-            <div class="slip-title">ADMISSION SLIP</div>
+            <div class="slip-title">
+                <h1><i class="bi bi-file-earmark-check"></i> Admission Slip</h1>
+                <p>TESDA Assessment Center | Competency Assessment</p>
+            </div>
 
             <!-- Form Content -->
             <div class="form-content">
