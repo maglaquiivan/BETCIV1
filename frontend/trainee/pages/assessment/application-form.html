@@ -12,6 +12,57 @@
     <link rel="stylesheet" href="../../assets/css/dashboard.css" />
     <link rel="stylesheet" href="../../assets/css/styles.css" />
     <style>
+        /* Tab Navigation Styles */
+        .tab-navigation {
+            display: flex;
+            gap: 10px;
+            margin: 0 0 30px 0;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab-btn i {
+            font-size: 18px;
+        }
+
+        .tab-btn:hover {
+            color: #E67E22;
+            background: rgba(230, 126, 34, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #E67E22;
+            border-bottom-color: #E67E22;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .tab-btn span {
+                display: none;
+            }
+            
+            .tab-btn {
+                padding: 12px 16px;
+            }
+        }
+
         .application-wrapper {
             max-width: 1000px;
             margin: 0 auto;
@@ -480,6 +531,26 @@
 
             <!-- Application Form Content -->
             <div class="dashboard-content">
+                <!-- Tab Navigation -->
+                <div class="tab-navigation">
+                    <button class="tab-btn" onclick="window.location.href='../assessment.html'">
+                        <i class="bi bi-grid"></i>
+                        <span>Overview</span>
+                    </button>
+                    <button class="tab-btn active">
+                        <i class="bi bi-file-earmark-text"></i>
+                        <span>Application Form</span>
+                    </button>
+                    <button class="tab-btn" onclick="window.location.href='admission-slip.html'">
+                        <i class="bi bi-calendar-check"></i>
+                        <span>Admission Slip</span>
+                    </button>
+                    <button class="tab-btn" onclick="alert('Results will be available after assessment completion')">
+                        <i class="bi bi-trophy"></i>
+                        <span>Results</span>
+                    </button>
+                </div>
+
                 <div class="application-wrapper">
                     <div class="form-header">
                         <h1><i class="bi bi-file-earmark-text"></i> Application Form</h1>

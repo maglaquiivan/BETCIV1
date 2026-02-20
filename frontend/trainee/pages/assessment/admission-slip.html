@@ -16,6 +16,56 @@
     <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     
     <style>
+        /* Tab Navigation Styles */
+        .tab-navigation {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab-btn i {
+            font-size: 18px;
+        }
+
+        .tab-btn:hover {
+            color: #E67E22;
+            background: rgba(230, 126, 34, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #E67E22;
+            border-bottom-color: #E67E22;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .tab-btn span {
+                display: none;
+            }
+            
+            .tab-btn {
+                padding: 12px 16px;
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -589,6 +639,26 @@
 </head>
 <body class="admission-page">
     <main class="main">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation" style="background: white; padding: 15px 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <button class="tab-btn" onclick="window.location.href='../assessment.html'">
+                <i class="bi bi-grid"></i>
+                <span>Overview</span>
+            </button>
+            <button class="tab-btn" onclick="window.location.href='application-form.html'">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Application Form</span>
+            </button>
+            <button class="tab-btn active">
+                <i class="bi bi-calendar-check"></i>
+                <span>Admission Slip</span>
+            </button>
+            <button class="tab-btn" onclick="alert('Results will be available after assessment completion')">
+                <i class="bi bi-trophy"></i>
+                <span>Results</span>
+            </button>
+        </div>
+
         <div class="admission-slip-container">
             <!-- Title -->
             <div class="slip-title">
