@@ -116,6 +116,66 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="../assets/css/dashboard.css" rel="stylesheet">
     <link href="../assets/css/styles.css" rel="stylesheet">
+    <style>
+        /* Tab Navigation Styles */
+        .tab-navigation {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0 30px 0;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab-btn i {
+            font-size: 18px;
+        }
+
+        .tab-btn:hover {
+            color: #E67E22;
+            background: rgba(230, 126, 34, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #E67E22;
+            border-bottom-color: #E67E22;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .tab-btn span {
+                display: none;
+            }
+            
+            .tab-btn {
+                padding: 12px 16px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="admin-container">
@@ -254,7 +314,27 @@
                 <h2><i class="bi bi-clipboard-check"></i> Assessment Center</h2>
             </div>
             
-            <div class="assessment-grid">
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" onclick="switchTab('overview')">
+                    <i class="bi bi-grid"></i>
+                    <span>Overview</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('application')">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Application Form</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('admission')">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Admission Slip</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('results')">
+                    <i class="bi bi-trophy"></i>
+                    <span>Results</span>
+                </button>
+            </div>
+            
+            <div class="assessment-grid" id="overviewTab">
                 <div class="assessment-card">
                     <div class="assessment-icon">
                         <i class="bi bi-file-earmark-text"></i>
@@ -375,6 +455,36 @@
                 sessionStorage.removeItem('userSession');
                 window.location.href = '../auth/login.html';
             }
+        }
+
+        // Tab switching function
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            event.target.closest('.tab-btn').classList.add('active');
+            
+            // Handle tab content based on tab name
+            if (tabName === 'application') {
+                openApplicationForm();
+            } else if (tabName === 'admission') {
+                openAdmissionSlip();
+            } else if (tabName === 'results') {
+                alert('Results will be available after assessment completion');
+            }
+        }
+
+        // Navigate to application form
+        function openApplicationForm() {
+            window.location.href = 'assessment/application-form.html';
+        }
+
+        // Navigate to admission slip
+        function openAdmissionSlip() {
+            window.location.href = 'assessment/admission-slip.html';
         }
     </script>
 </body>
