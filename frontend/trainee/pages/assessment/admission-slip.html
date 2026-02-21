@@ -529,6 +529,95 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: #1e1e1e;
+        }
+
+        body.dark-mode .admission-slip-container {
+            background: #2a2a2a;
+        }
+
+        body.dark-mode .slip-title {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        }
+
+        body.dark-mode .form-content {
+            background: #2a2a2a;
+        }
+
+        body.dark-mode .ref-section {
+            background: #1e1e1e;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .ref-label,
+        body.dark-mode .field-label,
+        body.dark-mode .assessment-label,
+        body.dark-mode .officer-label,
+        body.dark-mode .officer-header,
+        body.dark-mode .checklist-title,
+        body.dark-mode .datetime-label,
+        body.dark-mode .signature-label,
+        body.dark-mode .date-label,
+        body.dark-mode .picture-text {
+            color: #ffffff;
+        }
+
+        body.dark-mode .ref-input,
+        body.dark-mode .field-input,
+        body.dark-mode .assessment-input,
+        body.dark-mode .officer-input,
+        body.dark-mode .datetime-input,
+        body.dark-mode .date-input {
+            background: #1e1e1e;
+            color: #e0e0e0;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .picture-box {
+            background: #1e1e1e;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .picture-placeholder-text,
+        body.dark-mode .picture-subtext {
+            color: #999;
+        }
+
+        body.dark-mode .officer-section,
+        body.dark-mode .checklist-section,
+        body.dark-mode .datetime-section,
+        body.dark-mode .signature-section,
+        body.dark-mode .note-section {
+            background: #2a2a2a;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .checklist-item {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .note-section {
+            color: #64B5F6;
+        }
+
+        body.dark-mode .tab-navigation {
+            background: #2a2a2a !important;
+        }
+
+        body.dark-mode .tab-btn {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .tab-btn.active {
+            color: #E67E22;
+        }
+
+        body.dark-mode .tab-btn:hover {
+            background: rgba(230, 126, 34, 0.1);
+        }
+
         /* Print Styles */
         @media print {
             body {
@@ -849,6 +938,12 @@
 
         // Load applicant data from localStorage
         document.addEventListener('DOMContentLoaded', function() {
+            // Load dark mode theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+
             const applicationData = localStorage.getItem('applicationData');
             if (applicationData) {
                 try {
