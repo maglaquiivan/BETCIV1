@@ -486,6 +486,26 @@
         function openAdmissionSlip() {
             window.location.href = 'assessment/admission-slip.html';
         }
+
+        // Check application status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const applicationData = localStorage.getItem('applicationData');
+            if (applicationData) {
+                const data = JSON.parse(applicationData);
+                const statusDiv = document.querySelector('.assessment-card:first-child .assessment-status');
+                const button = document.querySelector('.assessment-card:first-child .assessment-btn');
+                
+                if (data.status === 'submitted') {
+                    statusDiv.className = 'assessment-status completed';
+                    statusDiv.innerHTML = '<i class="bi bi-check-circle"></i> Submitted';
+                    button.textContent = 'View Application';
+                } else if (data.status === 'saved') {
+                    statusDiv.className = 'assessment-status scheduled';
+                    statusDiv.innerHTML = '<i class="bi bi-save"></i> Saved - Continue';
+                    button.textContent = 'Continue Application';
+                }
+            }
+        });
     </script>
 </body>
 </html>
