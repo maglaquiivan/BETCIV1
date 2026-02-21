@@ -175,6 +175,52 @@
                 padding: 12px 16px;
             }
         }
+
+        /* Dark Mode Styles for Assessment Cards */
+        body.dark-mode .dashboard-content {
+            background: #1e1e1e;
+        }
+
+        body.dark-mode .section-header h2 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .assessment-card {
+            background: #2a2a2a;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .assessment-card h3 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .assessment-card p {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .assessment-status {
+            color: #ffffff;
+        }
+
+        body.dark-mode .assessment-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        body.dark-mode .tab-btn {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .tab-btn.active {
+            color: var(--primary-color);
+        }
+
+        /* Fix burger menu visibility */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex !important;
+            }
+        }
     </style>
 </head>
 <body>
