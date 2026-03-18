@@ -33,6 +33,46 @@
             color: var(--text-primary);
         }
 
+        /* Catalog Tabs Navigation */
+        .catalog-tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            background: var(--bg-white);
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .tab-btn:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: rgba(230, 126, 34, 0.05);
+        }
+
+        .tab-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .tab-btn i {
+            font-size: 16px;
+        }
+
         .courses-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -322,26 +362,17 @@
                             <span>Accounts</span>
                         </a>
                     </li>
-                    <li class="nav-item active">
-                        <a href="javascript:void(0);" class="nav-link nav-toggle" onclick="toggleTrainingCatalog(event)">
-                            <i class="bi bi-book"></i>
-                            <span>Training Catalog</span>
-                            <i class="bi bi-chevron-down nav-chevron"></i>
+                    <li class="nav-item">
+                        <a href="courses.html" class="nav-link">
+                            <i class="bi bi-mortarboard"></i>
+                            <span>Courses</span>
                         </a>
-                        <ul class="nav-submenu active" id="trainingSubmenu">
-                            <li class="nav-item">
-                                <a href="courses.html" class="nav-link nav-submenu-link active">
-                                    <i class="bi bi-mortarboard"></i>
-                                    <span>Courses</span>
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a href="competencies.html" class="nav-link nav-submenu-link">
-                                    <i class="bi bi-star"></i>
-                                    <span>Competencies</span>
-                                </a>
-                            </li>
-                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a href="competencies.html" class="nav-link">
+                            <i class="bi bi-star"></i>
+                            <span>Competencies</span>
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a href="appointments.html" class="nav-link">
@@ -412,13 +443,25 @@
 
             <!-- Courses Content -->
             <div class="dashboard-content catalog-content">
-                <h1 class="catalog-title">Training Courses</h1>
+                <h1 class="catalog-title">Training Catalog</h1>
+                
+                <!-- Navigation Tabs -->
+                <div class="catalog-tabs">
+                    <a href="courses.html" class="tab-btn active">
+                        <i class="bi bi-mortarboard"></i>
+                        <span>Courses</span>
+                    </a>
+                    <a href="competencies.html" class="tab-btn">
+                        <i class="bi bi-star"></i>
+                        <span>Competencies</span>
+                    </a>
+                </div>
 
                 <div class="courses-grid">
                     <!-- Course 1: Forklift -->
                     <div class="course-card">
                         <div class="course-image">
-                            <img src="../../../assets/img/fork.png" alt="Forklift Operation" style="max-width: 100%; max-height: 100%;">
+                            <img src="../../assets/img/fork.png" alt="Forklift Operation" style="max-width: 100%; max-height: 100%;">
                         </div>
                         <div class="course-body">
                             <h3 class="course-title">Forklift Operation NC II</h3>
@@ -504,6 +547,8 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../assets/js/burger-menu.js"></script>
+    <script src="../assets/js/dark-mode.js"></script>
     <script src="../assets/js/admin-dashboard.js"></script>
     <script>
         // Profile dropdown toggle

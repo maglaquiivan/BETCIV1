@@ -213,18 +213,20 @@ body {
 }
 
 .menu-toggle {
-  display: none;
+  display: flex;
   background: none;
   border: none;
   font-size: 20px;
   cursor: pointer;
   color: #333;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-right {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 24px;
 }
 
 /* USER PROFILE */
@@ -1422,26 +1424,46 @@ body.dark-mode .profile-section {
   }
 
   .top-header {
-    flex-direction: column;
-    gap: 12px;
+    flex-direction: row;
+    gap: 8px;
+    padding: 10px;
+    flex-wrap: nowrap;
+    align-items: center;
   }
 
   .header-left {
-    width: 100%;
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 140px;
+    min-width: 0;
   }
 
   .header-right {
-    width: 100%;
-    justify-content: space-between;
+    width: auto;
+    justify-content: flex-end;
+    gap: 8px;
+    flex: 1;
+    display: flex;
+    align-items: center;
   }
 
   .search-container {
     width: 100%;
-    max-width: none;
+    max-width: 140px;
+    padding: 8px 10px;
+  }
+
+  .search-input {
+    font-size: 12px;
   }
 
   .menu-toggle {
-    display: block;
+    display: flex !important;
+    width: 36px;
+    height: 36px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
   }
 
   .dashboard-content {
@@ -1454,11 +1476,15 @@ body.dark-mode .profile-section {
   }
 
   .filter-tabs {
-    flex-direction: column;
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: wrap;
   }
 
   .filter-tab {
-    width: 100%;
+    width: auto;
+    padding: 8px 16px;
+    font-size: 13px;
   }
 }
 
@@ -1473,6 +1499,34 @@ body.dark-mode .profile-section {
 
   .top-header {
     padding: 10px;
+    flex-direction: row;
+    gap: 8px;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .header-left {
+    flex: 0 0 auto;
+    width: auto;
+    max-width: 140px;
+    min-width: 0;
+  }
+
+  .header-right {
+    width: auto;
+    flex: 1;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  .search-container {
+    width: 100%;
+    max-width: 140px;
+    padding: 8px 10px;
+  }
+
+  .search-input {
+    font-size: 12px;
   }
 
   .dashboard-content {

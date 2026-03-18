@@ -197,7 +197,7 @@ body {
 }
 
 .menu-toggle {
-    display: none;
+    display: flex;
     background: none;
     border: none;
     font-size: 20px;
@@ -206,6 +206,8 @@ body {
     padding: 8px;
     border-radius: var(--border-radius-small);
     transition: var(--transition);
+    align-items: center;
+    justify-content: center;
 }
 
 .menu-toggle:hover {
@@ -683,7 +685,7 @@ body {
     }
     
     .menu-toggle {
-        display: block;
+        display: flex;
     }
     
     .dashboard-content {

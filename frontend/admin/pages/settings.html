@@ -162,23 +162,22 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content settings-content">
-                <!-- Settings Dropdown Header -->
-                <div class="settings-dropdown-header">
-                    <div class="dropdown-title">
-                        <i class="bi bi-gear"></i>
-                        <span id="dropdownTitleText">Settings</span>
-                        <i class="bi bi-chevron-down dropdown-chevron"></i>
-                    </div>
-                    <div class="dropdown-menu-settings">
-                        <a href="#" class="dropdown-item active" onclick="showSection('manage-profile', event)">
+                <!-- Settings Button Tabs -->
+                <div class="settings-button-tabs">
+                    <div class="tab-label">Manage Settings</div>
+                    <div class="tab-buttons">
+                        <button class="tab-item active" onclick="showSection('manage-profile', event)">
+                            <i class="bi bi-person"></i>
                             <span>Manage Profile</span>
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showSection('change-password', event)">
+                        </button>
+                        <button class="tab-item" onclick="showSection('change-password', event)">
+                            <i class="bi bi-key"></i>
                             <span>Change Password</span>
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showSection('appearance', event)">
+                        </button>
+                        <button class="tab-item" onclick="showSection('appearance', event)">
+                            <i class="bi bi-palette"></i>
                             <span>Appearance</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -312,8 +311,15 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../../assets/js/burger-menu.js"></script>
+    <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
+        // Load dark mode theme
+        if (typeof loadTheme === 'function') {
+            loadTheme();
+        }
+        
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             // Profile dropdown toggle
@@ -573,16 +579,6 @@
                 notification.style.animation = 'slideOut 0.3s ease';
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
-        }
-
-        // Dark Mode Functions
-        function toggleDarkMode() {
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            if (!darkModeToggle) return;
-            
-            const isDark = darkModeToggle.checked;
-            document.body.classList.toggle('dark-mode', isDark);
-            localStorage.setItem('darkMode', isDark);
         }
 
         function toggleCompactMode() {

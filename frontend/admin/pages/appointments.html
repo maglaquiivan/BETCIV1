@@ -162,20 +162,18 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content appointments-content">
-                <!-- Appointments Dropdown Header -->
-                <div class="appointments-dropdown-header">
-                    <div class="dropdown-title">
-                        <i class="bi bi-calendar-check"></i>
-                        <span id="dropdownTitleText">Appointments</span>
-                        <i class="bi bi-chevron-down dropdown-chevron"></i>
-                    </div>
-                    <div class="dropdown-menu-appointments">
-                        <a href="#" class="dropdown-item active" onclick="showSection('requests', event)">
+                <!-- Appointments Button Tabs -->
+                <div class="appointments-button-tabs">
+                    <div class="tab-label">Manage Appointments</div>
+                    <div class="tab-buttons">
+                        <button class="tab-item active" onclick="showSection('requests', event)">
+                            <i class="bi bi-inbox"></i>
                             <span>Requests</span>
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showSection('schedule', event)">
+                        </button>
+                        <button class="tab-item" onclick="showSection('schedule', event)">
+                            <i class="bi bi-calendar2"></i>
                             <span>Schedule</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -297,8 +295,22 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../../assets/js/burger-menu.js"></script>
+    <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
+        // Initialize dark mode
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof loadTheme === 'function') {
+                loadTheme();
+            }
+            
+            const darkModeBtn = document.getElementById('darkModeBtn');
+            if (darkModeBtn) {
+                darkModeBtn.addEventListener('click', toggleDarkMode);
+            }
+        });
+        
         // Profile dropdown toggle
         document.querySelector('.user-profile').addEventListener('click', function(e) {
             e.stopPropagation();
@@ -323,24 +335,6 @@
             }
         }
 
-        // Appointments dropdown toggle
-        const dropdownTitle = document.querySelector('.dropdown-title');
-        const dropdownMenu = document.querySelector('.dropdown-menu-appointments');
-
-        dropdownTitle.addEventListener('click', function(e) {
-            e.preventDefault();
-            dropdownMenu.classList.toggle('active');
-            this.classList.toggle('active');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.appointments-dropdown-header')) {
-                dropdownMenu.classList.remove('active');
-                dropdownTitle.classList.remove('active');
-            }
-        });
-
         // Show section function
         function showSection(sectionId, event) {
             event.preventDefault();
@@ -350,37 +344,14 @@
                 section.classList.remove('active');
             });
 
-            // Remove active from all dropdown items
-            document.querySelectorAll('.dropdown-item').forEach(item => {
+            // Remove active from all tab items
+            document.querySelectorAll('.tab-item').forEach(item => {
                 item.classList.remove('active');
             });
 
             // Show selected section
             document.getElementById(sectionId).classList.add('active');
-            event.target.closest('.dropdown-item').classList.add('active');
-
-            // Update breadcrumb
-            updateBreadcrumb(sectionId);
-
-            // Close dropdown
-            dropdownMenu.classList.remove('active');
-            dropdownTitle.classList.remove('active');
-        }
-        
-        // Update breadcrumb function
-        function updateBreadcrumb(sectionId) {
-            const dropdownTitleText = document.getElementById('dropdownTitleText');
-            
-            const sectionNames = {
-                'requests': 'Appointments / Requests',
-                'schedule': 'Appointments / Schedule'
-            };
-            
-            if (sectionId && sectionNames[sectionId]) {
-                dropdownTitleText.textContent = sectionNames[sectionId];
-            } else {
-                dropdownTitleText.textContent = 'Appointments';
-            }
+            event.target.closest('.tab-item').classList.add('active');
         }
 
         // Appointment management functions
@@ -438,6 +409,8 @@
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
+
+        // Burger menu is now handled by burger-menu.js
     </script>
 </body>
 </html>

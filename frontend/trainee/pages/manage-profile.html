@@ -31,10 +31,25 @@
             color: var(--text-dark);
         }
 
+        .admin-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .main-content {
+            flex: 1;
+            margin-left: 210px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .dashboard-content {
+            padding: 30px;
+        }
+
         .profile-container {
             max-width: 1000px;
-            margin: 40px auto;
-            padding: 20px;
+            margin: 0 auto;
+            padding: 0;
         }
 
         .profile-header {
@@ -371,13 +386,308 @@
                 padding: 8px;
             }
         }
+
+        .tab-btn.active {
+            background: #E67E22 !important;
+            color: white !important;
+            border-color: #E67E22 !important;
+        }
+
+        .tab-btn:hover {
+            border-color: #E67E22 !important;
+        }
+
+        .records-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .record-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .record-card:hover {
+            box-shadow: 0 8px 24px rgba(230, 126, 34, 0.2);
+            transform: translateY(-4px);
+            border-color: #E67E22;
+        }
+
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+
+        .record-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .record-date {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-failed {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .record-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 15px 0;
+        }
+
+        .detail-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            color: #999;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: #333;
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        .record-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .btn-action {
+            flex: 1;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-download {
+            background: #E67E22;
+            color: white;
+        }
+
+        .btn-download:hover {
+            background: #d35400;
+        }
+
+        .btn-view {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .btn-view:hover {
+            background: #e0e0e0;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+            grid-column: 1/-1;
+        }
+
+        .empty-state i {
+            font-size: 48px;
+            color: #ddd;
+            margin-bottom: 15px;
+        }
     </style>
 </head>
 <body>
-    <div class="profile-container">
+    <div class="admin-container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-image">
+                    <img src="../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
+                </div>
+                <div class="logo-text">
+                    <h3>BETCI</h3>
+                    <p>Trainee</p>
+                </div>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <i class="bi bi-list"></i>
+                </button>
+            </div>
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="bi bi-house-door"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="courses.html" class="nav-link">
+                            <i class="bi bi-book"></i>
+                            <span>Courses</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="assessment.html" class="nav-link">
+                            <i class="bi bi-clipboard-check"></i>
+                            <span>Assessment</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="records.html" class="nav-link">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <span>Records</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="settings.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content" id="mainContent">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <div class="search-container">
+                        <i class="bi bi-search"></i>
+                        <input type="text" placeholder="Search..." class="search-input">
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                    <div class="user-profile" id="userProfile">
+                        <div class="user-avatar">
+                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
+                                    <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
+                                    <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
+                                </svg>
+                            </svg>
+                        </div>
+                        <span class="user-name">KELI</span>
+                        <i class="bi bi-chevron-down dropdown-arrow"></i>
+                        
+                        <!-- User Dropdown Menu -->
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar">
+                                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
+                                            <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
+                                            <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
+                                        </svg>
+                                    </svg>
+                                </div>
+                                <div class="dropdown-user-info">
+                                    <h4>KELI STUDENT</h4>
+                                    <p>keli.student@betci.edu.ph</p>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="manage-profile.html">
+                                        <i class="bi bi-person"></i>
+                                        <span>My Profile</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="settings.html">
+                                        <i class="bi bi-gear"></i>
+                                        <span>Settings</span>
+                                    </a>
+                                </li>
+                                <li class="theme-toggle-item">
+                                    <div class="theme-toggle-wrapper">
+                                        <i class="bi bi-palette"></i>
+                                        <span>Dark Mode</span>
+                                        <label class="theme-switch">
+                                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                                            <span class="theme-slider"></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-footer">
+                                <button class="logout-btn" onclick="handleLogout()">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span>Log Out</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <div class="profile-container">
         <a href="dashboard.html" class="back-link">
             <i class="bi bi-arrow-left"></i> Back to Dashboard
         </a>
+
+        <!-- Tab Buttons -->
+        <div style="display: flex; gap: 10px; margin-bottom: 20px;">
+            <button class="tab-btn active" onclick="switchTab('profile')" style="padding: 10px 20px; border: 2px solid #ddd; background: white; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px;">
+                <i class="bi bi-person"></i> Profile
+            </button>
+        </div>
+
+        <!-- Profile Tab -->
+        <div id="profileTab">
 
         <!-- Profile Overview Card -->
         <div class="profile-header">
@@ -525,6 +835,7 @@
                 </table>
             </div>
         </div>
+        </div>
     </div>
 
     <!-- Edit Information Modal -->
@@ -568,8 +879,28 @@
             </div>
         </div>
     </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="../../assets/js/burger-menu.js"></script>
+    <script src="../../assets/js/dark-mode.js"></script>
     <script>
+        // Load dark mode theme
+        if (typeof loadTheme === 'function') {
+            loadTheme();
+        }
+        
+        function switchTab(tab) {
+            const profileTab = document.getElementById('profileTab');
+            const tabBtns = document.querySelectorAll('.tab-btn');
+            
+            tabBtns.forEach(btn => btn.classList.remove('active'));
+            profileTab.style.display = 'block';
+            tabBtns[0].classList.add('active');
+        }
+
         function openEditModal() {
             document.getElementById('editModal').classList.add('active');
         }
@@ -591,6 +922,26 @@
         document.getElementById('editModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 closeEditModal();
+            }
+        });
+
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('userSession');
+                sessionStorage.removeItem('userSession');
+                window.location.href = '../auth/login.html';
+            }
+        }
+        
+        // User profile dropdown
+        document.getElementById('userProfile').addEventListener('click', function(e) {
+            e.stopPropagation();
+            document.getElementById('userDropdown').classList.toggle('active');
+        });
+
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.user-profile')) {
+                document.getElementById('userDropdown').classList.remove('active');
             }
         });
     </script>

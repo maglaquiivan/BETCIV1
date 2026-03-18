@@ -761,8 +761,15 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../../assets/js/burger-menu.js"></script>
+    <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
+        // Load dark mode theme
+        if (typeof loadTheme === 'function') {
+            loadTheme();
+        }
+        
         // Profile dropdown toggle
         document.querySelector('.user-profile').addEventListener('click', function(e) {
             e.stopPropagation();
@@ -786,31 +793,6 @@
                 window.location.href = '../../auth/login.html';
             }
         }
-
-        // Dark mode toggle
-        function toggleDarkMode() {
-            const isDark = document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            
-            const darkModeBtn = document.getElementById('darkModeBtn');
-            if (darkModeBtn) {
-                darkModeBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
-            }
-        }
-
-        // Load theme on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            const darkModeBtn = document.getElementById('darkModeBtn');
-            
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                if (darkModeBtn) darkModeBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
-            } else {
-                document.body.classList.remove('dark-mode');
-                if (darkModeBtn) darkModeBtn.innerHTML = '<i class="bi bi-moon-fill"></i>';
-            }
-        });
 
         // Trainee management functions
         let currentEditCard = null;
@@ -1014,6 +996,8 @@
                 });
             }
         });
+
+        // Burger menu is now handled by burger-menu.js
     </script>
 
     <!-- Add/Edit Trainee Modal -->

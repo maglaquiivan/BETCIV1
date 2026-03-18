@@ -106,7 +106,7 @@
     height: 280px;
   }
   
-  .hero .hero-stats {
+  .hero .{
     gap: 80px;
     margin: 40px 0;
   }
@@ -1322,6 +1322,7 @@ section .container,
   line-height: 1;
   text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
   margin-bottom: 8px;
+  color: white;
 }
 
 .hero .stat-label {
@@ -2557,9 +2558,9 @@ section .container,
 .contact .info-item i {
   color: #E67E22;
   background: rgba(230, 126, 34, 0.1);
-  font-size: 20px;
-  width: 44px;
-  height: 44px;
+  font-size: 24px;
+  width: 52px;
+  height: 52px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -2571,18 +2572,18 @@ section .container,
 
 .contact .info-item h3 {
   padding: 0;
-  font-size: 18px;
+  font-size: 24px;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   color: #000000;
 }
 
 .contact .info-item p {
   padding: 0;
   margin-bottom: 0;
-  font-size: 14px;
+  font-size: 16px;
   color: #6E6E6E;
-  line-height: 1.6;
+  line-height: 1.7;
 }
 
 .contact .info-item:hover i {
@@ -2599,10 +2600,10 @@ section .container,
 }
 
 .contact .social-media-section h3 {
-  font-size: 20px;
+  font-size: 24px;
   font-weight: 700;
   color: #000000;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .contact .social-links {
@@ -2610,7 +2611,7 @@ section .container,
 }
 
 .contact .social-links a {
-  font-size: 20px;
+  font-size: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2619,8 +2620,8 @@ section .container,
   line-height: 1;
   border-radius: 50%;
   text-align: center;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   transition: all 0.3s ease;
 }
 
@@ -3851,9 +3852,9 @@ section .container,
 }
 
 .chat-window {
-  position: absolute;
-  bottom: 80px;
-  right: 0;
+  position: fixed;
+  bottom: 90px;
+  right: 20px;
   width: 380px;
   height: 550px;
   background: white;
@@ -3863,6 +3864,7 @@ section .container,
   flex-direction: column;
   overflow: hidden;
   animation: slideUp 0.3s ease;
+  z-index: 9998;
 }
 
 .chat-window.active {
@@ -4139,7 +4141,8 @@ section .container,
   .chat-window {
     width: calc(100vw - 40px);
     height: 500px;
-    bottom: 80px;
+    bottom: 90px;
+    right: 20px;
   }
 }
 
@@ -4159,7 +4162,7 @@ section .container,
     width: calc(100vw - 30px);
     height: calc(100vh - 120px);
     bottom: 75px;
-    right: -7.5px;
+    right: 15px;
   }
   
   .chat-messages {
@@ -4202,4 +4205,799 @@ section .container,
     width: 100%;
     text-align: center;
   }
+}
+
+
+/*--------------------------------------------------------------
+# Dark Mode Styles
+--------------------------------------------------------------*/
+
+/* Dark Mode Body */
+body.dark-mode {
+  --background-color: #1a1a1a !important;
+  --default-color: #ffffff !important;
+  --heading-color: #ffffff !important;
+  --surface-color: #2a2a2a !important;
+  --contrast-color: #ffffff !important;
+  --nav-color: rgba(255, 255, 255, 0.7) !important;
+  --nav-hover-color: #E67E22 !important;
+  --nav-mobile-background-color: #2a2a2a !important;
+  --nav-dropdown-background-color: #2a2a2a !important;
+  --nav-dropdown-color: #ffffff !important;
+  --nav-dropdown-hover-color: #E67E22 !important;
+}
+
+body.dark-mode {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .header {
+  background-color: #2a2a2a !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5) !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .header.header-scrolled {
+  background-color: #2a2a2a !important;
+  box-shadow: 0 2px 12px rgba(230, 126, 34, 0.15) !important;
+}
+
+body.dark-mode .header .logo {
+  background: linear-gradient(135deg, rgba(230, 126, 34, 0.2), rgba(244, 196, 48, 0.1)) !important;
+  border-color: rgba(230, 126, 34, 0.5) !important;
+}
+
+body.dark-mode .header .logo-text h1,
+body.dark-mode .header .logo-text p {
+  color: #ffffff !important;
+}
+
+body.dark-mode .navmenu {
+  background-color: #2a2a2a !important;
+}
+
+body.dark-mode .navmenu > ul > li > a {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.dark-mode .navmenu > ul > li > a:hover,
+body.dark-mode .navmenu > ul > li > a.active {
+  color: #E67E22 !important;
+}
+
+body.dark-mode .navmenu .dropdown ul {
+  background-color: #2a2a2a !important;
+}
+
+body.dark-mode .navmenu .dropdown ul a {
+  color: #ffffff !important;
+}
+
+body.dark-mode .navmenu .dropdown ul a:hover {
+  color: #E67E22 !important;
+}
+
+body.dark-mode .mobile-nav-toggle {
+  color: #ffffff !important;
+}
+
+body.dark-mode .dark-mode-btn {
+  color: #ffffff !important;
+}
+
+body.dark-mode .dark-mode-btn:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+body.dark-mode .login-btn {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .login-btn:hover {
+  background-color: #D35400 !important;
+}
+
+body.dark-mode .hero {
+  background-color: #1a1a1a !important;
+}
+
+body.dark-mode .hero-title {
+  color: #ffffff !important;
+}
+
+body.dark-mode .hero-description {
+  color: #cccccc !important;
+}
+
+body.dark-mode .btn-get-started {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .btn-get-started:hover {
+  background-color: #D35400 !important;
+}
+
+body.dark-mode .section {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .section-title h2 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .section-title p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .service-item {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .service-item:hover {
+  background-color: #3a3a3a !important;
+  border-color: #E67E22 !important;
+}
+
+body.dark-mode .service-item h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .service-item p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .btn-enroll {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .btn-enroll:hover {
+  background-color: #D35400 !important;
+}
+
+body.dark-mode .about-btn {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .about-btn:hover {
+  background-color: #D35400 !important;
+}
+
+body.dark-mode .features-item {
+  color: #ffffff !important;
+}
+
+body.dark-mode .features-item h4 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .features-item p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .info-item {
+  color: #ffffff !important;
+}
+
+body.dark-mode .info-item h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .info-item p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .footer {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .footer h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .footer p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .footer .social-links a {
+  color: #ffffff !important;
+  border-color: #3a3a3a !important;
+}
+
+body.dark-mode .footer .social-links a:hover {
+  background-color: #E67E22 !important;
+  border-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .footer .footer-bottom {
+  border-top-color: #3a3a3a !important;
+}
+
+body.dark-mode .footer .separator {
+  color: #666666 !important;
+}
+
+body.dark-mode .footer .credits a {
+  color: #E67E22 !important;
+}
+
+body.dark-mode .footer .credits a:hover {
+  color: #F4C430 !important;
+}
+
+body.dark-mode .chat-widget {
+  background-color: #2a2a2a !important;
+}
+
+body.dark-mode .chat-bubble {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .chat-window {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+}
+
+body.dark-mode .chat-window-header {
+  background-color: #3a3a3a !important;
+  border-bottom-color: #4a4a4a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .chat-messages {
+  background-color: #2a2a2a !important;
+}
+
+body.dark-mode .chat-msg p {
+  background-color: #3a3a3a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .bot-msg p {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .chat-input-field {
+  background-color: #3a3a3a !important;
+  border-color: #4a4a4a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .chat-input-field::placeholder {
+  color: #999999 !important;
+}
+
+body.dark-mode .chat-send-button {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .chat-send-button:hover {
+  background-color: #D35400 !important;
+}
+
+body.dark-mode .quick-reply-btn {
+  background-color: #3a3a3a !important;
+  color: #ffffff !important;
+  border-color: #4a4a4a !important;
+}
+
+body.dark-mode .quick-reply-btn:hover {
+  background-color: #E67E22 !important;
+  color: white !important;
+  border-color: #E67E22 !important;
+}
+
+body.dark-mode .profile-dropdown-header {
+  color: #ffffff !important;
+}
+
+body.dark-mode .profile-btn-header {
+  color: #ffffff !important;
+}
+
+body.dark-mode .profile-menu-header {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+}
+
+body.dark-mode .profile-menu-item-header {
+  color: #cccccc !important;
+}
+
+body.dark-mode .profile-menu-item-header:hover {
+  background-color: #3a3a3a !important;
+  color: #E67E22 !important;
+}
+
+body.dark-mode .profile-menu-divider-header {
+  background-color: #3a3a3a !important;
+}
+
+body.dark-mode a {
+  color: #E67E22 !important;
+}
+
+body.dark-mode a:hover {
+  color: #F4C430 !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .stat-number {
+  color: #E67E22 !important;
+}
+
+body.dark-mode .stat-label {
+  color: #E67E22 !important;
+}
+
+body.dark-mode .mission-box,
+body.dark-mode .vision-box {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .icon-box {
+  background-color: #3a3a3a !important;
+  color: #E67E22 !important;
+}
+
+body.dark-mode .value-item {
+  color: #ffffff !important;
+}
+
+body.dark-mode .value-item i {
+  color: #E67E22 !important;
+}
+
+
+/*--------------------------------------------------------------
+# Dark Mode - Landing Page Comprehensive Styles
+--------------------------------------------------------------*/
+
+/* Dark Mode - All Sections */
+body.dark-mode .section {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode #hero {
+  background: #1a1a1a !important;
+}
+
+body.dark-mode #about {
+  background-color: #1a1a1a !important;
+}
+
+body.dark-mode #features-2 {
+  background: #1a1a1a !important;
+}
+
+body.dark-mode #services {
+  background-color: #1a1a1a !important;
+}
+
+body.dark-mode #contact {
+  background: #1a1a1a !important;
+}
+
+/* Dark Mode - Section Titles in Gradient Sections */
+body.dark-mode #features-2 .section-title h2,
+body.dark-mode #contact .section-title h2 {
+  color: #ffffff !important;
+}
+
+body.dark-mode #features-2 .section-title p,
+body.dark-mode #contact .section-title p {
+  color: #cccccc !important;
+}
+
+/* Dark Mode - Hero Section */
+body.dark-mode .hero-waves {
+  fill: #1a1a1a !important;
+}
+
+body.dark-mode .hero-logos {
+  opacity: 0.9;
+}
+
+
+
+/* Dark Mode - Section Titles */
+body.dark-mode .section-title h2 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .section-title p {
+  color: #cccccc !important;
+}
+
+/* Dark Mode - Service Items */
+body.dark-mode .service-item {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .service-item:hover {
+  background-color: #3a3a3a !important;
+  border-color: #E67E22 !important;
+  box-shadow: 0 8px 24px rgba(230, 126, 34, 0.2) !important;
+}
+
+body.dark-mode .service-item h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .service-item p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .course-icon {
+  background-color: #3a3a3a !important;
+}
+
+/* Dark Mode - Buttons */
+body.dark-mode .btn-enroll {
+  background-color: #E67E22 !important;
+  color: white !important;
+  border-color: #E67E22 !important;
+}
+
+body.dark-mode .btn-enroll:hover {
+  background-color: #D35400 !important;
+  border-color: #D35400 !important;
+}
+
+body.dark-mode .btn-get-started {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .btn-get-started:hover {
+  background-color: #D35400 !important;
+}
+
+body.dark-mode .about-btn {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .about-btn:hover {
+  background-color: #D35400 !important;
+}
+
+/* Dark Mode - Features Section */
+body.dark-mode .features-item {
+  color: #ffffff !important;
+}
+
+body.dark-mode .features-item h4 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .features-item p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .features-item i {
+  color: #E67E22 !important;
+}
+
+/* Dark Mode - About Section */
+body.dark-mode .our-story {
+  color: #ffffff !important;
+}
+
+body.dark-mode .our-story h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .our-story h4 {
+  color: #E67E22 !important;
+}
+
+body.dark-mode .our-story p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .mission-box,
+body.dark-mode .vision-box {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .mission-box h5,
+body.dark-mode .vision-box h5 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .mission-box p,
+body.dark-mode .vision-box p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .icon-box {
+  background-color: #3a3a3a !important;
+  color: #E67E22 !important;
+}
+
+body.dark-mode .values-grid {
+  gap: 20px;
+}
+
+body.dark-mode .value-item {
+  color: #ffffff !important;
+}
+
+body.dark-mode .value-item i {
+  color: #E67E22 !important;
+}
+
+/* Dark Mode - Contact Section */
+body.dark-mode .contact-container {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+}
+
+body.dark-mode .contact .info-item {
+  color: #ffffff !important;
+}
+
+body.dark-mode .contact .info-item h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .contact .info-item p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .contact .info-item i {
+  background-color: rgba(230, 126, 34, 0.2) !important;
+  color: #E67E22 !important;
+}
+
+body.dark-mode .contact .info-item:hover i {
+  background-color: #E67E22 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .contact .social-media-section {
+  border-top-color: #3a3a3a !important;
+}
+
+body.dark-mode .contact .social-media-section h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .contact .social-links a {
+  background-color: rgba(230, 126, 34, 0.2) !important;
+  color: #E67E22 !important;
+}
+
+body.dark-mode .contact .social-links a:hover {
+  background-color: #E67E22 !important;
+  color: #ffffff !important;
+}
+
+/* Dark Mode - Footer */
+body.dark-mode .footer {
+  background-color: #2a2a2a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .footer h3 {
+  color: #ffffff !important;
+}
+
+body.dark-mode .footer p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .footer .social-links a {
+  background-color: rgba(230, 126, 34, 0.2) !important;
+  color: #E67E22 !important;
+  border-color: #3a3a3a !important;
+}
+
+body.dark-mode .footer .social-links a:hover {
+  background-color: #E67E22 !important;
+  color: #ffffff !important;
+  border-color: #E67E22 !important;
+}
+
+body.dark-mode .footer .footer-bottom {
+  border-top-color: #3a3a3a !important;
+}
+
+body.dark-mode .footer .separator {
+  color: #666666 !important;
+}
+
+body.dark-mode .footer .credits a {
+  color: #E67E22 !important;
+}
+
+body.dark-mode .footer .credits a:hover {
+  color: #F4C430 !important;
+}
+
+/* Dark Mode - Chat Widget */
+body.dark-mode .chat-widget {
+  background-color: transparent;
+}
+
+body.dark-mode .chat-bubble {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .chat-window {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+}
+
+body.dark-mode .chat-window-header {
+  background-color: #3a3a3a !important;
+  border-bottom-color: #4a4a4a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .chat-messages {
+  background-color: #2a2a2a !important;
+}
+
+body.dark-mode .chat-msg p {
+  background-color: #3a3a3a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .bot-msg p {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .chat-input-field {
+  background-color: #3a3a3a !important;
+  border-color: #4a4a4a !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .chat-input-field::placeholder {
+  color: #999999 !important;
+}
+
+body.dark-mode .chat-send-button {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .chat-send-button:hover {
+  background-color: #D35400 !important;
+}
+
+body.dark-mode .quick-reply-btn {
+  background-color: #3a3a3a !important;
+  color: #ffffff !important;
+  border-color: #4a4a4a !important;
+}
+
+body.dark-mode .quick-reply-btn:hover {
+  background-color: #E67E22 !important;
+  color: white !important;
+  border-color: #E67E22 !important;
+}
+
+/* Dark Mode - Navigation */
+body.dark-mode .navmenu > ul > li > a {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+body.dark-mode .navmenu > ul > li > a:hover,
+body.dark-mode .navmenu > ul > li > a.active {
+  color: #E67E22 !important;
+}
+
+body.dark-mode .navmenu .dropdown ul {
+  background-color: #2a2a2a !important;
+}
+
+body.dark-mode .navmenu .dropdown ul a {
+  color: #ffffff !important;
+}
+
+body.dark-mode .navmenu .dropdown ul a:hover {
+  color: #E67E22 !important;
+}
+
+body.dark-mode .mobile-nav-toggle {
+  color: #ffffff !important;
+}
+
+body.dark-mode .login-btn {
+  background-color: #E67E22 !important;
+  color: white !important;
+}
+
+body.dark-mode .login-btn:hover {
+  background-color: #D35400 !important;
+}
+
+/* Dark Mode - Profile Dropdown */
+body.dark-mode .profile-dropdown-header {
+  color: #ffffff !important;
+}
+
+body.dark-mode .profile-btn-header {
+  color: #ffffff !important;
+}
+
+body.dark-mode .profile-menu-header {
+  background-color: #2a2a2a !important;
+  border-color: #3a3a3a !important;
+}
+
+body.dark-mode .profile-menu-item-header {
+  color: #cccccc !important;
+}
+
+body.dark-mode .profile-menu-item-header:hover {
+  background-color: #3a3a3a !important;
+  color: #E67E22 !important;
+}
+
+body.dark-mode .profile-menu-divider-header {
+  background-color: #3a3a3a !important;
+}
+
+/* Dark Mode - General Text */
+body.dark-mode a {
+  color: #E67E22 !important;
+}
+
+body.dark-mode a:hover {
+  color: #F4C430 !important;
+}
+
+body.dark-mode h1,
+body.dark-mode h2,
+body.dark-mode h3,
+body.dark-mode h4,
+body.dark-mode h5,
+body.dark-mode h6 {
+  color: #ffffff !important;
+}
+
+body.dark-mode p {
+  color: #cccccc !important;
+}
+
+body.dark-mode .light-background {
+  background-color: #2a2a2a !important;
+}
+
+body.dark-mode .light-background h3,
+body.dark-mode .light-background p {
+  color: #ffffff !important;
 }

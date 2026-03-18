@@ -138,20 +138,18 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content catalog-content">
-                <!-- Training Catalog Dropdown Header -->
-                <div class="catalog-dropdown-header">
-                    <div class="dropdown-title">
-                        <i class="bi bi-book"></i>
-                        <span id="dropdownTitleText">Training Catalog</span>
-                        <i class="bi bi-chevron-down dropdown-chevron"></i>
-                    </div>
-                    <div class="dropdown-menu-catalog">
-                        <a href="#" class="dropdown-item active" onclick="showSection('courses', event)">
+                <!-- Training Catalog Button Tabs -->
+                <div class="catalog-button-tabs">
+                    <div class="tab-label">Manage Courses</div>
+                    <div class="tab-buttons">
+                        <button class="tab-item active" onclick="showSection('courses', event)">
+                            <i class="bi bi-mortarboard"></i>
                             <span>Courses</span>
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showSection('competencies', event)">
+                        </button>
+                        <button class="tab-item" onclick="showSection('competencies', event)">
+                            <i class="bi bi-star"></i>
                             <span>Competencies</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -355,9 +353,28 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../../assets/js/courses-data.js"></script>
+    <script>
+        // Force clear old courses data with incorrect image paths
+        const existingCourses = localStorage.getItem('betci_courses');
+        if (existingCourses) {
+            const courses = JSON.parse(existingCourses);
+            // Check if any course has the old incorrect path
+            if (courses.some(c => c.image && c.image.startsWith('../assets/'))) {
+                console.log('Clearing old courses data with incorrect paths...');
+                localStorage.removeItem('betci_courses');
+            }
+        }
+    </script>
+    <script src="../assets/js/courses-data.js"></script>
+    <script src="../../assets/js/burger-menu.js"></script>
+    <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
+        // Load dark mode theme
+        if (typeof loadTheme === 'function') {
+            loadTheme();
+        }
+        
         // Profile dropdown toggle
         document.querySelector('.user-profile').addEventListener('click', function(e) {
             e.stopPropagation();
@@ -373,23 +390,15 @@
             }
         });
 
-        // Training Catalog dropdown toggle
-        const dropdownTitle = document.querySelector('.dropdown-title');
-        const dropdownMenu = document.querySelector('.dropdown-menu-catalog');
-
-        dropdownTitle.addEventListener('click', function(e) {
-            e.preventDefault();
-            dropdownMenu.classList.toggle('active');
-            this.classList.toggle('active');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.catalog-dropdown-header')) {
-                dropdownMenu.classList.remove('active');
-                dropdownTitle.classList.remove('active');
-            }
-        });
+        // Training Catalog accordion toggle
+        function toggleAccordion(event) {
+            event.preventDefault();
+            const header = event.currentTarget;
+            const content = header.nextElementSibling;
+            
+            header.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        }
 
         // Show section function
         function showSection(sectionId, event) {
@@ -400,37 +409,14 @@
                 section.classList.remove('active');
             });
 
-            // Remove active from all dropdown items
-            document.querySelectorAll('.dropdown-item').forEach(item => {
+            // Remove active from all tab items
+            document.querySelectorAll('.tab-item').forEach(item => {
                 item.classList.remove('active');
             });
 
             // Show selected section
             document.getElementById(sectionId).classList.add('active');
-            event.target.closest('.dropdown-item').classList.add('active');
-
-            // Update breadcrumb
-            updateBreadcrumb(sectionId);
-
-            // Close dropdown
-            dropdownMenu.classList.remove('active');
-            dropdownTitle.classList.remove('active');
-        }
-        
-        // Update breadcrumb function
-        function updateBreadcrumb(sectionId) {
-            const dropdownTitleText = document.getElementById('dropdownTitleText');
-            
-            const sectionNames = {
-                'courses': 'Training Catalog / Courses',
-                'competencies': 'Training Catalog / Competencies'
-            };
-            
-            if (sectionId && sectionNames[sectionId]) {
-                dropdownTitleText.textContent = sectionNames[sectionId];
-            } else {
-                dropdownTitleText.textContent = 'Training Catalog';
-            }
+            event.target.closest('.tab-item').classList.add('active');
         }
 
         // Course management functions
@@ -692,6 +678,8 @@
                 window.location.href = '../../auth/login.html';
             }
         }
+
+        // Burger menu is now handled by burger-menu.js
     </script>
 </body>
 </html>

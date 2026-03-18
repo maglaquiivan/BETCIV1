@@ -116,6 +116,41 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="../assets/css/dashboard.css" rel="stylesheet">
     <link href="../assets/css/styles.css" rel="stylesheet">
+    
+    <style>
+        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; border: 2px solid #ddd; background: white; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
+        .tab-btn.active { background: #E67E22; color: white; border-color: #E67E22; }
+        .tab-btn:hover { border-color: #E67E22; }
+        
+        .records-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        .record-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent; }
+        .record-card:hover { box-shadow: 0 8px 24px rgba(230, 126, 34, 0.2); transform: translateY(-4px); border-color: #E67E22; }
+        
+        .record-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
+        .record-title { font-size: 18px; font-weight: 600; color: #333; }
+        .record-date { font-size: 12px; color: #999; margin-top: 5px; }
+        
+        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-failed { background: #f8d7da; color: #721c24; }
+        
+        .record-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; }
+        .detail-item { padding: 10px; background: #f8f9fa; border-radius: 6px; }
+        .detail-label { font-size: 11px; color: #999; font-weight: 600; text-transform: uppercase; }
+        .detail-value { font-size: 14px; color: #333; margin-top: 4px; font-weight: 500; }
+        
+        .record-actions { display: flex; gap: 10px; margin-top: 15px; }
+        .btn-action { flex: 1; padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.3s; }
+        .btn-download { background: #E67E22; color: white; }
+        .btn-download:hover { background: #d35400; }
+        .btn-view { background: #f0f0f0; color: #333; }
+        .btn-view:hover { background: #e0e0e0; }
+        
+        .empty-state { text-align: center; padding: 60px 20px; color: #999; grid-column: 1/-1; }
+        .empty-state i { font-size: 48px; color: #ddd; margin-bottom: 15px; }
+    </style>
 </head>
 <body>
     <div class="admin-container">
@@ -154,6 +189,12 @@
                         <span>Assessment</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                        <a href="records.html" class="nav-link">
+                            <i class="bi bi-file-earmark-text"></i>
+                            <span>Records</span>
+                        </a>
+                    </li>
                 <li class="nav-item active">
                     <a href="settings.html" class="nav-link">
                         <i class="bi bi-gear"></i>
@@ -166,22 +207,22 @@
 
     <!-- Main Content -->
     <div class="main-content" id="mainContent">
-        <!-- Top Header -->
-        <header class="top-header">
-            <div class="header-left">
-                <div class="search-container">
-                    <i class="bi bi-search"></i>
-                    <input type="text" placeholder="Search..." class="search-input">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <div class="search-container">
+                        <i class="bi bi-search"></i>
+                        <input type="text" placeholder="Search..." class="search-input">
+                    </div>
                 </div>
-                <button class="menu-toggle" id="menuToggle">
-                    <i class="bi bi-list"></i>
-                </button>
-            </div>
-            <div class="header-right">
-                <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                    <i class="bi bi-moon-fill"></i>
-                </button>
-                <div class="user-profile" id="userProfile">
+                <div class="header-right">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
+                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                        <i class="bi bi-moon-fill"></i>
+                    </button>
+                    <div class="user-profile" id="userProfile">
                     <div class="user-avatar">
                         <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <circle cx="20" cy="20" r="20" fill="#E67E22"/>
@@ -255,16 +296,27 @@
                 <h2><i class="bi bi-gear"></i> Settings</h2>
             </div>
             
-            <div class="settings-tabs">
-                <button class="settings-tab active" onclick="switchTab('profile', event)">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('settings')">
                     <i class="bi bi-person"></i> My Profile
                 </button>
-                <button class="settings-tab" onclick="switchTab('password', event)">
+                <button class="tab-btn" onclick="switchSettingsTab('password', event)">
                     <i class="bi bi-lock"></i> Change Password
                 </button>
-                <button class="settings-tab" onclick="switchTab('appearance', event)">
-                    <i class="bi bi-palette"></i> Appearance
-                </button>
+            </div>
+
+            <div id="settingsTab" class="tab-content">
+                <div class="settings-tabs">
+                    <button class="settings-tab active" onclick="switchSettingsTab('profile', event)">
+                        <i class="bi bi-person"></i> My Profile
+                    </button>
+                    <button class="settings-tab" onclick="switchSettingsTab('password', event)">
+                        <i class="bi bi-lock"></i> Change Password
+                    </button>
+                    <button class="settings-tab" onclick="switchSettingsTab('appearance', event)">
+                        <i class="bi bi-palette"></i> Appearance
+                    </button>
+                </div>
             </div>
 
             <!-- Profile Tab -->
@@ -419,47 +471,131 @@
                     </div>
                 </div>
             </div>
+            </div>
         </div>
     </div>
 
+    <script src="../../assets/js/burger-menu.js"></script>
+    <script src="../../assets/js/dark-mode.js"></script>
     <script src="../assets/js/script.js"></script>
     <script>
         // Initialize dark mode on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadTheme();
+            loadRecords();
+            
+            // Check if tab parameter is in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const tab = urlParams.get('tab');
+            
+            if (tab === 'password') {
+                // Switch to password tab
+                const passwordBtn = document.querySelectorAll('.settings-tab')[1];
+                if (passwordBtn) {
+                    switchSettingsTab('password', { target: passwordBtn, preventDefault: () => {} });
+                }
+            }
         });
 
-        // Load theme from localStorage
-        function loadTheme() {
-            const savedTheme = localStorage.getItem('theme') || 'light';
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            const darkModeBtn = document.getElementById('darkModeBtn');
+        function switchTab(tab) {
+            document.getElementById('settingsTab').style.display = 'block';
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-btn')[0].classList.add('active');
+        }
+
+        function switchSettingsTab(tabName, event) {
+            if (event) {
+                event.preventDefault();
+            }
             
-            if (savedTheme === 'dark') {
-                document.body.classList.add('dark-mode');
-                if (darkModeToggle) darkModeToggle.checked = true;
-                if (darkModeBtn) darkModeBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
-            } else {
-                document.body.classList.remove('dark-mode');
-                if (darkModeToggle) darkModeToggle.checked = false;
-                if (darkModeBtn) darkModeBtn.innerHTML = '<i class="bi bi-moon-fill"></i>';
+            // Hide all tabs
+            const tabs = document.querySelectorAll('.settings-tab-content');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.settings-tab');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Show selected tab
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            if (event && event.target) {
+                event.target.closest('.settings-tab').classList.add('active');
             }
         }
 
-        // Toggle dark mode
-        function toggleDarkMode() {
-            const isDark = document.body.classList.toggle('dark-mode');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        function loadRecords() {
+            const records = JSON.parse(localStorage.getItem('trainingRecords') || '[]');
+            const recordsList = document.getElementById('recordsList');
             
-            const darkModeBtn = document.getElementById('darkModeBtn');
-            if (darkModeBtn) {
-                darkModeBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+            // Only proceed if recordsList element exists (not on settings page)
+            if (!recordsList) {
+                return;
             }
-            
-            const darkModeToggle = document.getElementById('darkModeToggle');
-            if (darkModeToggle) {
-                darkModeToggle.checked = isDark;
+
+            if (records.length === 0) {
+                recordsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-inbox"></i>
+                        <p>No training records yet</p>
+                    </div>
+                `;
+                return;
             }
+
+            recordsList.innerHTML = records.map((record, index) => `
+                <div class="record-card">
+                    <div class="record-header">
+                        <div>
+                            <div class="record-title">${record.courseName}</div>
+                            <div class="record-date">${new Date(record.date).toLocaleDateString()}</div>
+                        </div>
+                        <span class="status-badge status-${record.status.toLowerCase()}">${record.status}</span>
+                    </div>
+                    <div class="record-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Duration</div>
+                            <div class="detail-value">${record.duration || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Score</div>
+                            <div class="detail-value">${record.score || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Instructor</div>
+                            <div class="detail-value">${record.instructor || 'N/A'}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Certificate</div>
+                            <div class="detail-value">${record.certificateId || 'Pending'}</div>
+                        </div>
+                    </div>
+                    <div class="record-actions">
+                        <button class="btn-action btn-view" onclick="viewRecord(${index})">
+                            <i class="bi bi-eye"></i> View
+                        </button>
+                        <button class="btn-action btn-download" onclick="downloadRecord(${index})">
+                            <i class="bi bi-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewRecord(index) {
+            const records = JSON.parse(localStorage.getItem('trainingRecords') || '[]');
+            const record = records[index];
+            alert(`${record.courseName}\n\nStatus: ${record.status}\nScore: ${record.score || 'N/A'}`);
+        }
+
+        function downloadRecord(index) {
+            const records = JSON.parse(localStorage.getItem('trainingRecords') || '[]');
+            const record = records[index];
+            alert(`Downloading certificate for ${record.courseName}...`);
         }
 
         // User profile dropdown
@@ -474,14 +610,18 @@
             }
         });
 
-        // Sidebar toggle
+        // Sidebar toggle for mobile
         document.getElementById('menuToggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
-        });
-
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('collapsed');
-            document.querySelector('.main-content').classList.toggle('expanded');
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            sidebar.classList.toggle('collapsed');
+            
+            // Update main-content margin based on sidebar state
+            if (sidebar.classList.contains('collapsed')) {
+                mainContent.style.marginLeft = '60px';
+            } else {
+                mainContent.style.marginLeft = '210px';
+            }
         });
 
         // Handle logout
@@ -568,6 +708,37 @@
 
         document.getElementById('passwordForm').addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            const currentPassword = this.querySelector('input[type="password"]').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = this.querySelectorAll('input[type="password"]')[2].value;
+            
+            // Validation
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Please fill in all password fields');
+                return;
+            }
+            
+            if (newPassword.length < 8) {
+                alert('New password must be at least 8 characters long');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('New password and confirm password do not match');
+                return;
+            }
+            
+            if (newPassword === currentPassword) {
+                alert('New password must be different from current password');
+                return;
+            }
+            
+            // Store password in localStorage (in production, this would be sent to server)
+            const userSession = JSON.parse(localStorage.getItem('userSession') || '{}');
+            userSession.password = newPassword;
+            localStorage.setItem('userSession', JSON.stringify(userSession));
+            
             alert('Password updated successfully!');
             this.reset();
         });

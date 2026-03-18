@@ -29,11 +29,8 @@ function initializeSidebarEvents() {
         });
     }
     
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-        });
-    }
+    // Menu toggle is now handled by burger-menu.js
+    // Removed duplicate event listener to prevent conflicts
     
     // Close sidebar when clicking on a nav link (mobile)
     const navLinks = document.querySelectorAll('.nav-link');
@@ -103,13 +100,22 @@ function initializeEventListeners() {
 // ============================================
 
 function toggleDarkMode() {
-    const toggle = document.getElementById('darkModeToggle');
-    if (toggle.checked) {
-        document.body.classList.add('dark-mode');
-        localStorage.setItem('theme', 'dark');
-    } else {
-        document.body.classList.remove('dark-mode');
-        localStorage.setItem('theme', 'light');
+    // Dark mode toggle is now handled by dark-mode.js
+    // This function is kept for backward compatibility
+    if (typeof window.toggleDarkMode === 'function' && window.toggleDarkMode.name !== 'toggleDarkMode') {
+        // Call the dark-mode.js version
+        const isDark = document.body.classList.toggle('dark-mode');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        
+        const darkModeBtn = document.getElementById('darkModeBtn');
+        if (darkModeBtn) {
+            darkModeBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        }
+        
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        if (darkModeToggle) {
+            darkModeToggle.checked = isDark;
+        }
     }
 }
 

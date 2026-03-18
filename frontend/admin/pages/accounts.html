@@ -48,24 +48,60 @@
             padding: 30px;
         }
 
-        /* Dropdown Header */
-        .accounts-dropdown-header {
-            position: relative;
+        /* Accounts Button Tabs */
+        .accounts-button-tabs {
             margin-bottom: 20px;
         }
 
-        .dropdown-title {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 20px;
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
-            color: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 18px;
+        .tab-label {
+            font-size: 14px;
             font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .tab-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            background: white;
+            color: #666;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
             transition: all 0.3s ease;
+        }
+
+        .tab-item:hover {
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+            background: rgba(230, 126, 34, 0.05);
+        }
+
+        .tab-item.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .tab-item.active:hover {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .tab-item i {
+            font-size: 16px;
         }
         
         /* Breadcrumb */
@@ -94,65 +130,6 @@
         
         .page-breadcrumb .breadcrumb-current {
             color: var(--text-primary);
-            font-weight: 600;
-        }
-
-        .dropdown-title:hover {
-            background: linear-gradient(135deg, #34495e 0%, #2c3e50 100%);
-        }
-
-        .dropdown-title i:first-child {
-            font-size: 24px;
-        }
-
-        .dropdown-chevron {
-            margin-left: auto;
-            transition: transform 0.3s ease;
-        }
-
-        .dropdown-title.active .dropdown-chevron {
-            transform: rotate(180deg);
-        }
-
-        .dropdown-menu-accounts {
-            position: absolute;
-            top: 100%;
-            left: 0;
-            right: 0;
-            background: white;
-            border-radius: 0 0 8px 8px;
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-            overflow: hidden;
-            display: none;
-            z-index: 100;
-            margin-top: -8px;
-            padding-top: 8px;
-        }
-
-        .dropdown-menu-accounts.active {
-            display: block;
-        }
-
-        .dropdown-item {
-            display: block;
-            padding: 16px 20px;
-            color: #666;
-            text-decoration: none;
-            transition: all 0.2s ease;
-            border-left: 4px solid transparent;
-            font-size: 16px;
-        }
-
-        .dropdown-item:hover {
-            background: #f5f5f5;
-            color: var(--primary-color);
-            border-left-color: var(--primary-color);
-        }
-
-        .dropdown-item.active {
-            background: rgba(230, 126, 34, 0.1);
-            color: var(--primary-color);
-            border-left-color: var(--primary-color);
             font-weight: 600;
         }
 
@@ -322,9 +299,96 @@
             font-size: 12px;
         }
 
+        /* Mobile Card Layout for Tables */
+        .mobile-cards {
+            display: none;
+        }
+
+        .account-card {
+            background: var(--bg-white);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .account-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .account-card-id {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .account-card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .account-card-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 13px;
+        }
+
+        .account-card-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        .account-card-value {
+            color: var(--text-primary);
+            text-align: right;
+        }
+
+        .account-card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .account-card-actions .btn {
+            flex: 1;
+        }
+
         @media (max-width: 768px) {
             .accounts-content {
                 padding: 16px;
+            }
+
+            .tab-label {
+                font-size: 12px;
+            }
+
+            .tab-buttons {
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+
+            .tab-item {
+                padding: 8px 12px;
+                font-size: 12px;
+                flex: 0 1 auto;
+            }
+
+            .tab-item span {
+                display: inline !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+
+            .tab-item i {
+                font-size: 14px;
             }
 
             .dropdown-title {
@@ -336,15 +400,114 @@
                 flex-direction: column;
                 align-items: flex-start;
                 gap: 12px;
+                padding: 16px;
             }
 
-            .table {
+            .btn-primary {
+                width: auto;
+                justify-content: center;
+            }
+
+            .card-title {
+                font-size: 16px;
+            }
+
+            .card-subtitle {
                 font-size: 12px;
             }
 
-            .table th,
-            .table td {
-                padding: 8px 12px;
+            /* Hide table, show cards on mobile */
+            .table-responsive {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block;
+                padding: 16px;
+            }
+
+            .action-buttons {
+                flex-direction: row;
+                gap: 6px;
+            }
+
+            .action-buttons .btn {
+                width: auto;
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .accounts-content {
+                padding: 12px;
+            }
+
+            .tab-label {
+                font-size: 11px;
+            }
+
+            .tab-buttons {
+                gap: 6px;
+            }
+
+            .tab-item {
+                padding: 8px 10px;
+                font-size: 11px;
+                flex: 1 1 auto;
+                min-width: calc(50% - 3px);
+            }
+
+            .tab-item span {
+                display: inline !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+            }
+
+            .tab-item i {
+                font-size: 13px;
+            }
+
+            .card-header {
+                padding: 12px;
+            }
+
+            .card-header h2 {
+                font-size: 16px;
+            }
+
+            .card-subtitle {
+                font-size: 11px;
+            }
+
+            .btn-primary {
+                width: auto;
+                padding: 8px 14px;
+                font-size: 13px;
+            }
+
+            /* Hide table, show cards on mobile */
+            .table-responsive {
+                display: none;
+            }
+
+            .mobile-cards {
+                display: block;
+                padding: 12px;
+            }
+
+            .account-card {
+                padding: 12px;
+            }
+
+            .action-buttons {
+                flex-direction: row;
+                gap: 4px;
+            }
+
+            .action-buttons .btn {
+                padding: 5px 8px;
+                font-size: 10px;
             }
         }
 
@@ -622,23 +785,22 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content accounts-content">
-                <!-- Accounts Dropdown Header -->
-                <div class="accounts-dropdown-header">
-                    <div class="dropdown-title">
-                        <i class="bi bi-person-badge"></i>
-                        <span id="dropdownTitleText">Accounts</span>
-                        <i class="bi bi-chevron-down dropdown-chevron"></i>
-                    </div>
-                    <div class="dropdown-menu-accounts">
-                        <a href="#" class="dropdown-item active" onclick="showSection('manage-accounts', event)">
+                <!-- Accounts Button Tabs -->
+                <div class="accounts-button-tabs">
+                    <div class="tab-label">Manage Accounts</div>
+                    <div class="tab-buttons">
+                        <button class="tab-item active" onclick="showSection('manage-accounts', event)">
+                            <i class="bi bi-person"></i>
                             <span>Manage Accounts</span>
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showSection('user-roles', event)">
+                        </button>
+                        <button class="tab-item" onclick="showSection('user-roles', event)">
+                            <i class="bi bi-shield"></i>
                             <span>User Roles</span>
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showSection('permissions', event)">
+                        </button>
+                        <button class="tab-item" onclick="showSection('permissions', event)">
+                            <i class="bi bi-lock"></i>
                             <span>Permissions</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -709,6 +871,96 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Mobile Card Layout -->
+                    <div class="mobile-cards">
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">#A001</span>
+                                <span class="badge badge-success">Active</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Username:</span>
+                                    <span class="account-card-value">admin_user</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Email:</span>
+                                    <span class="account-card-value">admin@betci.edu.ph</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Role:</span>
+                                    <span class="badge badge-primary">Administrator</span>
+                                </div>
+                            </div>
+                            <div class="account-card-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="editAccount(this)">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="deleteAccount(this)">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">#A002</span>
+                                <span class="badge badge-success">Active</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Username:</span>
+                                    <span class="account-card-value">trainer_user</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Email:</span>
+                                    <span class="account-card-value">trainer@betci.edu.ph</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Role:</span>
+                                    <span class="badge badge-primary">Trainer</span>
+                                </div>
+                            </div>
+                            <div class="account-card-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="editAccount(this)">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="deleteAccount(this)">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">#A003</span>
+                                <span class="badge badge-warning">Inactive</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Username:</span>
+                                    <span class="account-card-value">staff_user</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Email:</span>
+                                    <span class="account-card-value">staff@betci.edu.ph</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Role:</span>
+                                    <span class="badge badge-primary">Staff</span>
+                                </div>
+                            </div>
+                            <div class="account-card-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="editAccount(this)">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                                <button class="btn btn-sm btn-secondary" onclick="deleteAccount(this)">
+                                    <i class="bi bi-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 </div>
 
@@ -768,6 +1020,63 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Mobile Card Layout -->
+                    <div class="mobile-cards">
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">Administrator</span>
+                                <span class="badge badge-primary">1 Users</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Description:</span>
+                                    <span class="account-card-value">Full system access and control</span>
+                                </div>
+                            </div>
+                            <div class="account-card-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="editRole(this)">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">Trainer</span>
+                                <span class="badge badge-primary">2 Users</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Description:</span>
+                                    <span class="account-card-value">Can manage courses and trainees</span>
+                                </div>
+                            </div>
+                            <div class="account-card-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="editRole(this)">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">Staff</span>
+                                <span class="badge badge-primary">1 Users</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Description:</span>
+                                    <span class="account-card-value">Limited access to records</span>
+                                </div>
+                            </div>
+                            <div class="account-card-actions">
+                                <button class="btn btn-sm btn-secondary" onclick="editRole(this)">
+                                    <i class="bi bi-pencil"></i> Edit
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 </div>
 
@@ -818,6 +1127,103 @@
                             </tbody>
                         </table>
                     </div>
+
+                    <!-- Mobile Card Layout -->
+                    <div class="mobile-cards">
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">View Dashboard</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Description:</span>
+                                    <span class="account-card-value">Access to admin dashboard</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Roles:</span>
+                                    <span class="account-card-value">
+                                        <span class="badge badge-primary">Admin</span> 
+                                        <span class="badge badge-primary">Trainer</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">Manage Trainees</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Description:</span>
+                                    <span class="account-card-value">Add, edit, delete trainee records</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Roles:</span>
+                                    <span class="account-card-value">
+                                        <span class="badge badge-primary">Admin</span> 
+                                        <span class="badge badge-primary">Trainer</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">Manage Courses</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Description:</span>
+                                    <span class="account-card-value">Create and manage training courses</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Roles:</span>
+                                    <span class="account-card-value">
+                                        <span class="badge badge-primary">Admin</span> 
+                                        <span class="badge badge-primary">Trainer</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">View Reports</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Description:</span>
+                                    <span class="account-card-value">Access to system reports</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Roles:</span>
+                                    <span class="account-card-value">
+                                        <span class="badge badge-primary">Admin</span> 
+                                        <span class="badge badge-primary">Staff</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="account-card">
+                            <div class="account-card-header">
+                                <span class="account-card-id">Manage Accounts</span>
+                            </div>
+                            <div class="account-card-body">
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Description:</span>
+                                    <span class="account-card-value">Create and manage user accounts</span>
+                                </div>
+                                <div class="account-card-row">
+                                    <span class="account-card-label">Roles:</span>
+                                    <span class="account-card-value">
+                                        <span class="badge badge-primary">Admin</span>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 </div>
             </div>
@@ -825,6 +1231,8 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../../assets/js/burger-menu.js"></script>
+    <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
         // Profile dropdown toggle
@@ -852,23 +1260,6 @@
         }
 
         // Accounts dropdown toggle
-        const dropdownTitle = document.querySelector('.dropdown-title');
-        const dropdownMenu = document.querySelector('.dropdown-menu-accounts');
-
-        dropdownTitle.addEventListener('click', function(e) {
-            e.preventDefault();
-            dropdownMenu.classList.toggle('active');
-            this.classList.toggle('active');
-        });
-
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.accounts-dropdown-header')) {
-                dropdownMenu.classList.remove('active');
-                dropdownTitle.classList.remove('active');
-            }
-        });
-
         // Show section function
         function showSection(sectionId, event) {
             event.preventDefault();
@@ -878,38 +1269,14 @@
                 section.classList.remove('active');
             });
 
-            // Remove active from all dropdown items
-            document.querySelectorAll('.dropdown-item').forEach(item => {
+            // Remove active from all tab items
+            document.querySelectorAll('.tab-item').forEach(item => {
                 item.classList.remove('active');
             });
 
             // Show selected section
             document.getElementById(sectionId).classList.add('active');
-            event.target.closest('.dropdown-item').classList.add('active');
-
-            // Update breadcrumb
-            updateBreadcrumb(sectionId);
-
-            // Close dropdown
-            dropdownMenu.classList.remove('active');
-            dropdownTitle.classList.remove('active');
-        }
-        
-        // Update breadcrumb function
-        function updateBreadcrumb(sectionId) {
-            const dropdownTitleText = document.getElementById('dropdownTitleText');
-            
-            const sectionNames = {
-                'manage-accounts': 'Accounts / Manage Accounts',
-                'user-roles': 'Accounts / User Roles',
-                'permissions': 'Accounts / Permissions'
-            };
-            
-            if (sectionId && sectionNames[sectionId]) {
-                dropdownTitleText.textContent = sectionNames[sectionId];
-            } else {
-                dropdownTitleText.textContent = 'Accounts';
-            }
+            event.target.closest('.tab-item').classList.add('active');
         }
 
         // Account management functions
@@ -1039,6 +1406,11 @@
         
         // Reset delete confirmation input styling on input
         document.addEventListener('DOMContentLoaded', function() {
+            // Load dark mode theme
+            if (typeof loadTheme === 'function') {
+                loadTheme();
+            }
+            
             const deleteInput = document.getElementById('deleteAccountConfirmInput');
             if (deleteInput) {
                 deleteInput.addEventListener('input', function() {
@@ -1047,6 +1419,8 @@
                 });
             }
         });
+
+        // Burger menu is now handled by burger-menu.js
     </script>
 
     <!-- Add/Edit Account Modal -->

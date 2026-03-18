@@ -18,27 +18,9 @@ document.addEventListener('DOMContentLoaded', function() {
    ============================================ */
 
 function initializeHamburgerMenu() {
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.querySelector('.sidebar');
-    const mainContent = document.querySelector('.main-content');
-    
-    if (menuToggle && sidebar) {
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('expanded');
-            
-            // Store state in localStorage
-            const isCollapsed = sidebar.classList.contains('collapsed');
-            localStorage.setItem('sidebarCollapsed', isCollapsed);
-        });
-        
-        // Restore sidebar state from localStorage
-        const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-        if (sidebarCollapsed) {
-            sidebar.classList.add('collapsed');
-            mainContent.classList.add('expanded');
-        }
-    }
+    // Hamburger menu is now handled by burger-menu.js
+    // This function is kept for backward compatibility but does nothing
+    console.log('Hamburger menu initialized by burger-menu.js');
 }
 
 function initializeSidebar() {
@@ -533,30 +515,15 @@ function initializeQuickActions() {
    ============================================ */
 
 function initializeDarkMode() {
-    const darkMode = localStorage.getItem('darkMode') === 'true';
-    const darkModeBtn = document.getElementById('darkModeBtn');
-    
-    if (darkMode) {
-        document.body.classList.add('dark-mode');
-        if (darkModeBtn) {
-            darkModeBtn.innerHTML = '<i class="bi bi-sun-fill"></i>';
-        }
-    }
+    // Dark mode is now handled by dark-mode.js
+    // This function is kept for backward compatibility
 }
 
 function toggleDarkMode() {
-    const isDark = document.body.classList.toggle('dark-mode');
-    localStorage.setItem('darkMode', isDark ? 'true' : 'false');
-    
-    const darkModeBtn = document.getElementById('darkModeBtn');
-    if (darkModeBtn) {
-        darkModeBtn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
-    }
-    
-    // Update settings page toggle if it exists
-    const darkModeToggle = document.getElementById('darkModeToggle');
-    if (darkModeToggle) {
-        darkModeToggle.checked = isDark;
+    // Dark mode toggle is now handled by dark-mode.js
+    // Call the dark-mode.js function
+    if (typeof window.toggleDarkMode === 'function') {
+        window.toggleDarkMode();
     }
 }
 

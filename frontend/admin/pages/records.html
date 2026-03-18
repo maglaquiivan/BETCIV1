@@ -103,7 +103,7 @@
                 </div>
 
                 <div class="header-right">
-                    <button class="dark-mode-btn" id="darkModeBtn" onclick="handleDarkModeToggle()" title="Toggle Dark Mode">
+                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile">
@@ -138,26 +138,26 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content records-content">
-                <!-- Records Dropdown Header -->
-                <div class="records-dropdown-header">
-                    <div class="dropdown-title">
-                        <i class="bi bi-file-earmark"></i>
-                        <span id="dropdownTitleText">Records</span>
-                        <i class="bi bi-chevron-down dropdown-chevron"></i>
-                    </div>
-                    <div class="dropdown-menu-records">
-                        <a href="#" class="dropdown-item active" onclick="showSection('enrollment', event)">
+                <!-- Records Button Tabs -->
+                <div class="records-button-tabs">
+                    <div class="tab-label">Manage Records</div>
+                    <div class="tab-buttons">
+                        <button class="tab-item active" onclick="showSection('enrollment', event)">
+                            <i class="bi bi-file-text"></i>
                             <span>Enrollment</span>
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showSection('application', event)">
+                        </button>
+                        <button class="tab-item" onclick="showSection('application', event)">
+                            <i class="bi bi-file-earmark"></i>
                             <span>Application</span>
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showSection('admission', event)">
+                        </button>
+                        <button class="tab-item" onclick="showSection('admission', event)">
+                            <i class="bi bi-file-check"></i>
                             <span>Admission</span>
-                        </a>
-                        <a href="#" class="dropdown-item" onclick="showSection('attendance', event)">
+                        </button>
+                        <button class="tab-item" onclick="showSection('attendance', event)">
+                            <i class="bi bi-calendar2-check"></i>
                             <span>Attendance</span>
-                        </a>
+                        </button>
                     </div>
                 </div>
 
@@ -373,33 +373,13 @@
     </div>
 
     <!-- Scripts -->
+    <script src="../../assets/js/burger-menu.js"></script>
+    <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
-        // Wait for external script to load
-        document.addEventListener('DOMContentLoaded', function() {
-            // Initialize dropdown
-            initializeRecordsDropdown();
-        });
-        
-        function initializeRecordsDropdown() {
-            const dropdownTitle = document.querySelector('.dropdown-title');
-            const dropdownMenu = document.querySelector('.dropdown-menu-records');
-
-            if (dropdownTitle && dropdownMenu) {
-                dropdownTitle.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    dropdownMenu.classList.toggle('active');
-                    this.classList.toggle('active');
-                });
-
-                // Close dropdown when clicking outside
-                document.addEventListener('click', function(e) {
-                    if (!e.target.closest('.records-dropdown-header')) {
-                        dropdownMenu.classList.remove('active');
-                        dropdownTitle.classList.remove('active');
-                    }
-                });
-            }
+        // Load dark mode theme
+        if (typeof loadTheme === 'function') {
+            loadTheme();
         }
         
         // Profile dropdown toggle
@@ -416,13 +396,6 @@
                 dropdown.classList.remove('active');
             }
         });
-
-        // Dark mode toggle wrapper
-        function handleDarkModeToggle() {
-            if (typeof toggleDarkMode === 'function') {
-                toggleDarkMode();
-            }
-        }
 
         // Logout handler
         function handleLogout() {
@@ -442,39 +415,14 @@
                 section.classList.remove('active');
             });
 
-            // Remove active from all dropdown items
-            document.querySelectorAll('.dropdown-item').forEach(item => {
+            // Remove active from all tab items
+            document.querySelectorAll('.tab-item').forEach(item => {
                 item.classList.remove('active');
             });
 
             // Show selected section
             document.getElementById(sectionId).classList.add('active');
-            event.target.closest('.dropdown-item').classList.add('active');
-
-            // Update breadcrumb
-            updateBreadcrumb(sectionId);
-
-            // Close dropdown
-            dropdownMenu.classList.remove('active');
-            dropdownTitle.classList.remove('active');
-        }
-        
-        // Update breadcrumb function
-        function updateBreadcrumb(sectionId) {
-            const dropdownTitleText = document.getElementById('dropdownTitleText');
-            
-            const sectionNames = {
-                'enrollment': 'Records / Enrollment',
-                'application': 'Records / Application',
-                'admission': 'Records / Admission',
-                'attendance': 'Records / Attendance'
-            };
-            
-            if (sectionId && sectionNames[sectionId]) {
-                dropdownTitleText.textContent = sectionNames[sectionId];
-            } else {
-                dropdownTitleText.textContent = 'Records';
-            }
+            event.target.closest('.tab-item').classList.add('active');
         }
 
         // Records management functions
@@ -596,6 +544,8 @@
                 setTimeout(() => notification.remove(), 300);
             }, 3000);
         }
+
+        // Burger menu is now handled by burger-menu.js
     </script>
 </body>
 </html>

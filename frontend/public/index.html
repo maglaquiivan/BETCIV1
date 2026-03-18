@@ -87,6 +87,11 @@
           <li><a href="#services">Courses</a></li>
           <li><a href="#contact">Contact</a></li>
           <li id="loginLi"><a href="../auth/login.html" class="login-btn">Login</a></li>
+          <li style="margin-left: 20px;">
+            <button class="dark-mode-btn" id="darkModeBtn" title="Toggle Dark Mode" style="background: none; border: none; cursor: pointer; font-size: 22px; color: inherit; padding: 8px 12px; transition: all 0.3s ease;">
+              <i class="bi bi-moon-fill"></i>
+            </button>
+          </li>
           <li id="profileLi" style="display: none;">
             <div class="profile-dropdown-header">
               <button class="profile-btn-header">
@@ -404,7 +409,7 @@
                     <div>
                       <h3>Address</h3>
                       <p>Builders Education & Training Center Inc.<br>
-                      123 Training Avenue, Manila, Philippines</p>
+                      Purok 3 San Agustin Arayat Pampanga, Philippines</p>
                     </div>
                   </div><!-- End Info Item -->
                 </div>
@@ -573,12 +578,25 @@
   <script src="../assets/vendor/glightbox/js/glightbox.min.js"></script>
   <script src="../assets/vendor/swiper/swiper-bundle.min.js"></script>
 
+  <!-- Dark Mode & Burger Menu -->
+  <script src="../assets/js/dark-mode.js"></script>
+  <script src="../assets/js/burger-menu.js"></script>
+
   <!-- Main JS File -->
   <script src="../assets/js/main.js"></script>
 
   <!-- Logout Handler & Course Loading from API -->
   <script>
     document.addEventListener('DOMContentLoaded', function() {
+      // Load theme
+      loadTheme();
+      
+      // Attach dark mode button
+      const darkModeBtn = document.getElementById('darkModeBtn');
+      if (darkModeBtn) {
+        darkModeBtn.addEventListener('click', toggleDarkMode);
+      }
+      
       // Initialize profile dropdown
       const profileBtnHeader = document.querySelector('.profile-btn-header');
       const profileMenuHeader = document.querySelector('.profile-menu-header');
@@ -688,7 +706,7 @@
         } else if (text.includes('enroll')) {
           response = 'To enroll, click the Login button and register as a trainee. Our team will guide you through the process. Questions? Email us at admissions@betci.edu.ph';
         } else if (text.includes('contact')) {
-          response = 'Contact us at: 📞 +63 2 8123 4567 | 📧 info@betci.edu.ph | 📍 123 Training Avenue, Manila';
+          response = 'Contact us at: 📞 +63 2 8123 4567 | 📧 info@betci.edu.ph | 📍 Purok 3 San Agustin Arayat, Pampanga';
         } else {
           response = 'Thanks for your interest! How else can we help?';
         }

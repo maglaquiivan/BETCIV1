@@ -32,69 +32,59 @@
     font-weight: 600;
 }
 
-/* Dropdown Header */
-.settings-dropdown-header {
-    position: relative;
+/* Settings Button Tabs */
+.settings-button-tabs {
     margin-bottom: 20px;
 }
 
-.dropdown-title {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 12px 20px;
-    background: linear-gradient(135deg, #7f8c8d 0%, #95a5a6 100%);
-    color: white;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 18px;
+.tab-label {
+    font-size: 14px;
     font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.tab-buttons {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.tab-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: white;
+    color: #666;
+    border: 2px solid #ddd;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
     transition: all 0.3s ease;
 }
 
-.dropdown-title:hover {
-    background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+.tab-item:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    background: rgba(230, 126, 34, 0.05);
 }
 
-.dropdown-title i:first-child {
-    font-size: 24px;
+.tab-item.active {
+    background: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
 }
 
-.dropdown-chevron {
-    margin-left: auto;
-    transition: transform 0.3s ease;
+.tab-item.active:hover {
+    background: var(--primary-color);
+    color: white;
 }
 
-.dropdown-title.active .dropdown-chevron {
-    transform: rotate(180deg);
-}
-
-.dropdown-menu-settings {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    background: white;
-    border-radius: 0 0 8px 8px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
-    overflow: hidden;
-    display: none;
-    z-index: 100;
-    margin-top: -8px;
-    padding-top: 8px;
-}
-
-.dropdown-menu-settings.active {
-    display: block;
-}
-
-.dropdown-item {
-    display: block;
-    padding: 16px 20px;
-    color: #666;
-    text-decoration: none;
-    transition: all 0.2s ease;
-    border-left: 4px solid transparent;
+.tab-item i {
     font-size: 16px;
 }
 
@@ -502,6 +492,25 @@ body.dark-mode .appearance-option {
 @media (max-width: 768px) {
     .settings-content {
         padding: 16px;
+    }
+
+    .tab-label {
+        font-size: 12px;
+    }
+
+    .tab-buttons {
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .tab-item {
+        padding: 8px 12px;
+        font-size: 12px;
+        flex: 0 1 auto;
+    }
+
+    .tab-item i {
+        font-size: 14px;
     }
 
     .dropdown-title {
