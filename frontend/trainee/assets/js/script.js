@@ -201,8 +201,8 @@ function openSettings(event) {
 // ============================================
 
 window.addEventListener('resize', function() {
-    const sidebar = document.getElementById('sidebar');
-    if (window.innerWidth > 768) {
+    const sidebar = document.querySelector('.sidebar');
+    if (sidebar && window.innerWidth > 768) {
         sidebar.classList.remove('active');
     }
 });

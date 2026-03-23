@@ -18,222 +18,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <!-- Admin Dashboard CSS -->
-    <link rel="stylesheet" href="../assets/css/admin-dashboard.css" />
-    
-    <style>
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        
-        @keyframes slideOut {
-            from {
-                transform: translateX(0);
-                opacity: 1;
-            }
-            to {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-        }
-        
-        /* Modal Styles */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 9999;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            animation: fadeIn 0.3s ease;
-        }
-
-        .modal.active {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-            animation: slideUp 0.3s ease;
-        }
-
-        .modal-content.modal-small {
-            max-width: 450px;
-        }
-
-        .modal-header {
-            padding: 20px 24px;
-            border-bottom: 1px solid #e0e0e0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .modal-header h3 {
-            margin: 0;
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .modal-close {
-            background: none;
-            border: none;
-            font-size: 24px;
-            cursor: pointer;
-            color: #666;
-            padding: 0;
-            width: 32px;
-            height: 32px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: all 0.2s;
-        }
-
-        .modal-close:hover {
-            background: #f5f5f5;
-            color: #333;
-        }
-
-        .modal-body {
-            padding: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: #333;
-            font-size: 14px;
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #ddd;
-            border-radius: 6px;
-            font-size: 14px;
-            transition: border-color 0.2s;
-            box-sizing: border-box;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary-color);
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 16px;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 12px;
-            justify-content: flex-end;
-            margin-top: 24px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-primary {
-            background: var(--primary-color);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #d66f1a;
-        }
-
-        .btn-secondary {
-            background: #e0e0e0;
-            color: #333;
-        }
-
-        .btn-secondary:hover {
-            background: #d0d0d0;
-        }
-
-        .btn-danger {
-            background: var(--danger);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: #c0392b;
-        }
-
-        .delete-warning {
-            text-align: center;
-            padding: 20px;
-        }
-
-        .delete-warning i {
-            font-size: 48px;
-            color: var(--danger);
-            margin-bottom: 16px;
-        }
-
-        .delete-warning p {
-            margin: 8px 0;
-            font-size: 14px;
-        }
-
-        .delete-trainee-name {
-            font-weight: 600;
-            color: var(--text-primary);
-            font-size: 16px;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @keyframes slideUp {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=6" />
 </head>
 <body>
     <div class="admin-container">
@@ -305,13 +90,13 @@
             <!-- Top Header -->
             <header class="top-header">
                 <div class="header-left">
-                    <div class="search-container">
-                        <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search..." class="search-input">
-                    </div>
                     <button class="menu-toggle" id="menuToggle">
                         <i class="bi bi-list"></i>
                     </button>
+                    <div class="search-container">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input">
+                    </div>
                 </div>
                 <div class="header-right">
                     <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
@@ -376,18 +161,6 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content">
-                <!-- Welcome Banner -->
-                <div class="welcome-banner">
-                    <div class="welcome-text">
-                        <h1>Welcome Back, KELI!</h1>
-                        <p>You have <strong>48 new enrollments</strong> today. Continue managing the system!</p>
-                        <button class="view-btn">View Trainees</button>
-                    </div>
-                    <div class="welcome-icon">
-                        <i class="bi bi-person-workspace"></i>
-                    </div>
-                </div>
-
                 <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -685,10 +458,52 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../../assets/js/burger-menu.js"></script>
     <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
+        // Sidebar toggle for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const menuToggle = document.getElementById('menuToggle');
+            
+            // Load saved sidebar state only on desktop
+            if (window.innerWidth > 768) {
+                const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.style.marginLeft = '60px';
+                }
+            }
+            
+            // Toggle sidebar
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    // Update main-content margin based on sidebar state and screen size
+                    if (window.innerWidth > 768) {
+                        if (sidebar.classList.contains('collapsed')) {
+                            mainContent.style.marginLeft = '60px';
+                            localStorage.setItem('sidebarCollapsed', 'true');
+                        } else {
+                            mainContent.style.marginLeft = '210px';
+                            localStorage.setItem('sidebarCollapsed', 'false');
+                        }
+                    }
+                });
+            }
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('collapsed');
+                    }
+                }
+            });
+        });
+
         // Ensure dark mode function is available
         if (typeof toggleDarkMode === 'undefined') {
             window.toggleDarkMode = function() {

@@ -327,10 +327,39 @@
     </div>
 
     <script src="../../admin/assets/js/courses-data.js"></script>
-    <script src="../../assets/js/burger-menu.js"></script>
     <script src="../../assets/js/dark-mode.js"></script>
     <script src="../assets/js/script.js"></script>
     <script>
+        // Sidebar toggle for mobile
+        document.addEventListener('DOMContentLoaded', function() {
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const menuToggle = document.getElementById('menuToggle');
+            
+            // Load saved sidebar state
+            const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+            if (sidebarCollapsed) {
+                sidebar.classList.add('collapsed');
+                mainContent.style.marginLeft = '60px';
+            }
+            
+            // Toggle sidebar
+            if (menuToggle) {
+                menuToggle.addEventListener('click', function() {
+                    sidebar.classList.toggle('collapsed');
+                    
+                    // Update main-content margin based on sidebar state
+                    if (sidebar.classList.contains('collapsed')) {
+                        mainContent.style.marginLeft = '60px';
+                        localStorage.setItem('sidebarCollapsed', 'true');
+                    } else {
+                        mainContent.style.marginLeft = '210px';
+                        localStorage.setItem('sidebarCollapsed', 'false');
+                    }
+                });
+            }
+        });
+
         // Initialize dark mode on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadTheme();
