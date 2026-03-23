@@ -16,6 +16,56 @@
     <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     
     <style>
+        /* Tab Navigation Styles */
+        .tab-navigation {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab-btn i {
+            font-size: 18px;
+        }
+
+        .tab-btn:hover {
+            color: #E67E22;
+            background: rgba(230, 126, 34, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #E67E22;
+            border-bottom-color: #E67E22;
+            font-weight: 600;
+        }
+
+        @media (max-width: 768px) {
+            .tab-btn span {
+                display: none;
+            }
+            
+            .tab-btn {
+                padding: 12px 16px;
+            }
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -24,7 +74,7 @@
 
         body.admission-page {
             font-family: 'Roboto', sans-serif;
-            background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%);
+            background: #f5f5f5;
             padding: 20px;
             min-height: 100vh;
         }
@@ -35,69 +85,87 @@
 
         .admission-slip-container {
             background: white;
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border: 2px solid #333;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
-        /* Title */
+        /* Header - matching application form */
         .slip-title {
+            background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%);
+            padding: 30px 20px;
             text-align: center;
-            background: #B0E0E6;
-            border-bottom: 2px solid #333;
-            padding: 8px;
-            font-size: 18px;
-            font-weight: 900;
-            letter-spacing: 0.5px;
-            color: #333;
+            color: white;
+            border: none;
+        }
+
+        .slip-title h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin: 0 0 10px 0;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .slip-title p {
+            font-size: 14px;
+            margin: 0;
+            opacity: 0.95;
         }
 
         /* Form Content */
         .form-content {
-            padding: 12px;
+            padding: 30px;
         }
 
         /* Reference Number Section */
         .ref-section {
-            margin-bottom: 8px;
-            border: 1px solid #333;
-            padding: 8px;
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fafafa;
         }
 
         .ref-label {
-            font-weight: 700;
-            margin-bottom: 5px;
+            font-weight: 600;
+            margin-bottom: 10px;
             display: block;
-            font-size: 11px;
+            font-size: 13px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .ref-boxes {
             display: flex;
-            gap: 2px;
+            gap: 8px;
             flex-wrap: wrap;
         }
 
         .ref-input {
-            width: 32px;
-            height: 28px;
-            border: 1px solid #333;
-            padding: 1px;
+            width: 45px;
+            height: 45px;
+            border: 1px solid #ddd;
+            padding: 5px;
             text-align: center;
-            font-weight: 700;
-            font-size: 10px;
+            font-weight: 600;
+            font-size: 14px;
             font-family: 'Roboto', sans-serif;
             cursor: pointer;
+            border-radius: 4px;
+            transition: all 0.3s ease;
         }
 
         .ref-input:focus {
             outline: none;
-            background: #fffef0;
+            border-color: #E67E22;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
         }
 
-        .ref-yellow { background: #FFFF99; }
-        .ref-light-blue { background: #ADD8E6; }
+        .ref-yellow { background: #FFF9E6; }
+        .ref-light-blue { background: #E8F4F8; }
         .ref-pink { background: #FFB6C1; }
         .ref-green { background: #90EE90; }
         .ref-orange { background: #FFD580; }
@@ -461,6 +529,95 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background: #1e1e1e;
+        }
+
+        body.dark-mode .admission-slip-container {
+            background: #2a2a2a;
+        }
+
+        body.dark-mode .slip-title {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+        }
+
+        body.dark-mode .form-content {
+            background: #2a2a2a;
+        }
+
+        body.dark-mode .ref-section {
+            background: #1e1e1e;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .ref-label,
+        body.dark-mode .field-label,
+        body.dark-mode .assessment-label,
+        body.dark-mode .officer-label,
+        body.dark-mode .officer-header,
+        body.dark-mode .checklist-title,
+        body.dark-mode .datetime-label,
+        body.dark-mode .signature-label,
+        body.dark-mode .date-label,
+        body.dark-mode .picture-text {
+            color: #ffffff;
+        }
+
+        body.dark-mode .ref-input,
+        body.dark-mode .field-input,
+        body.dark-mode .assessment-input,
+        body.dark-mode .officer-input,
+        body.dark-mode .datetime-input,
+        body.dark-mode .date-input {
+            background: #1e1e1e;
+            color: #e0e0e0;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .picture-box {
+            background: #1e1e1e;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .picture-placeholder-text,
+        body.dark-mode .picture-subtext {
+            color: #999;
+        }
+
+        body.dark-mode .officer-section,
+        body.dark-mode .checklist-section,
+        body.dark-mode .datetime-section,
+        body.dark-mode .signature-section,
+        body.dark-mode .note-section {
+            background: #2a2a2a;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .checklist-item {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .note-section {
+            color: #64B5F6;
+        }
+
+        body.dark-mode .tab-navigation {
+            background: #2a2a2a !important;
+        }
+
+        body.dark-mode .tab-btn {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .tab-btn.active {
+            color: #E67E22;
+        }
+
+        body.dark-mode .tab-btn:hover {
+            background: rgba(230, 126, 34, 0.1);
+        }
+
         /* Print Styles */
         @media print {
             body {
@@ -571,9 +728,32 @@
 </head>
 <body class="admission-page">
     <main class="main">
+        <!-- Tab Navigation -->
+        <div class="tab-navigation" style="background: white; padding: 15px 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <button class="tab-btn" onclick="window.location.href='../assessment.html'">
+                <i class="bi bi-grid"></i>
+                <span>Overview</span>
+            </button>
+            <button class="tab-btn" onclick="window.location.href='application-form.html'">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Application Form</span>
+            </button>
+            <button class="tab-btn active">
+                <i class="bi bi-calendar-check"></i>
+                <span>Admission Slip</span>
+            </button>
+            <button class="tab-btn" onclick="alert('Results will be available after assessment completion')">
+                <i class="bi bi-trophy"></i>
+                <span>Results</span>
+            </button>
+        </div>
+
         <div class="admission-slip-container">
             <!-- Title -->
-            <div class="slip-title">ADMISSION SLIP</div>
+            <div class="slip-title">
+                <h1><i class="bi bi-file-earmark-check"></i> Admission Slip</h1>
+                <p>TESDA Assessment Center | Competency Assessment</p>
+            </div>
 
             <!-- Form Content -->
             <div class="form-content">
@@ -716,7 +896,7 @@
                 <!-- Action Buttons -->
                 <div class="action-buttons">
                     <button type="button" class="action-btn save-btn" onclick="saveAdmissionSlip()">
-                        <i class="bi bi-download"></i> Save as PDF
+                        <i class="bi bi-file-earmark-pdf"></i> Save
                     </button>
                     <button type="button" class="action-btn print-btn" onclick="printAdmissionSlip()">
                         <i class="bi bi-printer"></i> Print
@@ -760,6 +940,12 @@
 
         // Load applicant data from localStorage
         document.addEventListener('DOMContentLoaded', function() {
+            // Load dark mode theme
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+            }
+
             const applicationData = localStorage.getItem('applicationData');
             if (applicationData) {
                 try {

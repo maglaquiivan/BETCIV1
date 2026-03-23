@@ -9,6 +9,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
     <link href="../assets/css/dashboard.css" rel="stylesheet">
     <link href="../assets/css/styles.css" rel="stylesheet">
+<<<<<<< HEAD
     
     <style>
         .assessment-section { padding: 20px; background: white; }
@@ -42,6 +43,113 @@
         
         .empty-state { text-align: center; padding: 60px 20px; color: #999; grid-column: 1/-1; }
         .empty-state i { font-size: 48px; color: #ddd; margin-bottom: 15px; }
+=======
+    <style>
+        /* Tab Navigation Styles */
+        .tab-navigation {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0 30px 0;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            background: transparent;
+            color: #666;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            white-space: nowrap;
+        }
+
+        .tab-btn i {
+            font-size: 18px;
+        }
+
+        .tab-btn:hover {
+            color: #E67E22;
+            background: rgba(230, 126, 34, 0.05);
+        }
+
+        .tab-btn.active {
+            color: #E67E22;
+            border-bottom-color: #E67E22;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .tab-btn span {
+                display: none;
+            }
+            
+            .tab-btn {
+                padding: 12px 16px;
+            }
+        }
+
+        /* Dark Mode Styles for Assessment Cards */
+        body.dark-mode .dashboard-content {
+            background: #1e1e1e;
+        }
+
+        body.dark-mode .section-header h2 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .assessment-card {
+            background: #2a2a2a;
+            border-color: #3a3a3a;
+        }
+
+        body.dark-mode .assessment-card h3 {
+            color: #ffffff;
+        }
+
+        body.dark-mode .assessment-card p {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .assessment-status {
+            color: #ffffff;
+        }
+
+        body.dark-mode .assessment-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        body.dark-mode .tab-btn {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .tab-btn.active {
+            color: var(--primary-color);
+        }
+
+        /* Fix burger menu visibility */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex !important;
+            }
+        }
+>>>>>>> 20257f4b9b72fcb0a4e822e8e7c0a8c920866b48
     </style>
 </head>
 <body>
@@ -277,6 +385,86 @@
                     </div>
                 </div>
             </div>
+<<<<<<< HEAD
+=======
+        </header>
+
+        <!-- Assessment Section -->
+        <div class="dashboard-content">
+            <div class="section-header">
+                <h2><i class="bi bi-clipboard-check"></i> Assessment Center</h2>
+            </div>
+            
+            <!-- Tab Navigation -->
+            <div class="tab-navigation">
+                <button class="tab-btn active" onclick="switchTab('overview')">
+                    <i class="bi bi-grid"></i>
+                    <span>Overview</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('application')">
+                    <i class="bi bi-file-earmark-text"></i>
+                    <span>Application Form</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('admission')">
+                    <i class="bi bi-calendar-check"></i>
+                    <span>Admission Slip</span>
+                </button>
+                <button class="tab-btn" onclick="switchTab('results')">
+                    <i class="bi bi-trophy"></i>
+                    <span>Results</span>
+                </button>
+            </div>
+            
+            <div class="assessment-grid" id="overviewTab">
+                <div class="assessment-card">
+                    <div class="assessment-icon">
+                        <i class="bi bi-file-earmark-text"></i>
+                    </div>
+                    <h3>Application Form</h3>
+                    <p>Submit your course application and required documents</p>
+                    <div class="assessment-status pending">
+                        <i class="bi bi-clock"></i> Ready to Apply
+                    </div>
+                    <button class="assessment-btn" onclick="openApplicationForm()">Start Application</button>
+                </div>
+                
+                <div class="assessment-card">
+                    <div class="assessment-icon">
+                        <i class="bi bi-calendar-check"></i>
+                    </div>
+                    <h3>Admission Slip</h3>
+                    <p>Generate and download your admission slip and exam schedule</p>
+                    <div class="assessment-status completed">
+                        <i class="bi bi-check-circle"></i> Ready for Download
+                    </div>
+                    <button class="assessment-btn" onclick="openAdmissionSlip()">Generate Slip</button>
+                </div>
+                
+                <div class="assessment-card">
+                    <div class="assessment-icon">
+                        <i class="bi bi-clipboard-data"></i>
+                    </div>
+                    <h3>Practical Assessment</h3>
+                    <p>Schedule your hands-on practical examination</p>
+                    <div class="assessment-status scheduled">
+                        <i class="bi bi-calendar"></i> Scheduled: March 15, 2024
+                    </div>
+                    <button class="assessment-btn">Reschedule</button>
+                </div>
+                
+                <div class="assessment-card">
+                    <div class="assessment-icon">
+                        <i class="bi bi-award"></i>
+                    </div>
+                    <h3>Certification</h3>
+                    <p>View and download your certificates</p>
+                    <div class="assessment-status available">
+                        <i class="bi bi-download"></i> 2 Certificates Available
+                    </div>
+                    <button class="assessment-btn">Download Certificates</button>
+                </div>
+            </div>
+>>>>>>> 20257f4b9b72fcb0a4e822e8e7c0a8c920866b48
         </div>
     </div>
 
@@ -349,6 +537,7 @@
             }
         }
 
+<<<<<<< HEAD
         // Assessment functions
         function openApplicationForm() {
             alert('Application form functionality coming soon!');
@@ -365,6 +554,57 @@
         function downloadCertificates() {
             alert('Download Certificates functionality coming soon!');
         }
+=======
+        // Tab switching function
+        function switchTab(tabName) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            event.target.closest('.tab-btn').classList.add('active');
+            
+            // Handle tab content based on tab name
+            if (tabName === 'application') {
+                openApplicationForm();
+            } else if (tabName === 'admission') {
+                openAdmissionSlip();
+            } else if (tabName === 'results') {
+                alert('Results will be available after assessment completion');
+            }
+        }
+
+        // Navigate to application form
+        function openApplicationForm() {
+            window.location.href = 'assessment/application-form.html';
+        }
+
+        // Navigate to admission slip
+        function openAdmissionSlip() {
+            window.location.href = 'assessment/admission-slip.html';
+        }
+
+        // Check application status on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const applicationData = localStorage.getItem('applicationData');
+            if (applicationData) {
+                const data = JSON.parse(applicationData);
+                const statusDiv = document.querySelector('.assessment-card:first-child .assessment-status');
+                const button = document.querySelector('.assessment-card:first-child .assessment-btn');
+                
+                if (data.status === 'submitted') {
+                    statusDiv.className = 'assessment-status completed';
+                    statusDiv.innerHTML = '<i class="bi bi-check-circle"></i> Submitted';
+                    button.textContent = 'View Application';
+                } else if (data.status === 'saved') {
+                    statusDiv.className = 'assessment-status scheduled';
+                    statusDiv.innerHTML = '<i class="bi bi-save"></i> Saved - Continue';
+                    button.textContent = 'Continue Application';
+                }
+            }
+        });
+>>>>>>> 20257f4b9b72fcb0a4e822e8e7c0a8c920866b48
     </script>
 </body>
 </html>
