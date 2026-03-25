@@ -1,0 +1,18 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  
+  # Remove .html extension
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^([^\.]+)$ $1.html [NC,L]
+  
+  # Redirect /BETCIV1-main/public/index.html to /frontend/public/index.html
+  RewriteCond %{REQUEST_URI} ^/BETCIV1-main/public/index\.html$ [NC]
+  RewriteRule ^BETCIV1-main/public/index\.html$ frontend/public/index.html [L,R=301]
+  
+  # Redirect root to frontend/public/index.html
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^$ frontend/public/index.html [L]
+</IfModule>

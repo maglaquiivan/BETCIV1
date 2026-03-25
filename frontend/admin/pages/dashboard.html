@@ -3,11 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' ws: wss: http: https:; object-src 'none'; base-uri 'self';">
     <title>BETCI | Admin Dashboard</title>
     <meta name="description" content="BETCI Admin Dashboard" />
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="../../assets/img/logo.png" />
+    <!-- Favicon -->    
+    <link rel="icon" type="image/png" href="../../assets/img/logo.png" />
     
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -90,13 +91,13 @@
             <!-- Top Header -->
             <header class="top-header">
                 <div class="header-left">
+                    <div class="search-container">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search">
+                    </div>
                     <button class="menu-toggle" id="menuToggle">
                         <i class="bi bi-list"></i>
                     </button>
-                    <div class="search-container">
-                        <i class="bi bi-search"></i>
-                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input">
-                    </div>
                 </div>
                 <div class="header-right">
                     <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
@@ -126,7 +127,7 @@
                                             <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
                                         </svg>
                                     </svg>
-                                </div>
+                                </div> 
                                 <div class="dropdown-user-info">
                                     <h4>ADMIN USER</h4>
                                     <p>admin@betci.edu.ph</p>
@@ -161,6 +162,12 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content">
+                <!-- Page Title -->
+                <div style="background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%); padding: 24px 32px; border-radius: 12px; margin-bottom: 32px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.2);">
+                    <h1 style="font-size: 32px; font-weight: 700; color: white; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">Welcome to Admin Dashboard</h1>
+                    <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 14px;">Manage your training center efficiently</p>
+                </div>
+                
                 <!-- Stats Cards -->
                 <div class="stats-grid">
                     <div class="stat-card">
@@ -503,6 +510,58 @@
                 }
             });
         });
+    </script>
+    <script>
+        // PROFILE DROPDOWN - IMMEDIATE EXECUTION
+        (function() {
+            function initProfileDropdown() {
+                const userProfile = document.getElementById('userProfile');
+                if (!userProfile) {
+                    return;
+                }
+                
+                userProfile.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.classList.toggle('active');
+                });
+                
+                document.addEventListener('click', function(e) {
+                    if (!e.target.closest('.user-profile')) {
+                        userProfile.classList.remove('active');
+                    }
+                });
+                
+                // Close dropdown when clicking menu items
+                const dropdownLinks = document.querySelectorAll('.dropdown-menu a');
+                dropdownLinks.forEach(link => {
+                    link.addEventListener('click', function() {
+                        userProfile.classList.remove('active');
+                    });
+                });
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initProfileDropdown);
+            } else {
+                initProfileDropdown();
+            }
+        })();
+        
+        // LOGOUT FUNCTION
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Clear any stored session data
+                localStorage.removeItem('userSession');
+                sessionStorage.removeItem('userSession');
+                localStorage.removeItem('adminSession');
+                sessionStorage.removeItem('adminSession');
+                
+                // Redirect to login page
+                window.location.href = '../login.html';
+            }
+        }
+        // Burger menu is now handled by burger-menu.js
 
         // Ensure dark mode function is available
         if (typeof toggleDarkMode === 'undefined') {
@@ -528,25 +587,9 @@
             }
         });
         
-        function handleLogout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../login.html';
-            }
-        }
+        // Logout function moved to top script block
 
-        // User profile dropdown
-        document.getElementById('userProfile').addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.getElementById('userDropdown').classList.toggle('active');
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.user-profile')) {
-                document.getElementById('userDropdown').classList.remove('active');
-            }
-        });
+        // User profile dropdown - REMOVED (now in separate script block above)
 
         // Toggle Training Catalog submenu
         function toggleTrainingCatalog(event) {
@@ -713,27 +756,27 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="form-label" for="traineeName">Full Name *</label>
-                        <input type="text" id="traineeName" class="form-control" placeholder="e.g., John Doe" required>
+                        <input type="text" id="traineeName" name="traineeName" class="form-control" placeholder="e.g., John Doe" autocomplete="name" required>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="traineeRole">Role/Position *</label>
-                        <input type="text" id="traineeRole" class="form-control" placeholder="e.g., Forklift Operator" required>
+                        <input type="text" id="traineeRole" name="traineeRole" class="form-control" placeholder="e.g., Forklift Operator" autocomplete="organization-title" required>
                     </div>
                     
                     <div class="form-group">
                         <label class="form-label" for="traineeEmail">Email Address *</label>
-                        <input type="email" id="traineeEmail" class="form-control" placeholder="e.g., john@example.com" required>
+                        <input type="email" id="traineeEmail" name="traineeEmail" class="form-control" placeholder="e.g., john@example.com" autocomplete="email" required>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label" for="traineeEnrolled">Enrolled Date *</label>
-                            <input type="text" id="traineeEnrolled" class="form-control" placeholder="e.g., Jan 15, 2024" required>
+                            <input type="text" id="traineeEnrolled" name="traineeEnrolled" class="form-control" placeholder="e.g., Jan 15, 2024" autocomplete="off" required>
                         </div>
                         <div class="form-group">
                             <label class="form-label" for="traineeStatus">Status *</label>
-                            <select id="traineeStatus" class="form-control" required>
+                            <select id="traineeStatus" name="traineeStatus" class="form-control" required>
                                 <option value="ACTIVE">Active</option>
                                 <option value="PENDING">Pending</option>
                                 <option value="COMPLETED">Completed</option>
@@ -769,7 +812,7 @@
                     
                     <div class="form-group" style="text-align: left;">
                         <label class="form-label" for="deleteConfirmInput">Type the trainee's name to confirm:</label>
-                        <input type="text" id="deleteConfirmInput" class="form-control" placeholder="Enter trainee name" autocomplete="off">
+                        <input type="text" id="deleteConfirmInput" name="deleteConfirmInput" class="form-control" placeholder="Enter trainee name" autocomplete="off">
                         <p id="deleteErrorMsg" style="color: var(--danger); font-size: 12px; margin-top: 8px; display: none;">Name does not match. Please try again.</p>
                     </div>
                 </div>

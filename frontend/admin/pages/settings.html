@@ -18,7 +18,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <!-- Admin Dashboard CSS -->
-    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=6" />
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=7" />
     
     <!-- Settings Page CSS -->
     <link rel="stylesheet" href="../assets/css/settings.css" />
@@ -290,12 +290,7 @@
     <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
-        // Load dark mode theme
-        if (typeof loadTheme === 'function') {
-            loadTheme();
-        }
-
-        // Burger menu functionality
+        // Sidebar toggle for mobile
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.querySelector('.sidebar');
             const mainContent = document.querySelector('.main-content');
@@ -337,6 +332,12 @@
                 }
             });
         });
+    </script>
+    <script>
+        // Load dark mode theme
+        if (typeof loadTheme === 'function') {
+            loadTheme();
+        }
         // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
             // Profile dropdown toggle
@@ -344,20 +345,14 @@
             if (userProfile) {
                 userProfile.addEventListener('click', function(e) {
                     e.stopPropagation();
-                    const dropdown = this.querySelector('.user-dropdown');
-                    if (dropdown) {
-                        dropdown.classList.toggle('active');
-                    }
+                    this.classList.toggle('active');
                 });
             }
 
             document.addEventListener('click', function(e) {
                 const userProfile = document.querySelector('.user-profile');
                 if (userProfile && !e.target.closest('.user-profile')) {
-                    const dropdown = userProfile.querySelector('.user-dropdown');
-                    if (dropdown) {
-                        dropdown.classList.remove('active');
-                    }
+                    userProfile.classList.remove('active');
                 }
             });
 
@@ -475,8 +470,8 @@
                 section.classList.remove('active');
             });
 
-            // Remove active from all dropdown items
-            document.querySelectorAll('.dropdown-item').forEach(item => {
+            // Remove active from all tab buttons
+            document.querySelectorAll('.tab-item').forEach(item => {
                 item.classList.remove('active');
             });
 
@@ -486,19 +481,11 @@
                 selectedSection.classList.add('active');
             }
             
-            const clickedItem = event.target.closest('.dropdown-item');
-            if (clickedItem) {
-                clickedItem.classList.add('active');
+            // Add active to clicked tab button
+            const clickedButton = event.target.closest('.tab-item');
+            if (clickedButton) {
+                clickedButton.classList.add('active');
             }
-
-            // Update breadcrumb
-            updateBreadcrumb(sectionId);
-
-            // Close dropdown
-            const dropdownMenu = document.querySelector('.dropdown-menu-settings');
-            const dropdownTitle = document.querySelector('.dropdown-title');
-            if (dropdownMenu) dropdownMenu.classList.remove('active');
-            if (dropdownTitle) dropdownTitle.classList.remove('active');
         }
         
         // Update breadcrumb function
