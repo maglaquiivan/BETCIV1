@@ -83,9 +83,6 @@
                     <h3>BETCI</h3>
                     <p>Trainee</p>
                 </div>
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="bi bi-list"></i>
-                </button>
             </div>
             
             <nav class="sidebar-nav">
@@ -131,7 +128,7 @@
                 <div class="header-left">
                     <div class="search-container">
                         <i class="bi bi-search"></i>
-                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input">
+                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search">
                     </div>
                 </div>
                 <div class="header-right">
@@ -195,8 +192,8 @@
                                     <div class="theme-toggle-wrapper">
                                         <i class="bi bi-palette"></i>
                                         <span>Dark Mode</span>
-                                        <label class="theme-switch">
-                                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                                        <label class="theme-switch" for="darkModeToggle">
+                                            <input type="checkbox" id="darkModeToggle" name="darkMode" onchange="toggleDarkMode()" autocomplete="off">
                                             <span class="theme-slider"></span>
                                         </label>
                                     </div>
@@ -442,7 +439,7 @@
     <script src="../../assets/js/dark-mode.js"></script>
     <script src="../assets/js/dashboard-fixed.js"></script>
     <script>
-        // Sidebar toggle for mobile
+        // Sidebar toggle for mobile - EXACT COPY FROM ADMIN
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.querySelector('.sidebar');
             const mainContent = document.querySelector('.main-content');
@@ -457,13 +454,20 @@
                 }
             }
             
-            // Toggle sidebar
+            // Toggle sidebar or mobile menu based on screen size
             if (menuToggle) {
                 menuToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('collapsed');
-                    
-                    // Update main-content margin based on sidebar state and screen size
-                    if (window.innerWidth > 768) {
+                    if (window.innerWidth <= 768) {
+                        // Mobile: Show full-screen menu overlay
+                        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+                        if (mobileMenuOverlay) {
+                            mobileMenuOverlay.classList.add('active');
+                            document.body.style.overflow = 'hidden';
+                        }
+                    } else {
+                        // Desktop: Toggle sidebar collapse
+                        sidebar.classList.toggle('collapsed');
+                        
                         if (sidebar.classList.contains('collapsed')) {
                             mainContent.style.marginLeft = '60px';
                             localStorage.setItem('sidebarCollapsed', 'true');
@@ -475,11 +479,37 @@
                 });
             }
             
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
-                        sidebar.classList.remove('collapsed');
+            // Close mobile menu
+            const mobileMenuClose = document.getElementById('mobileMenuClose');
+            if (mobileMenuClose) {
+                mobileMenuClose.addEventListener('click', function() {
+                    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+                    if (mobileMenuOverlay) {
+                        mobileMenuOverlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            }
+            
+            // Close mobile menu when clicking a link
+            const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+            mobileMenuLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+                    if (mobileMenuOverlay) {
+                        mobileMenuOverlay.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+            });
+            
+            // Close mobile menu on window resize to desktop
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
+                    if (mobileMenuOverlay) {
+                        mobileMenuOverlay.classList.remove('active');
+                        document.body.style.overflow = '';
                     }
                 }
             });
@@ -553,5 +583,61 @@
             }
         }
     </script>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <div class="mobile-menu-header">
+            <div class="mobile-menu-logo">
+                <img src="../assets/img/logo.png" alt="BETCI Logo">
+                <div class="mobile-menu-title">
+                    <h3>BETCI</h3>
+                    <p>Trainee Dashboard</p>
+                </div>
+            </div>
+            <button class="mobile-menu-close" id="mobileMenuClose">
+                <i class="bi bi-x"></i>
+            </button>
+        </div>
+        <nav class="mobile-menu-nav">
+            <a href="dashboard.html" class="mobile-menu-link active">
+                <i class="bi bi-house-door"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="courses.html" class="mobile-menu-link">
+                <i class="bi bi-book"></i>
+                <span>Courses</span>
+            </a>
+            <a href="assessment.html" class="mobile-menu-link">
+                <i class="bi bi-clipboard-check"></i>
+                <span>Assessment</span>
+            </a>
+            <a href="attendance.html" class="mobile-menu-link">
+                <i class="bi bi-calendar-check"></i>
+                <span>Attendance</span>
+            </a>
+            <a href="records.html" class="mobile-menu-link">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>Records</span>
+            </a>
+            <a href="manage-profile.html" class="mobile-menu-link">
+                <i class="bi bi-person-circle"></i>
+                <span>Profile</span>
+            </a>
+            <a href="settings.html" class="mobile-menu-link">
+                <i class="bi bi-gear"></i>
+                <span>Settings</span>
+            </a>
+            <div class="mobile-menu-footer">
+                <button class="mobile-menu-logout" onclick="handleLogout()">
+                    <i class="bi bi-box-arrow-right"></i>
+                    <span>Logout</span>
+                </button>
+                <button class="mobile-menu-dark-toggle" onclick="toggleDarkMode()">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
+            </div>
+        </nav>
+    </div>
+
 </body>
 </html>

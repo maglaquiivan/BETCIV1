@@ -173,9 +173,6 @@
                 <h3>BETCI</h3>
                 <p>Trainee</p>
             </div>
-            <button class="sidebar-toggle" id="sidebarToggle">
-                <i class="bi bi-list"></i>
-            </button>
         </div>
         
         <nav class="sidebar-nav">
@@ -221,7 +218,7 @@
                 <div class="header-left">
                     <div class="search-container">
                         <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search..." class="search-input">
+                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search">
                     </div>
                 </div>
                 <div class="header-right">
@@ -306,7 +303,7 @@
             </div>
             
             <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchTab('settings')">
+                <button class="tab-btn active" onclick="switchSettingsTab('profile', event)">
                     <i class="bi bi-person"></i> My Profile
                 </button>
                 <button class="tab-btn" onclick="switchSettingsTab('password', event)">
@@ -414,18 +411,21 @@
                     </div>
 
                     <form id="passwordForm" class="profile-form">
+                        <!-- Hidden username field for accessibility -->
+                        <input type="text" name="username" autocomplete="username" style="display:none;" value="KELI" readonly>
+                        
                         <div class="form-group">
                             <label>Current Password</label>
-                            <input type="password" class="form-control" placeholder="Enter your current password" required>
+                            <input type="password" class="form-control" placeholder="Enter your current password" autocomplete="current-password" required>
                         </div>
                         <div class="form-group">
                             <label>New Password</label>
-                            <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" required>
+                            <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" autocomplete="new-password" required>
                             <p class="form-hint">Password must be at least 8 characters long</p>
                         </div>
                         <div class="form-group">
                             <label>Confirm Password</label>
-                            <input type="password" class="form-control" placeholder="Confirm new password" required>
+                            <input type="password" class="form-control" placeholder="Confirm new password" autocomplete="new-password" required>
                         </div>
                         <button type="submit" class="btn-primary">
                             <i class="bi bi-lock"></i> Update Password
@@ -504,12 +504,6 @@
                 }
             }
         });
-
-        function switchTab(tab) {
-            document.getElementById('settingsTab').style.display = 'block';
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        }
 
         function switchSettingsTab(tabName, event) {
             if (event) {
@@ -631,28 +625,42 @@
             const mainContent = document.querySelector('.main-content');
             const menuToggle = document.getElementById('menuToggle');
             
-            // Load saved sidebar state
-            const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (sidebarCollapsed) {
-                sidebar.classList.add('collapsed');
-                mainContent.style.marginLeft = '60px';
+            // Load saved sidebar state only on desktop
+            if (window.innerWidth > 768) {
+                const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.style.marginLeft = '60px';
+                }
             }
             
             // Toggle sidebar
             if (menuToggle) {
                 menuToggle.addEventListener('click', function() {
+                    // Toggle sidebar - use 'collapsed' class
                     sidebar.classList.toggle('collapsed');
                     
-                    // Update main-content margin based on sidebar state
-                    if (sidebar.classList.contains('collapsed')) {
-                        mainContent.style.marginLeft = '60px';
-                        localStorage.setItem('sidebarCollapsed', 'true');
-                    } else {
-                        mainContent.style.marginLeft = '210px';
-                        localStorage.setItem('sidebarCollapsed', 'false');
+                    // Update main-content margin based on sidebar state and screen size
+                    if (window.innerWidth > 768) {
+                        if (sidebar.classList.contains('collapsed')) {
+                            mainContent.style.marginLeft = '60px';
+                            localStorage.setItem('sidebarCollapsed', 'true');
+                        } else {
+                            mainContent.style.marginLeft = '210px';
+                            localStorage.setItem('sidebarCollapsed', 'false');
+                        }
                     }
                 });
             }
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('collapsed');
+                    }
+                }
+            });
         });
 
         // Handle logout
@@ -665,7 +673,7 @@
         }
 
         // Settings tab switching
-        function switchTab(tabName, event) {
+        function switchSettingsTab(tabName, event) {
             if (event) {
                 event.preventDefault();
             }
@@ -674,8 +682,8 @@
             const tabs = document.querySelectorAll('.settings-tab-content');
             tabs.forEach(tab => tab.classList.remove('active'));
             
-            // Remove active class from all buttons
-            const buttons = document.querySelectorAll('.settings-tab');
+            // Remove active class from all buttons (both tab-btn and settings-tab)
+            const buttons = document.querySelectorAll('.tab-btn, .settings-tab');
             buttons.forEach(btn => btn.classList.remove('active'));
             
             // Show selected tab
@@ -686,7 +694,10 @@
             
             // Add active class to clicked button
             if (event && event.target) {
-                event.target.closest('.settings-tab').classList.add('active');
+                const clickedBtn = event.target.closest('.tab-btn') || event.target.closest('.settings-tab');
+                if (clickedBtn) {
+                    clickedBtn.classList.add('active');
+                }
             }
         }
 

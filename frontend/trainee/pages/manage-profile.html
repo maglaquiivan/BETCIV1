@@ -547,9 +547,6 @@
                     <h3>BETCI</h3>
                     <p>Trainee</p>
                 </div>
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="bi bi-list"></i>
-                </button>
             </div>
             
             <nav class="sidebar-nav">
@@ -595,7 +592,7 @@
                 <div class="header-left">
                     <div class="search-container">
                         <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search..." class="search-input">
+                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search">
                     </div>
                 </div>
                 <div class="header-right">
@@ -892,28 +889,42 @@
             const mainContent = document.querySelector('.main-content');
             const menuToggle = document.getElementById('menuToggle');
             
-            // Load saved sidebar state
-            const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-            if (sidebarCollapsed) {
-                sidebar.classList.add('collapsed');
-                mainContent.style.marginLeft = '60px';
+            // Load saved sidebar state only on desktop
+            if (window.innerWidth > 768) {
+                const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
+                if (sidebarCollapsed) {
+                    sidebar.classList.add('collapsed');
+                    mainContent.style.marginLeft = '60px';
+                }
             }
             
             // Toggle sidebar
             if (menuToggle) {
                 menuToggle.addEventListener('click', function() {
+                    // Toggle sidebar - use 'collapsed' class
                     sidebar.classList.toggle('collapsed');
                     
-                    // Update main-content margin based on sidebar state
-                    if (sidebar.classList.contains('collapsed')) {
-                        mainContent.style.marginLeft = '60px';
-                        localStorage.setItem('sidebarCollapsed', 'true');
-                    } else {
-                        mainContent.style.marginLeft = '210px';
-                        localStorage.setItem('sidebarCollapsed', 'false');
+                    // Update main-content margin based on sidebar state and screen size
+                    if (window.innerWidth > 768) {
+                        if (sidebar.classList.contains('collapsed')) {
+                            mainContent.style.marginLeft = '60px';
+                            localStorage.setItem('sidebarCollapsed', 'true');
+                        } else {
+                            mainContent.style.marginLeft = '210px';
+                            localStorage.setItem('sidebarCollapsed', 'false');
+                        }
                     }
                 });
             }
+            
+            // Close sidebar when clicking outside on mobile
+            document.addEventListener('click', function(e) {
+                if (window.innerWidth <= 768) {
+                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
+                        sidebar.classList.remove('collapsed');
+                    }
+                }
+            });
         });
 
         // Load dark mode theme

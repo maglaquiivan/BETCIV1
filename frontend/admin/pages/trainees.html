@@ -92,7 +92,7 @@
                 <div class="header-left">
                     <div class="search-container">
                         <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search trainees..." class="search-input">
+                        <input type="text" id="searchInput" name="search" placeholder="Search trainees..." class="search-input" autocomplete="off" aria-label="Search trainees">
                     </div>
                     <button class="menu-toggle" id="menuToggle">
                         <i class="bi bi-list"></i>
@@ -575,28 +575,28 @@
             <form id="traineeForm" onsubmit="saveTrainee(event)">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="form-label">Full Name *</label>
-                        <input type="text" id="traineeName" class="form-control" placeholder="e.g., John Doe" required>
+                        <label class="form-label" for="traineeName">Full Name *</label>
+                        <input type="text" id="traineeName" name="traineeName" class="form-control" placeholder="e.g., John Doe" autocomplete="name" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Role/Position *</label>
-                        <input type="text" id="traineeRole" class="form-control" placeholder="e.g., Forklift Operator" required>
+                        <label class="form-label" for="traineeRole">Role/Position *</label>
+                        <input type="text" id="traineeRole" name="traineeRole" class="form-control" placeholder="e.g., Forklift Operator" autocomplete="organization-title" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Email Address *</label>
-                        <input type="email" id="traineeEmail" class="form-control" placeholder="e.g., john@example.com" required>
+                        <label class="form-label" for="traineeEmail">Email Address *</label>
+                        <input type="email" id="traineeEmail" name="traineeEmail" class="form-control" placeholder="e.g., john@example.com" autocomplete="email" required>
                     </div>
                     
                     <div class="form-row">
                         <div class="form-group">
-                            <label class="form-label">Enrolled Date *</label>
-                            <input type="text" id="traineeEnrolled" class="form-control" placeholder="e.g., Jan 15, 2024" required>
+                            <label class="form-label" for="traineeEnrolled">Enrolled Date *</label>
+                            <input type="text" id="traineeEnrolled" name="traineeEnrolled" class="form-control" placeholder="e.g., Jan 15, 2024" autocomplete="off" required>
                         </div>
                         <div class="form-group">
-                            <label class="form-label">Status *</label>
-                            <select id="traineeStatus" class="form-control" required>
+                            <label class="form-label" for="traineeStatus">Status *</label>
+                            <select id="traineeStatus" name="traineeStatus" class="form-control" autocomplete="off" required>
                                 <option value="ACTIVE">Active</option>
                                 <option value="PENDING">Pending</option>
                                 <option value="COMPLETED">Completed</option>
@@ -631,8 +631,8 @@
                     <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">This action cannot be undone.</p>
                     
                     <div class="form-group" style="text-align: left;">
-                        <label class="form-label">Type the trainee's name to confirm:</label>
-                        <input type="text" id="deleteConfirmInput" class="form-control" placeholder="Enter trainee name" autocomplete="off">
+                        <label class="form-label" for="deleteConfirmInput">Type the trainee's name to confirm:</label>
+                        <input type="text" id="deleteConfirmInput" name="deleteConfirmInput" class="form-control" placeholder="Enter trainee name" autocomplete="off">
                         <p id="deleteErrorMsg" style="color: var(--danger); font-size: 12px; margin-top: 8px; display: none;">Name does not match. Please try again.</p>
                     </div>
                 </div>

@@ -741,7 +741,7 @@
                 <div class="header-left">
                     <div class="search-container">
                         <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search..." class="search-input">
+                        <input type="text" id="accountSearchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search accounts">
                     </div>
                     <button class="menu-toggle" id="menuToggle">
                         <i class="bi bi-list"></i>
@@ -1474,20 +1474,20 @@
             <form id="accountForm" onsubmit="saveAccount(event)">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label class="form-label">Username *</label>
-                        <input type="text" id="accountUsername" class="form-control" required>
+                        <label class="form-label" for="accountUsername">Username *</label>
+                        <input type="text" id="accountUsername" name="accountUsername" class="form-control" autocomplete="username" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Email *</label>
-                        <input type="email" id="accountEmail" class="form-control" required>
+                        <label class="form-label" for="accountEmail">Email *</label>
+                        <input type="email" id="accountEmail" name="accountEmail" class="form-control" autocomplete="email" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Password *</label>
-                        <input type="password" id="accountPassword" class="form-control" autocomplete="new-password" required>
+                        <label class="form-label" for="accountPassword">Password *</label>
+                        <input type="password" id="accountPassword" name="accountPassword" class="form-control" autocomplete="new-password" required>
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Role *</label>
-                        <select id="accountRole" class="form-control" required>
+                        <label class="form-label" for="accountRole">Role *</label>
+                        <select id="accountRole" name="accountRole" class="form-control" autocomplete="off" required>
                             <option value="Admin">Admin</option>
                             <option value="Trainer">Trainer</option>
                             <option value="Staff">Staff</option>
@@ -1521,8 +1521,8 @@
                     <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">This action cannot be undone.</p>
                     
                     <div class="form-group" style="text-align: left;">
-                        <label class="form-label">Type the username to confirm:</label>
-                        <input type="text" id="deleteAccountConfirmInput" class="form-control" placeholder="Enter username" autocomplete="off">
+                        <label class="form-label" for="deleteAccountConfirmInput">Type the username to confirm:</label>
+                        <input type="text" id="deleteAccountConfirmInput" name="deleteAccountConfirmInput" class="form-control" placeholder="Enter username" autocomplete="off">
                         <p id="deleteAccountErrorMsg" style="color: var(--danger); font-size: 12px; margin-top: 8px; display: none;">Username does not match. Please try again.</p>
                     </div>
                 </div>

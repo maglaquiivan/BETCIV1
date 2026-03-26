@@ -95,7 +95,7 @@
                 <div class="header-left">
                     <div class="search-container">
                         <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search courses..." class="search-input">
+                        <input type="text" id="searchInput" name="search" placeholder="Search courses..." class="search-input" autocomplete="off" aria-label="Search courses">
                     </div>
                     <button class="menu-toggle" id="menuToggle">
                         <i class="bi bi-list"></i>
@@ -190,17 +190,17 @@
                                     </div>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Course Title *</label>
-                                    <input type="text" id="courseTitle" class="form-control" placeholder="e.g., Forklift Operation NC II" required>
+                                    <label class="form-label" for="courseTitle">Course Title *</label>
+                                    <input type="text" id="courseTitle" name="courseTitle" class="form-control" placeholder="e.g., Forklift Operation NC II" autocomplete="off" required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Course Description *</label>
-                                    <textarea id="courseDescription" class="form-control" rows="4" placeholder="Enter course description..." required></textarea>
+                                    <label class="form-label" for="courseDescription">Course Description *</label>
+                                    <textarea id="courseDescription" name="courseDescription" class="form-control" rows="4" placeholder="Enter course description..." autocomplete="off" required></textarea>
                                 </div>
                                 <div class="form-row">
                                     <div class="form-group">
-                                        <label class="form-label">Course Level</label>
-                                        <select id="courseLevel" class="form-control">
+                                        <label class="form-label" for="courseLevel">Course Level</label>
+                                        <select id="courseLevel" name="courseLevel" class="form-control" autocomplete="off">
                                             <option value="NC I">NC I</option>
                                             <option value="NC II" selected>NC II</option>
                                             <option value="NC III">NC III</option>
@@ -208,8 +208,8 @@
                                         </select>
                                     </div>
                                     <div class="form-group">
-                                        <label class="form-label">Duration (Hours)</label>
-                                        <input type="number" id="courseDuration" class="form-control" placeholder="e.g., 40" min="1">
+                                        <label class="form-label" for="courseDuration">Duration (Hours)</label>
+                                        <input type="number" id="courseDuration" name="courseDuration" class="form-control" placeholder="e.g., 40" min="1" autocomplete="off">
                                     </div>
                                 </div>
                             </div>
@@ -238,8 +238,8 @@
                                 <p style="color: var(--text-secondary); font-size: 13px; margin-bottom: 20px;">This action cannot be undone.</p>
                                 
                                 <div class="form-group" style="text-align: left;">
-                                    <label class="form-label">Type the course name to confirm:</label>
-                                    <input type="text" id="deleteConfirmInput" class="form-control" placeholder="Enter course name" autocomplete="off">
+                                    <label class="form-label" for="deleteConfirmInput">Type the course name to confirm:</label>
+                                    <input type="text" id="deleteConfirmInput" name="deleteConfirmInput" class="form-control" placeholder="Enter course name" autocomplete="off">
                                     <p id="deleteErrorMsg" style="color: var(--danger); font-size: 12px; margin-top: 8px; display: none;">Course name does not match. Please try again.</p>
                                 </div>
                             </div>

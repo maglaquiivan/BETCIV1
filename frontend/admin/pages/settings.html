@@ -95,7 +95,7 @@
                 <div class="header-left">
                     <div class="search-container">
                         <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search settings..." class="search-input">
+                        <input type="text" id="searchInput" name="search" placeholder="Search settings..." class="search-input" autocomplete="off" aria-label="Search settings">
                     </div>
                     <button class="menu-toggle" id="menuToggle">
                         <i class="bi bi-list"></i>
@@ -185,27 +185,27 @@
                             
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">Full Name</label>
-                                    <input type="text" class="form-control" name="fullname" value="Admin User" disabled required>
+                                    <label class="form-label" for="fullname">Full Name</label>
+                                    <input type="text" id="fullname" class="form-control" name="fullname" value="Admin User" autocomplete="name" disabled required>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Email</label>
-                                    <input type="email" class="form-control" name="email" value="admin@betci.edu.ph" disabled required>
+                                    <label class="form-label" for="email">Email</label>
+                                    <input type="email" id="email" class="form-control" name="email" value="admin@betci.edu.ph" autocomplete="email" disabled required>
                                 </div>
                             </div>
                             <div class="form-row">
                                 <div class="form-group">
-                                    <label class="form-label">Phone</label>
-                                    <input type="tel" class="form-control" name="phone" value="+63 9XX XXX XXXX" disabled>
+                                    <label class="form-label" for="phone">Phone</label>
+                                    <input type="tel" id="phone" class="form-control" name="phone" value="+63 9XX XXX XXXX" autocomplete="tel" disabled>
                                 </div>
                                 <div class="form-group">
-                                    <label class="form-label">Department</label>
-                                    <input type="text" class="form-control" name="department" value="Administration" disabled>
+                                    <label class="form-label" for="department">Department</label>
+                                    <input type="text" id="department" class="form-control" name="department" value="Administration" autocomplete="organization" disabled>
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Address</label>
-                                <input type="text" class="form-control" name="address" placeholder="Enter your address" disabled>
+                                <label class="form-label" for="address">Address</label>
+                                <input type="text" id="address" class="form-control" name="address" placeholder="Enter your address" autocomplete="street-address" disabled>
                             </div>
                             <div class="form-actions" id="formActions" style="display: none;">
                                 <button type="submit" class="btn btn-primary">
@@ -227,12 +227,13 @@
                             <p class="card-subtitle">Update your account password</p>
                         </div>
                         <form id="passwordForm" method="POST" action="/api/password/change">
+                            <input type="text" id="username" name="username" value="admin" autocomplete="username" style="display: none;" aria-hidden="true">
                             <div class="form-group">
-                                <label class="form-label">Current Password</label>
-                                <input type="password" class="form-control" name="current_password" autocomplete="current-password" required>
+                                <label class="form-label" for="current_password">Current Password</label>
+                                <input type="password" id="current_password" class="form-control" name="current_password" autocomplete="current-password" required>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">New Password</label>
+                                <label class="form-label" for="newPassword">New Password</label>
                                 <input type="password" class="form-control" name="new_password" id="newPassword" autocomplete="new-password" required>
                                 <div class="password-strength">
                                     <div class="password-strength-bar" id="strengthBar"></div>
@@ -240,8 +241,8 @@
                                 <p class="password-hint">Password must be at least 8 characters long</p>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Confirm Password</label>
-                                <input type="password" class="form-control" name="confirm_password" autocomplete="new-password" required>
+                                <label class="form-label" for="confirm_password">Confirm Password</label>
+                                <input type="password" id="confirm_password" class="form-control" name="confirm_password" autocomplete="new-password" required>
                             </div>
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-lock"></i> Update Password
@@ -263,8 +264,8 @@
                                     <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Dark Mode</h3>
                                     <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">Switch between light and dark theme</p>
                                 </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                                <label class="toggle-switch" for="darkModeToggle">
+                                    <input type="checkbox" id="darkModeToggle" name="darkMode" onchange="toggleDarkMode()" autocomplete="off">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
@@ -274,8 +275,8 @@
                                     <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Compact Mode</h3>
                                     <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">Reduce spacing for more content</p>
                                 </div>
-                                <label class="toggle-switch">
-                                    <input type="checkbox" id="compactModeToggle" onchange="toggleCompactMode()">
+                                <label class="toggle-switch" for="compactModeToggle">
+                                    <input type="checkbox" id="compactModeToggle" name="compactMode" onchange="toggleCompactMode()" autocomplete="off">
                                     <span class="toggle-slider"></span>
                                 </label>
                             </div>
