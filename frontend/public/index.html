@@ -71,7 +71,7 @@
   <header id="header" class="header d-flex align-items-center fixed-top">
     <div class="container-fluid container-xl position-relative d-flex align-items-center justify-content-between">
 
-      <a href="index.html" class="logo d-flex align-items-center">
+      <a href="/" class="logo d-flex align-items-center">
         <img src="../assets/img/logo.png" alt="BETCI Logo" class="logo-img">
         <div class="logo-text">
           <h1 class="sitename">BETCI</h1>
@@ -627,56 +627,104 @@
         });
       });
       
-      // Check if user is logged in and show profile dropdown
-      const isLoggedIn = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
+      // Clear any existing sessions on landing page - always show login button
+      localStorage.removeItem('userSession');
+      sessionStorage.removeItem('userSession');
+      
+      // Always show login button on landing page
       const loginLi = document.getElementById('loginLi');
       const profileLi = document.getElementById('profileLi');
       
-      if (isLoggedIn && loginLi && profileLi) {
-        loginLi.style.display = 'none';
-        profileLi.style.display = 'block';
+      if (loginLi && profileLi) {
+        loginLi.style.display = 'block';
+        profileLi.style.display = 'none';
       }
 
       // Load and sync courses from admin dashboard
       loadCoursesFromStorage();
     });
 
-    // Function to load courses from localStorage and update landing page
-    function loadCoursesFromStorage() {
-      const courses = JSON.parse(localStorage.getItem('betci_courses') || '{}');
-      
-      // Update each course element
-      Object.entries(courses).forEach(([courseId, courseData]) => {
-        const courseElement = document.querySelector(`[data-course-id="${courseId}"]`);
+    // Function to load courses from API and update landing page
+    async function loadCoursesFromStorage() {
+      try {
+        const response = await fetch('http://localhost:5500/api/courses');
+        if (!response.ok) throw new Error('Failed to fetch courses');
         
-        if (courseElement) {
-          // Update title
-          const titleElement = courseElement.querySelector('.course-title');
-          if (titleElement) {
-            titleElement.textContent = courseData.title;
+        const courses = await response.json();
+        
+        // Map course titles to image paths (absolute paths)
+        const courseImages = {
+          'forklift': '/assets/img/fork.png',
+          'bulldozer': '/assets/img/bulldozer.png',
+          'dump truck': '/assets/img/dump truck.png',
+          'excavator': '/assets/img/hydraulic excavator.png'
+        };
+        
+        // Update each course element
+        courses.forEach(courseData => {
+          const courseTitle = (courseData.title || courseData.courseName || '').toLowerCase();
+          let imageUrl = '/assets/img/logo.png';
+          
+          // First try to use image from database
+          if (courseData.image) {
+            // Handle different path formats
+            if (courseData.image.startsWith('http')) {
+              // Extract path from full URL
+              try {
+                const url = new URL(courseData.image);
+                imageUrl = url.pathname;
+              } catch (e) {
+                imageUrl = courseData.image;
+              }
+            } else if (courseData.image.includes('/assets/img/')) {
+              // Extract just the /assets/img/ part
+              imageUrl = '/assets/img/' + courseData.image.split('/assets/img/')[1];
+            } else if (courseData.image.startsWith('/assets/')) {
+              // Already in correct format
+              imageUrl = courseData.image;
+            } else {
+              // Convert relative paths to absolute
+              imageUrl = courseData.image.replace(/^(\.\.\/)+/, '/').replace(/^\.\//, '/');
+            }
+          } else {
+            // Fall back to mapping
+            for (const [key, url] of Object.entries(courseImages)) {
+              if (courseTitle.includes(key)) {
+                imageUrl = url;
+                break;
+              }
+            }
           }
           
-          // Update description
-          const descElement = courseElement.querySelector('.course-description');
-          if (descElement) {
-            descElement.textContent = courseData.description;
-          }
-          
-          // Update image
-          const imgElement = courseElement.querySelector('.course-icon img');
-          if (imgElement) {
-            imgElement.src = courseData.imageUrl;
-          }
-        }
-      });
+          // Find course element by title or ID
+          const courseElements = document.querySelectorAll('[data-course-id]');
+          courseElements.forEach(courseElement => {
+            const titleElement = courseElement.querySelector('.course-title');
+            if (titleElement && titleElement.textContent.toLowerCase().includes(courseTitle.split(' ')[0])) {
+              // Update title
+              titleElement.textContent = courseData.title || courseData.courseName;
+              
+              // Update description
+              const descElement = courseElement.querySelector('.course-description');
+              if (descElement) {
+                descElement.textContent = courseData.description || 'Professional training program';
+              }
+              
+              // Update image
+              const imgElement = courseElement.querySelector('.course-icon img');
+              if (imgElement) {
+                imgElement.src = imageUrl;
+              }
+            }
+          });
+        });
+      } catch (error) {
+        console.error('Error loading courses:', error);
+      }
     }
 
-    // Listen for storage changes (when admin updates courses in another tab)
-    window.addEventListener('storage', function(e) {
-      if (e.key === 'betci_courses') {
-        loadCoursesFromStorage();
-      }
-    });
+    // Auto-refresh courses every 10 seconds
+    setInterval(loadCoursesFromStorage, 10000);
 
     // Chat Widget Functions
     function toggleChatWidget() {

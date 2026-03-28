@@ -323,9 +323,9 @@
         </div>
     </div>
 
-    <script src="../../admin/assets/js/courses-data.js"></script>
     <script src="../../assets/js/dark-mode.js"></script>
     <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/courses.js"></script>
     <script>
         // Sidebar toggle for mobile
         document.addEventListener('DOMContentLoaded', function() {
@@ -345,10 +345,8 @@
             // Toggle sidebar
             if (menuToggle) {
                 menuToggle.addEventListener('click', function() {
-                    // Toggle sidebar - use 'collapsed' class
                     sidebar.classList.toggle('collapsed');
                     
-                    // Update main-content margin based on sidebar state and screen size
                     if (window.innerWidth > 768) {
                         if (sidebar.classList.contains('collapsed')) {
                             mainContent.style.marginLeft = '60px';
@@ -371,18 +369,6 @@
             });
         });
 
-        // Initialize dark mode on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            loadTheme();
-            loadTraineeCourses();
-        });
-
-        function switchTab(tab) {
-            document.getElementById('coursesTab').style.display = 'block';
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-btn')[0].classList.add('active');
-        }
-
         // User profile dropdown
         document.getElementById('userProfile').addEventListener('click', function(e) {
             e.stopPropagation();
@@ -400,97 +386,8 @@
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('userSession');
                 sessionStorage.removeItem('userSession');
-                window.location.href = '../auth/login.html';
+                window.location.href = '../../auth/login.html';
             }
-        }
-        
-        // Load courses for trainee (read-only)
-        function loadTraineeCourses() {
-            const courses = getCoursesData();
-            const coursesGrid = document.getElementById('all-courses-grid');
-            if (!coursesGrid) return;
-            
-            coursesGrid.innerHTML = '';
-            
-            courses.forEach(course => {
-                const card = document.createElement('div');
-                card.className = 'course-card';
-                card.innerHTML = `
-                    <div class="course-image">
-                        <img src="${course.image}" alt="${course.title}">
-                    </div>
-                    <div class="course-body">
-                        <h3 class="course-title">${course.title}</h3>
-                        <p class="course-description">${course.description}</p>
-                        <div class="course-meta">
-                            <span class="course-level"><i class="bi bi-award"></i> ${course.level}</span>
-                            <span class="course-duration"><i class="bi bi-clock"></i> ${course.duration} hours</span>
-                        </div>
-                        <button class="enroll-btn" onclick="enrollCourse(${course.id})">
-                            <i class="bi bi-plus-circle"></i> Enroll Now
-                        </button>
-                    </div>
-                `;
-                coursesGrid.appendChild(card);
-            });
-        }
-
-        function enrollCourse(courseId) {
-            const course = getCourseById(courseId);
-            alert('Enrolling in: ' + course.title + '\\n\\nThis would open the enrollment form.');
-        }
-
-        function filterCourses(filter, buttonElement) {
-            const courses = getCoursesData();
-            const coursesGrid = document.getElementById('all-courses-grid');
-            const filterTabs = document.querySelectorAll('.filter-tab');
-            
-            // Update active filter tab
-            filterTabs.forEach(tab => tab.classList.remove('active'));
-            if (buttonElement) {
-                buttonElement.classList.add('active');
-            }
-            
-            coursesGrid.innerHTML = '';
-            
-            let filteredCourses = courses;
-            
-            // Filter courses based on status
-            if (filter === 'active') {
-                filteredCourses = courses.filter(c => c.status === 'active');
-            } else if (filter === 'completed') {
-                filteredCourses = courses.filter(c => c.status === 'completed');
-            } else if (filter === 'available') {
-                filteredCourses = courses.filter(c => c.status === 'available');
-            }
-            // 'all' shows all courses without filtering
-            
-            if (filteredCourses.length === 0) {
-                coursesGrid.innerHTML = '<div class="empty-state"><i class="bi bi-inbox"></i><p>No courses found</p></div>';
-                return;
-            }
-            
-            filteredCourses.forEach(course => {
-                const card = document.createElement('div');
-                card.className = 'course-card';
-                card.innerHTML = `
-                    <div class="course-image">
-                        <img src="${course.image}" alt="${course.title}">
-                    </div>
-                    <div class="course-body">
-                        <h3 class="course-title">${course.title}</h3>
-                        <p class="course-description">${course.description}</p>
-                        <div class="course-meta">
-                            <span class="course-level"><i class="bi bi-award"></i> ${course.level}</span>
-                            <span class="course-duration"><i class="bi bi-clock"></i> ${course.duration} hours</span>
-                        </div>
-                        <button class="enroll-btn" onclick="enrollCourse(${course.id})">
-                            <i class="bi bi-plus-circle"></i> Enroll Now
-                        </button>
-                    </div>
-                `;
-                coursesGrid.appendChild(card);
-            });
         }
     </script>
     </div>

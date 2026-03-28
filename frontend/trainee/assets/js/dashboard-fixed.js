@@ -6,103 +6,64 @@ document.addEventListener('DOMContentLoaded', function() {
     animateProgressBars();
 });
 
-function loadAllCourses() {
+async function loadAllCourses() {
     const coursesGrid = document.getElementById('coursesGrid');
     if (!coursesGrid) return;
-    
-    const courses = [
-        {
-            title: "Forklift Operation NC II",
-            description: "Master forklift operation, safety protocols, and material handling techniques.",
-            image: "../assets/img/fork.png",
-            progress: 65,
-            duration: "4 weeks",
-            level: "Beginner",
-            status: "active",
-            badge: "NEW"
-        },
-        {
-            title: "Bulldozer Operation NC II", 
-            description: "Learn bulldozer operation, earthmoving techniques, and site preparation.",
-            image: "../assets/img/bulldozer.png",
-            progress: 40,
-            duration: "6 weeks", 
-            level: "Intermediate",
-            status: "active",
-            badge: "IN PROGRESS"
-        },
-        {
-            title: "Hydraulic Excavator NC II",
-            description: "Advanced excavator operation, digging techniques, and hydraulic systems.",
-            image: "../assets/img/hydraulic excavator.png",
-            progress: 85,
-            duration: "8 weeks",
-            level: "Advanced", 
-            status: "active",
-            badge: "LEVEL III"
-        },
-        {
-            title: "Dump Truck Operation NC II",
-            description: "Professional training for rigid on-highway dump truck operation.",
-            image: "../assets/img/dump truck.png",
-            progress: 100,
-            duration: "5 weeks",
-            level: "Intermediate",
-            status: "completed",
-            badge: "COMPLETED"
-        },
-        {
-            title: "Wheel Loader NC II",
-            description: "Comprehensive wheel loader training and material handling techniques.",
-            image: "../assets/img/logo.png",
-            progress: 0,
-            duration: "6 weeks",
-            level: "Intermediate",
-            status: "available",
-            badge: "AVAILABLE"
-        },
-        {
-            title: "Backhoe Loader NC II",
-            description: "Master backhoe loader operation, digging, and trenching techniques.",
-            image: "../assets/img/logo.png", 
-            progress: 100,
-            duration: "7 weeks",
-            level: "Advanced",
-            status: "completed",
-            badge: "COMPLETED"
-        }
-    ];
-    
-    coursesGrid.innerHTML = courses.map(course => `
-        <div class="course-card" data-status="${course.status}">
-            <div class="course-image">
-                <img src="${course.image}" alt="${course.title}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjRDNDMwIiBvcGFjaXR5PSIwLjIiLz4KPHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI3MCIgeT0iNDUiPgo8cGF0aCBkPSJNMTUgMjVIMzVWMzVIMTVWMjVaIiBmaWxsPSIjRTY3RTIyIi8+CjxwYXRoIGQ9Ik0yMCAzMEgzMFY0MEgyMFYzMFoiIGZpbGw9IiNFNjdFMjIiLz4KPC9zdmc+Cjwvc3ZnPgo='">
-                <div class="course-badge ${course.status}">${course.badge}</div>
-            </div>
-            <div class="course-content">
-                <h3>${course.title}</h3>
-                <p>${course.description}</p>
-                <div class="course-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${course.progress}%"></div>
+
+    try {
+        // Fetch courses from MongoDB API
+        const response = await fetch('http://localhost:5500/api/courses');
+        if (!response.ok) throw new Error('Failed to fetch courses');
+
+        const courses = await response.json();
+
+        // Map MongoDB courses to display format
+        const displayCourses = courses.map(course => ({
+            title: course.title,
+            description: course.description,
+            image: course.image,
+            progress: course.status === 'completed' ? 100 : course.status === 'active' ? 65 : 0,
+            duration: course.duration || '4 weeks',
+            level: 'Intermediate',
+            status: course.status,
+            badge: course.status === 'completed' ? 'COMPLETED' : course.status === 'active' ? 'IN PROGRESS' : 'AVAILABLE'
+        }));
+
+        coursesGrid.innerHTML = displayCourses.map(course => `
+            <div class="course-card" data-status="${course.status}">
+                <div class="course-image">
+                    <img src="${course.image}" alt="${course.title}" onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIwMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjRDNDMwIiBvcGFjaXR5PSIwLjIiLz4KPHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4PSI3MCIgeT0iNDUiPgo8cGF0aCBkPSJNMTUgMjVIMzVWMzVIMTVWMjVaIiBmaWxsPSIjRTY3RTIyIi8+CjxwYXRoIGQ9Ik0yMCAzMEgzMFY0MEgyMFYzMFoiIGZpbGw9IiNFNjdFMjIiLz4KPC9zdmc+Cjwvc3ZnPgo='">
+                    <div class="course-badge ${course.status}">${course.badge}</div>
+                </div>
+                <div class="course-content">
+                    <h3>${course.title}</h3>
+                    <p>${course.description}</p>
+                    <div class="course-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${course.progress}%"></div>
+                        </div>
+                        <span class="progress-text">${course.progress}% Complete</span>
                     </div>
-                    <span class="progress-text">${course.progress}% Complete</span>
+                    <div class="course-meta">
+                        <span class="course-duration"><i class="bi bi-clock"></i> ${course.duration}</span>
+                        <span class="course-level">${course.level}</span>
+                    </div>
+                    <button class="continue-btn ${course.status === 'available' ? 'enroll-btn' : course.status === 'completed' ? 'review-btn' : ''}"
+                            onclick="handleCourseAction('${course.status}', '${course.title}')">
+                        ${course.status === 'available' ? 'Enroll Now' : course.status === 'completed' ? 'Review Course' : 'Continue Learning'}
+                    </button>
                 </div>
-                <div class="course-meta">
-                    <span class="course-duration"><i class="bi bi-clock"></i> ${course.duration}</span>
-                    <span class="course-level">${course.level}</span>
-                </div>
-                <button class="continue-btn ${course.status === 'available' ? 'enroll-btn' : course.status === 'completed' ? 'review-btn' : ''}" 
-                        onclick="handleCourseAction('${course.status}', '${course.title}')">
-                    ${course.status === 'available' ? 'Enroll Now' : course.status === 'completed' ? 'Review Course' : 'Continue Learning'}
-                </button>
             </div>
-        </div>
-    `).join('');
-    
-    setTimeout(() => {
-        animateProgressBars();
-    }, 100);
+        `).join('');
+
+        setTimeout(() => {
+            animateProgressBars();
+        }, 100);
+
+    } catch (error) {
+        console.error('Error loading courses:', error);
+        coursesGrid.innerHTML = '<p style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">Failed to load courses. Please make sure the server is running.</p>';
+    }
 }
 
 function animateProgressBars() {

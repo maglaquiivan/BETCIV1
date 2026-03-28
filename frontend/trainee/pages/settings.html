@@ -356,37 +356,37 @@
                     <form id="profileForm" class="profile-form">
                         <div class="form-row">
                             <div class="form-group">
-                                <label>First Name</label>
-                                <input type="text" class="form-control" value="KELI" disabled>
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" class="form-control" value="KELI" disabled>
                             </div>
                             <div class="form-group">
-                                <label>Last Name</label>
-                                <input type="text" class="form-control" value="STUDENT" disabled>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="form-group">
-                                <label>Email Address</label>
-                                <input type="email" class="form-control" value="keli.student@betci.edu.ph" disabled>
-                            </div>
-                            <div class="form-group">
-                                <label>Phone Number</label>
-                                <input type="tel" class="form-control" value="+63 912 345 6789" disabled>
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" class="form-control" value="STUDENT" disabled>
                             </div>
                         </div>
                         <div class="form-row">
                             <div class="form-group">
-                                <label>Course</label>
-                                <input type="text" class="form-control" value="Forklift Operation NC II" disabled>
+                                <label for="emailAddress">Email Address</label>
+                                <input type="email" id="emailAddress" class="form-control" value="keli.student@betci.edu.ph" disabled>
                             </div>
                             <div class="form-group">
-                                <label>Enrollment Date</label>
-                                <input type="text" class="form-control" value="January 15, 2024" disabled>
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="tel" id="phoneNumber" class="form-control" value="+63 912 345 6789" disabled>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="course">Course</label>
+                                <input type="text" id="course" class="form-control" value="Forklift Operation NC II" disabled>
+                            </div>
+                            <div class="form-group">
+                                <label for="enrollmentDate">Enrollment Date</label>
+                                <input type="text" id="enrollmentDate" class="form-control" value="January 15, 2024" disabled>
                             </div>
                         </div>
                         <div class="form-group">
-                            <label>Address</label>
-                            <textarea class="form-control" rows="2" disabled>Building Equipment Training and Certification Institute, Philippines</textarea>
+                            <label for="address">Address</label>
+                            <textarea id="address" class="form-control" rows="2" disabled>Building Equipment Training and Certification Institute, Philippines</textarea>
                         </div>
                         <div class="form-actions" id="formActions" style="display: none;">
                             <button type="submit" class="btn-primary">
@@ -415,17 +415,17 @@
                         <input type="text" name="username" autocomplete="username" style="display:none;" value="KELI" readonly>
                         
                         <div class="form-group">
-                            <label>Current Password</label>
-                            <input type="password" class="form-control" placeholder="Enter your current password" autocomplete="current-password" required>
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" class="form-control" placeholder="Enter your current password" autocomplete="current-password" required>
                         </div>
                         <div class="form-group">
-                            <label>New Password</label>
+                            <label for="newPassword">New Password</label>
                             <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" autocomplete="new-password" required>
                             <p class="form-hint">Password must be at least 8 characters long</p>
                         </div>
                         <div class="form-group">
-                            <label>Confirm Password</label>
-                            <input type="password" class="form-control" placeholder="Confirm new password" autocomplete="new-password" required>
+                            <label for="confirmPassword">Confirm Password</label>
+                            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password" autocomplete="new-password" required>
                         </div>
                         <button type="submit" class="btn-primary">
                             <i class="bi bi-lock"></i> Update Password

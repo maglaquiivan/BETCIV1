@@ -559,3 +559,320 @@ function switchTab(tabName, event) {
         event.target.closest('.tab-item').classList.add('active');
     }
 }
+
+
+/* ============================================
+   MONGODB API INTEGRATION
+   ============================================ */
+
+const API_BASE_URL = 'http://localhost:5500/api';
+
+// Load dashboard data on page load
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOMContentLoaded - Starting to load dashboard data');
+    setTimeout(() => {
+        loadDashboardStats();
+        loadTrainees();
+        loadCourses();
+    }, 500);
+});
+
+// Load dashboard statistics
+async function loadDashboardStats() {
+    try {
+        // Fetch courses
+        const coursesResponse = await fetch(`${API_BASE_URL}/courses`);
+        const courses = await coursesResponse.json();
+        
+        // Fetch trainees
+        const traineesResponse = await fetch(`${API_BASE_URL}/trainees`);
+        const trainees = await traineesResponse.json();
+        
+        // Calculate stats
+        const activeCourses = courses.filter(c => c.status === 'active').length;
+        const totalTrainees = trainees.length;
+        
+        // Update stats cards
+        updateStatsCard(0, activeCourses, 'Active Courses');
+        updateStatsCard(1, totalTrainees, 'Total Trainees');
+        updateStatsCard(2, '48', 'Today\'s Enrollments');
+        
+    } catch (error) {
+        console.error('Error loading dashboard stats:', error);
+        showNotification('Failed to load dashboard statistics', 'error');
+    }
+}
+
+// Update individual stat card
+function updateStatsCard(index, value, label) {
+    const statCards = document.querySelectorAll('.stat-card');
+    if (statCards[index]) {
+        const h3 = statCards[index].querySelector('h3');
+        const p = statCards[index].querySelector('p');
+        if (h3) h3.textContent = value;
+        if (p) p.textContent = label;
+    }
+}
+
+// Load trainees from MongoDB
+async function loadTrainees() {
+    try {
+        console.log('loadTrainees: Starting fetch from', `${API_BASE_URL}/trainees`);
+        const response = await fetch(`${API_BASE_URL}/trainees`);
+        console.log('loadTrainees: Response status', response.status);
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const trainees = await response.json();
+        
+        console.log('loadTrainees: Loaded', trainees.length, 'trainees');
+        
+        // Get trainees grid by ID
+        const traineesGrid = document.getElementById('traineesGrid');
+        console.log('loadTrainees: Grid element found?', !!traineesGrid);
+        
+        if (!traineesGrid) {
+            console.error('Trainees grid not found');
+            return;
+        }
+        
+        // Clear existing content
+        traineesGrid.innerHTML = '';
+        
+        if (trainees.length === 0) {
+            traineesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;"><i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i><p>No trainees found</p></div>';
+            return;
+        }
+        
+        // Display first 6 trainees
+        trainees.slice(0, 6).forEach((trainee, index) => {
+            console.log('Creating card for trainee', index, trainee.firstName);
+            const traineeCard = createTraineeCard(trainee);
+            traineesGrid.appendChild(traineeCard);
+        });
+        
+        console.log('loadTrainees: Finished loading', trainees.slice(0, 6).length, 'cards');
+        
+    } catch (error) {
+        console.error('Error loading trainees:', error);
+        const traineesGrid = document.getElementById('traineesGrid');
+        if (traineesGrid) {
+            traineesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #e74c3c;"><p>Failed to load trainees: ' + error.message + '</p></div>';
+        }
+    }
+}
+
+// Create trainee card element
+function createTraineeCard(trainee) {
+    const card = document.createElement('div');
+    card.className = 'trainee-card';
+    
+    const initials = `${trainee.firstName.charAt(0)}${trainee.lastName.charAt(0)}`.toUpperCase();
+    const enrolledCourse = trainee.enrolledCourses && trainee.enrolledCourses.length > 0 
+        ? trainee.enrolledCourses[0].courseName 
+        : 'No course enrolled';
+    const status = trainee.status || 'active';
+    const enrollDate = trainee.enrolledCourses && trainee.enrolledCourses.length > 0 && trainee.enrolledCourses[0].enrollmentDate
+        ? new Date(trainee.enrolledCourses[0].enrollmentDate).toLocaleDateString()
+        : new Date(trainee.createdAt || Date.now()).toLocaleDateString();
+    
+    card.innerHTML = `
+        <div class="trainee-header">
+            <div class="trainee-avatar">
+                <span>${initials}</span>
+            </div>
+            <div class="trainee-info">
+                <h4>${trainee.firstName} ${trainee.lastName}</h4>
+                <p>${enrolledCourse}</p>
+            </div>
+            <span class="status-badge ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+        </div>
+        <div class="trainee-meta">
+            <span class="meta-item"><i class="bi bi-envelope"></i> ${trainee.email}</span>
+            <span class="meta-item"><i class="bi bi-calendar"></i> Enrolled: ${enrollDate}</span>
+        </div>
+        <div class="trainee-actions">
+            <button class="btn-action edit" onclick="window.location.href='trainees.html'"><i class="bi bi-pencil"></i> Edit</button>
+            <button class="btn-action delete" onclick="deleteTraineeFromDashboard('${trainee.traineeId}')"><i class="bi bi-trash"></i> Delete</button>
+        </div>
+    `;
+    
+    return card;
+}
+
+// Load courses from MongoDB
+async function loadCourses() {
+    try {
+        const response = await fetch(`${API_BASE_URL}/courses`);
+        const courses = await response.json();
+        
+        console.log('Dashboard loaded courses:', courses.length);
+        
+        // Get courses grid by ID
+        const coursesGrid = document.getElementById('coursesGrid');
+        if (!coursesGrid) {
+            console.error('Courses grid not found');
+            return;
+        }
+        
+        // Clear existing content
+        coursesGrid.innerHTML = '';
+        
+        if (courses.length === 0) {
+            coursesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;"><i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i><p>No courses found</p></div>';
+            return;
+        }
+        
+        // Display first 6 courses
+        courses.slice(0, 6).forEach(course => {
+            const courseCard = createCourseCard(course);
+            coursesGrid.appendChild(courseCard);
+        });
+        
+    } catch (error) {
+        console.error('Error loading courses:', error);
+        const coursesGrid = document.getElementById('coursesGrid');
+        if (coursesGrid) {
+            coursesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #e74c3c;"><p>Failed to load courses</p></div>';
+        }
+    }
+}
+
+// Create course card element
+function createCourseCard(course) {
+    const card = document.createElement('div');
+    card.className = 'trainee-card';
+    
+    const statusColors = {
+        active: '#E67E22',
+        completed: '#10b981',
+        available: '#0ea5e9'
+    };
+    
+    const iconColor = statusColors[course.status] || '#E67E22';
+    
+    card.innerHTML = `
+        <div class="trainee-header">
+            <div class="trainee-avatar" style="background: ${iconColor};">
+                <i class="bi bi-book"></i>
+            </div>
+            <div class="trainee-info">
+                <h4>${course.title}</h4>
+                <p>${course.category || 'Heavy Equipment'}</p>
+            </div>
+            <span class="status-badge ${course.status}">${course.status.charAt(0).toUpperCase() + course.status.slice(1)}</span>
+        </div>
+        <div class="trainee-meta">
+            <span class="meta-item"><i class="bi bi-people"></i> ${course.traineeCount || 0} Trainees</span>
+            <span class="meta-item"><i class="bi bi-clock"></i> ${course.duration || '3 months'}</span>
+        </div>
+        <div class="trainee-actions">
+            <button class="btn-action edit" onclick="editCourse('${course.courseId}')"><i class="bi bi-pencil"></i> Edit</button>
+            <button class="btn-action delete" onclick="deleteCourse('${course.courseId}')"><i class="bi bi-trash"></i> Delete</button>
+        </div>
+    `;
+    
+    return card;
+}
+
+// Edit trainee
+async function editTrainee(userId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`);
+        const trainee = await response.json();
+        
+        // Populate edit form or redirect to edit page
+        showNotification(`Edit trainee: ${trainee.firstName} ${trainee.lastName}`, 'info');
+        // TODO: Implement edit form
+        
+    } catch (error) {
+        console.error('Error fetching trainee:', error);
+        showNotification('Failed to load trainee details', 'error');
+    }
+}
+
+// Delete trainee
+async function deleteTrainee(userId) {
+    if (!confirm('Are you sure you want to delete this trainee?')) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/users/${userId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            showNotification('Trainee deleted successfully', 'success');
+            loadTrainees(); // Reload trainees list
+            loadDashboardStats(); // Update stats
+        } else {
+            throw new Error('Failed to delete trainee');
+        }
+        
+    } catch (error) {
+        console.error('Error deleting trainee:', error);
+        showNotification('Failed to delete trainee', 'error');
+    }
+}
+
+// Delete trainee from dashboard (uses traineeId instead of userId)
+async function deleteTraineeFromDashboard(traineeId) {
+    if (!confirm('Are you sure you want to delete this trainee?')) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/trainees/${traineeId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            showNotification('Trainee deleted successfully', 'success');
+            loadTrainees(); // Reload trainees list
+            loadDashboardStats(); // Update stats
+        } else {
+            throw new Error('Failed to delete trainee');
+        }
+        
+    } catch (error) {
+        console.error('Error deleting trainee:', error);
+        showNotification('Failed to delete trainee', 'error');
+    }
+}
+
+// Edit course
+async function editCourse(courseId) {
+    try {
+        const response = await fetch(`${API_BASE_URL}/courses/${courseId}`);
+        const course = await response.json();
+        
+        // Populate edit form or redirect to edit page
+        showNotification(`Edit course: ${course.title}`, 'info');
+        // TODO: Implement edit form
+        
+    } catch (error) {
+        console.error('Error fetching course:', error);
+        showNotification('Failed to load course details', 'error');
+    }
+}
+
+// Delete course
+async function deleteCourse(courseId) {
+    if (!confirm('Are you sure you want to delete this course?')) return;
+    
+    try {
+        const response = await fetch(`${API_BASE_URL}/courses/${courseId}`, {
+            method: 'DELETE'
+        });
+        
+        if (response.ok) {
+            showNotification('Course deleted successfully', 'success');
+            loadCourses(); // Reload courses list
+            loadDashboardStats(); // Update stats
+        } else {
+            throw new Error('Failed to delete course');
+        }
+        
+    } catch (error) {
+        console.error('Error deleting course:', error);
+        showNotification('Failed to delete course', 'error');
+    }
+}

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Accounts API</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        button { padding: 10px 20px; margin: 5px; cursor: pointer; }
+        #output { background: #f5f5f5; padding: 15px; margin-top: 20px; border-radius: 5px; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>Test Accounts API</h1>
+    
+    <button onclick="testConnection()">1. Test Server Connection</button>
+    <button onclick="testGetAccounts()">2. Get All Accounts</button>
+    <button onclick="testCreateAccount()">3. Create Test Account</button>
+    
+    <div id="output"></div>
+    
+    <script>
+        const API_URL = 'http://localhost:5500/api';
+        const output = document.getElementById('output');
+        
+        function log(message, type = 'info') {
+            const p = document.createElement('p');
+            p.className = type;
+            p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            output.appendChild(p);
+        }
+        
+        async function testConnection() {
+            output.innerHTML = '';
+            log('Testing server connection...');
+            try {
+                const response = await fetch(`${API_URL}/accounts`);
+                if (response.ok) {
+                    log('✓ Server is running and responding!', 'success');
+                    log(`Status: ${response.status} ${response.statusText}`, 'success');
+                } else {
+                    log(`✗ Server responded with error: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                log(`✗ Cannot connect to server: ${error.message}`, 'error');
+                log('Make sure the backend server is running on port 5500', 'error');
+            }
+        }
+        
+        async function testGetAccounts() {
+            output.innerHTML = '';
+            log('Fetching accounts from database...');
+            try {
+                const response = await fetch(`${API_URL}/accounts`);
+                if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                
+                const accounts = await response.json();
+                log(`✓ Found ${accounts.length} accounts`, 'success');
+                log(JSON.stringify(accounts, null, 2));
+            } catch (error) {
+                log(`✗ Error: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testCreateAccount() {
+            output.innerHTML = '';
+            log('Creating test account...');
+            
+            const testAccount = {
+                accountId: `ACC${Date.now()}`,
+                username: `testuser_${Date.now()}`,
+                email: `test${Date.now()}@betci.com`,
+                password: 'test123',
+                firstName: 'Test',
+                lastName: 'User',
+                role: 'staff',
+                status: 'active',
+                permissions: ['view_trainees']
+            };
+            
+            try {
+                const response = await fetch(`${API_URL}/accounts`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(testAccount)
+                });
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || `HTTP ${response.status}`);
+                }
+                
+                const result = await response.json();
+                log('✓ Account created successfully!', 'success');
+                log(JSON.stringify(result, null, 2));
+            } catch (error) {
+                log(`✗ Error: ${error.message}`, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

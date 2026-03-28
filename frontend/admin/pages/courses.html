@@ -510,7 +510,7 @@
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('userSession');
                 sessionStorage.removeItem('userSession');
-                window.location.href = '../login.html';
+                window.location.href = '../../public/index.html';
             }
         }
 
@@ -531,7 +531,7 @@
                     <input type="hidden" id="editCourseId">
                     
                     <div class="form-group">
-                        <label class="form-label">Course Image</label>
+                        <label class="form-label" for="courseImageFile">Course Image</label>
                         <p style="font-size: 12px; color: #999; margin-bottom: 8px;">
                             Upload an image (max 5MB) or enter image URL below
                         </p>
@@ -545,17 +545,17 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Or Image URL</label>
+                        <label class="form-label" for="editCourseImage">Or Image URL</label>
                         <input type="text" id="editCourseImage" class="form-control" placeholder="Enter image URL (e.g., ../assets/img/fork.png)">
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Course Title *</label>
+                        <label class="form-label" for="editCourseTitle">Course Title *</label>
                         <input type="text" id="editCourseTitle" class="form-control" placeholder="e.g., Forklift Operation NC II" required>
                     </div>
                     
                     <div class="form-group">
-                        <label class="form-label">Course Description *</label>
+                        <label class="form-label" for="editCourseDescription">Course Description *</label>
                         <textarea id="editCourseDescription" class="form-control" rows="4" placeholder="Enter course description..." required></textarea>
                     </div>
                     

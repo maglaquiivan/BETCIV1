@@ -19,6 +19,34 @@
     
     <!-- Admin Dashboard CSS -->
     <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=7" />
+    
+    <style>
+        /* Modal Wide Layout */
+        .modal-content.modal-wide {
+            max-width: 800px;
+        }
+        
+        /* Form Grid Layout */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .form-grid .form-group {
+            margin-bottom: 0;
+        }
+        
+        @media (max-width: 768px) {
+            .modal-content.modal-wide {
+                max-width: 95%;
+            }
+            
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="admin-container">
@@ -139,145 +167,13 @@
                 <div class="section-header">
                     <h1 class="section-title">Trainees Management</h1>
                     <button class="view-all-btn" onclick="openAddTraineeModal()">
-                        <i class="bi bi-plus"></i> View All
+                        <i class="bi bi-plus"></i> Add Trainee
                     </button>
                 </div>
 
                 <!-- Trainees Grid -->
                 <div class="trainees-grid">
-                    <!-- Trainee Card 1 -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar">JD</div>
-                            <div class="trainee-info">
-                                <h3>John Doe</h3>
-                                <p>Forklift Operation</p>
-                            </div>
-                            <span class="trainee-status status-active">Active</span>
-                        </div>
-                        <div class="trainee-details">
-                            <div class="detail-item">
-                                <i class="bi bi-envelope"></i>
-                                <span>john@example.com</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="bi bi-calendar"></i>
-                                <span>Enrolled: Jan 15, 2024</span>
-                            </div>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit" onclick="editTrainee(this)">
-                                <i class="bi bi-pencil"></i> Edit
-                            </button>
-                            <button class="btn-action delete" onclick="deleteTrainee(this)">
-                                <i class="bi bi-trash"></i> Delete
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Trainee Card 2 -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar">JS</div>
-                            <div class="trainee-info">
-                                <h3>Jane Smith</h3>
-                                <p>Bulldozer Operation</p>
-                            </div>
-                            <span class="trainee-status status-pending">Pending</span>
-                        </div>
-                        <div class="trainee-details">
-                            <div class="detail-item">
-                                <i class="bi bi-envelope"></i>
-                                <span>jane@example.com</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="bi bi-calendar"></i>
-                                <span>Enrolled: Jan 18, 2024</span>
-                            </div>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit" onclick="editTrainee(this)">
-                                <i class="bi bi-pencil"></i> Edit
-                            </button>
-                            <button class="btn-action delete" onclick="deleteTrainee(this)">
-                                <i class="bi bi-trash"></i> Delete
-                            </button>
-                        </div>
-                    </div>
-
-                    <!-- Trainee Card 3 -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar">MJ</div>
-                            <div class="trainee-info">
-                                <h3>Mike Johnson</h3>
-                                <p>Excavator Operation</p>
-                            </div>
-                            <span class="trainee-status status-completed">Completed</span>
-                        </div>
-                        <div class="trainee-details">
-                            <div class="detail-item">
-                                <i class="bi bi-envelope"></i>
-                                <span>mike@example.com</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="bi bi-calendar"></i>
-                                <span>Enrolled: Dec 20, 2023</span>
-                            </div>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit" onclick="editTrainee(this)">
-                                <i class="bi bi-pencil"></i> Edit
-                            </button>
-                            <button class="btn-action delete" onclick="deleteTrainee(this)">
-                                <i class="bi bi-trash"></i> Delete
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Quick Actions Section -->
-                <h2 class="section-title" style="margin-top: 40px;">Quick Actions</h2>
-                <div class="quick-actions">
-                    <!-- Add Trainee -->
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-person-plus"></i>
-                        </div>
-                        <h4>Add Trainee</h4>
-                        <p>Enroll a new trainee</p>
-                        <button class="action-btn" onclick="openAddTraineeModal()">Add Now</button>
-                    </div>
-
-                    <!-- View Reports -->
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-file-earmark-text"></i>
-                        </div>
-                        <h4>View Reports</h4>
-                        <p>Generate system reports</p>
-                        <button class="action-btn" onclick="viewReports()">View</button>
-                    </div>
-
-                    <!-- Manage Appointments -->
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-calendar-check"></i>
-                        </div>
-                        <h4>Manage Appointments</h4>
-                        <p>Schedule assessments</p>
-                        <button class="action-btn" onclick="manageAppointments()">Manage</button>
-                    </div>
-
-                    <!-- System Settings -->
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-gear"></i>
-                        </div>
-                        <h4>System Settings</h4>
-                        <p>Configure system</p>
-                        <button class="action-btn" onclick="openSettings()">Configure</button>
-                    </div>
+                    <!-- Trainees will be loaded dynamically from the API -->
                 </div>
             </div>
         </div>
@@ -286,6 +182,7 @@
     <!-- Scripts -->
     <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
+    <script src="../assets/js/trainees-page.js"></script>
     <script>
         // Sidebar toggle for mobile
         document.addEventListener('DOMContentLoaded', function() {
@@ -353,202 +250,10 @@
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('userSession');
                 sessionStorage.removeItem('userSession');
-                window.location.href = '../../auth/login.html';
+                window.location.href = '../../public/index.html';
             }
         }
 
-        // Trainee management functions
-        let currentEditCard = null;
-        let currentDeleteCard = null;
-
-        function openAddTraineeModal() {
-            currentEditCard = null;
-            document.getElementById('modalTitle').textContent = 'Add New Trainee';
-            document.getElementById('traineeForm').reset();
-            document.getElementById('traineeModal').classList.add('active');
-        }
-
-        function editTrainee(button) {
-            currentEditCard = button.closest('.trainee-card');
-            const name = currentEditCard.querySelector('.trainee-info h3').textContent;
-            const role = currentEditCard.querySelector('.trainee-info p').textContent;
-            
-            // Get email and enrolled date from detail-item spans
-            const detailItems = currentEditCard.querySelectorAll('.detail-item span');
-            const email = detailItems[0] ? detailItems[0].textContent : '';
-            const enrolled = detailItems[1] ? detailItems[1].textContent.replace('Enrolled: ', '') : '';
-            
-            const status = currentEditCard.querySelector('.trainee-status').textContent.trim();
-            
-            document.getElementById('modalTitle').textContent = 'Edit Trainee';
-            document.getElementById('traineeName').value = name;
-            document.getElementById('traineeRole').value = role;
-            document.getElementById('traineeEmail').value = email;
-            document.getElementById('traineeEnrolled').value = enrolled;
-            document.getElementById('traineeStatus').value = status.toUpperCase();
-            
-            document.getElementById('traineeModal').classList.add('active');
-        }
-
-        function deleteTrainee(button) {
-            currentDeleteCard = button.closest('.trainee-card');
-            const name = currentDeleteCard.querySelector('.trainee-info h3').textContent;
-            document.getElementById('deleteTraineeNameModal').textContent = name;
-            document.getElementById('deleteConfirmInput').value = '';
-            document.getElementById('deleteConfirmInput').placeholder = 'Please enter "' + name + '" to delete';
-            document.getElementById('deleteErrorMsg').style.display = 'none';
-            document.getElementById('deleteModal').classList.add('active');
-        }
-
-        function closeTraineeModal() {
-            document.getElementById('traineeModal').classList.remove('active');
-            currentEditCard = null;
-        }
-
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.remove('active');
-            document.getElementById('deleteConfirmInput').value = '';
-            document.getElementById('deleteErrorMsg').style.display = 'none';
-            currentDeleteCard = null;
-        }
-
-        function confirmDelete() {
-            if (currentDeleteCard) {
-                const name = currentDeleteCard.querySelector('.trainee-info h3').textContent;
-                const inputValue = document.getElementById('deleteConfirmInput').value.trim();
-                const errorMsg = document.getElementById('deleteErrorMsg');
-                
-                // Check if input matches the trainee name
-                if (inputValue !== name) {
-                    errorMsg.style.display = 'block';
-                    document.getElementById('deleteConfirmInput').style.borderColor = 'var(--danger)';
-                    document.getElementById('deleteConfirmInput').focus();
-                    return;
-                }
-                
-                currentDeleteCard.style.opacity = '0';
-                currentDeleteCard.style.transform = 'scale(0.9)';
-                
-                setTimeout(() => {
-                    currentDeleteCard.remove();
-                    closeDeleteModal();
-                    showNotification('Trainee "' + name + '" has been deleted successfully.', 'success');
-                }, 300);
-            }
-        }
-
-        function saveTrainee(event) {
-            event.preventDefault();
-            
-            const name = document.getElementById('traineeName').value;
-            const role = document.getElementById('traineeRole').value;
-            const email = document.getElementById('traineeEmail').value;
-            const enrolled = document.getElementById('traineeEnrolled').value;
-            const status = document.getElementById('traineeStatus').value;
-            
-            if (currentEditCard) {
-                // Update existing trainee
-                currentEditCard.querySelector('.trainee-info h3').textContent = name;
-                currentEditCard.querySelector('.trainee-info p').textContent = role;
-                
-                // Update detail items
-                const detailItems = currentEditCard.querySelectorAll('.detail-item span');
-                if (detailItems[0]) detailItems[0].textContent = email;
-                if (detailItems[1]) detailItems[1].textContent = 'Enrolled: ' + enrolled;
-                
-                const statusBadge = currentEditCard.querySelector('.trainee-status');
-                statusBadge.textContent = status;
-                statusBadge.className = 'trainee-status status-' + status.toLowerCase();
-                
-                showNotification('Trainee updated successfully!', 'success');
-            } else {
-                // Add new trainee
-                const traineesGrid = document.querySelector('.trainees-grid');
-                const newCard = createTraineeCard({ name, role, email, enrolled, status });
-                traineesGrid.appendChild(newCard);
-                showNotification('Trainee added successfully!', 'success');
-            }
-            
-            closeTraineeModal();
-        }
-
-        function createTraineeCard(trainee) {
-            const card = document.createElement('div');
-            card.className = 'trainee-card';
-            
-            const initials = trainee.name.split(' ').map(n => n[0]).join('');
-            
-            card.innerHTML = `
-                <div class="trainee-header">
-                    <div class="trainee-avatar">${initials}</div>
-                    <div class="trainee-info">
-                        <h3>${trainee.name}</h3>
-                        <p>${trainee.role}</p>
-                    </div>
-                    <span class="trainee-status status-${trainee.status.toLowerCase()}">${trainee.status}</span>
-                </div>
-                <div class="trainee-details">
-                    <div class="detail-item">
-                        <i class="bi bi-envelope"></i>
-                        <span>${trainee.email}</span>
-                    </div>
-                    <div class="detail-item">
-                        <i class="bi bi-calendar"></i>
-                        <span>Enrolled: ${trainee.enrolled}</span>
-                    </div>
-                </div>
-                <div class="trainee-actions">
-                    <button class="btn-action edit" onclick="editTrainee(this)">
-                        <i class="bi bi-pencil"></i> Edit
-                    </button>
-                    <button class="btn-action delete" onclick="deleteTrainee(this)">
-                        <i class="bi bi-trash"></i> Delete
-                    </button>
-                </div>
-            `;
-            
-            return card;
-        }
-
-        function showNotification(message, type = 'info') {
-            const notification = document.createElement('div');
-            notification.className = 'notification notification-' + type;
-            notification.innerHTML = '<i class="bi bi-check-circle"></i> ' + message;
-            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000;';
-            
-            if (type === 'success') {
-                notification.style.borderLeft = '4px solid #27AE60';
-            } else if (type === 'error') {
-                notification.style.borderLeft = '4px solid #E74C3C';
-            }
-            
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
-        }
-
-        // Close modals when clicking outside
-        window.onclick = function(event) {
-            if (event.target.classList.contains('modal')) {
-                event.target.classList.remove('active');
-            }
-        };
-
-        // Quick action functions
-        function viewReports() {
-            alert('View Reports page would open here');
-        }
-
-        function manageAppointments() {
-            alert('Manage Appointments page would open here');
-        }
-
-        function openSettings() {
-            alert('System Settings page would open here');
-        }
-        
         // Reset delete confirmation input styling on input
         document.addEventListener('DOMContentLoaded', function() {
             const deleteInput = document.getElementById('deleteConfirmInput');
@@ -560,12 +265,17 @@
             }
         });
 
-        // Burger menu is now handled by burger-menu.js
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        };
     </script>
 
     <!-- Add/Edit Trainee Modal -->
     <div class="modal" id="traineeModal">
-        <div class="modal-content">
+        <div class="modal-content modal-wide">
             <div class="modal-header">
                 <h3 id="modalTitle">Add New Trainee</h3>
                 <button class="modal-close" onclick="closeTraineeModal()">
@@ -574,32 +284,43 @@
             </div>
             <form id="traineeForm" onsubmit="saveTrainee(event)">
                 <div class="modal-body">
-                    <div class="form-group">
-                        <label class="form-label" for="traineeName">Full Name *</label>
-                        <input type="text" id="traineeName" name="traineeName" class="form-control" placeholder="e.g., John Doe" autocomplete="name" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="traineeRole">Role/Position *</label>
-                        <input type="text" id="traineeRole" name="traineeRole" class="form-control" placeholder="e.g., Forklift Operator" autocomplete="organization-title" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" for="traineeEmail">Email Address *</label>
-                        <input type="email" id="traineeEmail" name="traineeEmail" class="form-control" placeholder="e.g., john@example.com" autocomplete="email" required>
-                    </div>
-                    
-                    <div class="form-row">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="traineeName">Full Name *</label>
+                            <input type="text" id="traineeName" name="traineeName" class="form-control" placeholder="e.g., John Doe" autocomplete="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="traineeEmail">Email Address *</label>
+                            <input type="email" id="traineeEmail" name="traineeEmail" class="form-control" placeholder="e.g., john@example.com" autocomplete="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="traineePhone">Phone Number *</label>
+                            <input type="tel" id="traineePhone" name="traineePhone" class="form-control" placeholder="e.g., +63 912 345 6789" autocomplete="tel" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="traineeLocation">Location *</label>
+                            <input type="text" id="traineeLocation" name="traineeLocation" class="form-control" placeholder="e.g., Manila, Philippines" autocomplete="address-level2" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="traineeRole">Role/Position *</label>
+                            <input type="text" id="traineeRole" name="traineeRole" class="form-control" placeholder="e.g., Forklift Operator" autocomplete="organization-title" required>
+                        </div>
+                        
                         <div class="form-group">
                             <label class="form-label" for="traineeEnrolled">Enrolled Date *</label>
-                            <input type="text" id="traineeEnrolled" name="traineeEnrolled" class="form-control" placeholder="e.g., Jan 15, 2024" autocomplete="off" required>
+                            <input type="date" id="traineeEnrolled" name="traineeEnrolled" class="form-control" autocomplete="off" required>
                         </div>
+                        
                         <div class="form-group">
                             <label class="form-label" for="traineeStatus">Status *</label>
                             <select id="traineeStatus" name="traineeStatus" class="form-control" autocomplete="off" required>
-                                <option value="ACTIVE">Active</option>
-                                <option value="PENDING">Pending</option>
-                                <option value="COMPLETED">Completed</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                                <option value="graduated">Graduated</option>
                             </select>
                         </div>
                     </div>

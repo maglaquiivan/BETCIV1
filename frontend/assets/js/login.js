@@ -3,6 +3,37 @@
 --------------------------------------------------------------*/
 
 document.addEventListener('DOMContentLoaded', function() {
+  // Modal functions
+  function showModal(type, title, message, redirectUrl = null) {
+    const modalEl = document.getElementById('loginModal');
+    if (!modalEl) return; // Modal not available on this page
+    
+    const modal = new bootstrap.Modal(modalEl);
+    const modalIcon = document.getElementById('modalIcon');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalMessage = document.getElementById('modalMessage');
+    const modalButton = document.getElementById('modalButton');
+
+    if (type === 'success') {
+      modalIcon.innerHTML = '<i class="bi bi-check-circle-fill text-success" style="font-size: 4rem;"></i>';
+      modalButton.className = 'btn btn-success';
+    } else {
+      modalIcon.innerHTML = '<i class="bi bi-x-circle-fill text-danger" style="font-size: 4rem;"></i>';
+      modalButton.className = 'btn btn-danger';
+    }
+
+    modalTitle.textContent = title;
+    modalMessage.textContent = message;
+    modal.show();
+
+    // Auto redirect on success
+    if (type === 'success' && redirectUrl) {
+      setTimeout(() => {
+        window.location.href = redirectUrl;
+      }, 2000);
+    }
+  }
+
   // Check URL parameters for course pre-selection
   const urlParams = new URLSearchParams(window.location.search);
   const courseParam = urlParams.get('course');
@@ -53,35 +84,58 @@ document.addEventListener('DOMContentLoaded', function() {
   const registerForm = document.querySelector('#register-tab .login-form');
 
   if (loginForm) {
-    loginForm.addEventListener('submit', function(e) {
+    loginForm.addEventListener('submit', async function(e) {
       e.preventDefault();
-      const role = document.getElementById('login-role').value;
-      const email = document.getElementById('login-email').value;
-      const password = document.getElementById('login-password').value;
+      
+      // Get email and password (no role selector needed)
+      const email = document.getElementById('login-email')?.value;
+      const password = document.getElementById('login-password')?.value;
 
-      if (!role || !email || !password) {
-        alert('Please fill in all fields');
+      if (!email || !password) {
+        showModal('error', 'Missing Information', 'Please fill in all fields');
         return;
       }
 
-      // Handle different roles
-      if (role === 'student') {
-        console.log('Student login:', { email, password });
-        alert('Redirecting to trainee dashboard...');
-        window.location.href = '../trainee/dashboard.html';
-      } else if (role === 'instructor') {
-        console.log('Instructor login:', { email, password });
-        alert('Instructor dashboard coming soon!');
-      } else if (role === 'admin') {
-        console.log('Admin login from role dropdown:', { email, password });
-        alert('Redirecting to admin dashboard...');
-        window.location.href = '../admin/dashboard.html';
+      try {
+        // Call MongoDB API for login
+        const response = await fetch('http://localhost:5500/api/users/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        if (!response.ok) {
+          showModal('error', 'Login Failed', 'Username or password is incorrect. Please try again.');
+          return;
+        }
+
+        const user = await response.json();
+
+        // Store user session
+        localStorage.setItem('userSession', JSON.stringify(user));
+
+        // Auto-redirect based on user role from database
+        // Admin and Instructor go to admin dashboard
+        // Everyone else (trainee, staff, etc.) goes to trainee dashboard
+        if (user.role === 'admin' || user.role === 'instructor') {
+          const roleTitle = user.role === 'admin' ? 'Admin' : 'Instructor';
+          showModal('success', 'Login Successful!', `Welcome back ${roleTitle}! Redirecting to dashboard...`, '../admin/pages/dashboard.html');
+        } else {
+          // Trainee, staff, or any other role
+          showModal('success', 'Login Successful!', 'Welcome back! Redirecting to your dashboard...', '../trainee/pages/dashboard.html');
+        }
+
+      } catch (error) {
+        console.error('Login error:', error);
+        showModal('error', 'Login Failed', 'Username or password is incorrect. Please try again.');
       }
     });
   }
 
   if (registerForm) {
-    registerForm.addEventListener('submit', function(e) {
+    registerForm.addEventListener('submit', async function(e) {
       e.preventDefault();
       const name = document.getElementById('register-name').value;
       const email = document.getElementById('register-email').value;
@@ -90,18 +144,70 @@ document.addEventListener('DOMContentLoaded', function() {
       const confirm = document.getElementById('register-confirm').value;
 
       if (!name || !email || !password || !confirm) {
-        alert('Please fill in all required fields');
+        showModal('error', 'Missing Information', 'Please fill in all required fields');
         return;
       }
 
       if (password !== confirm) {
-        alert('Passwords do not match');
+        showModal('error', 'Password Mismatch', 'Passwords do not match. Please try again.');
         return;
       }
 
-      // Here you would typically send the registration data to your backend
-      console.log('Registration attempt:', { name, email, course, password });
-      alert('Registration functionality would be implemented here');
+      try {
+        // Split name into first and last name
+        const nameParts = name.trim().split(' ');
+        const firstName = nameParts[0];
+        const lastName = nameParts.slice(1).join(' ') || nameParts[0];
+
+        // Create username from email (before @ symbol)
+        const username = email.split('@')[0];
+
+        // Call MongoDB API for registration - save to accounts collection
+        const response = await fetch('http://localhost:5500/api/accounts', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            accountId: `ACC${Date.now()}`,
+            username: username,
+            email: email,
+            password: password,
+            firstName: firstName,
+            lastName: lastName,
+            role: 'trainee',
+            status: 'active',
+            permissions: []
+          })
+        });
+
+        if (!response.ok) {
+          showModal('error', 'Registration Failed', 'Unable to create account. Email may already be in use.');
+          return;
+        }
+
+        const user = await response.json();
+        
+        showModal('success', 'Registration Successful!', 'Your account has been created. Please login with your credentials.');
+        
+        // Switch to login tab after delay
+        setTimeout(() => {
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          tabContents.forEach(content => content.classList.remove('active'));
+          
+          const loginBtn = document.querySelector('[data-tab="login"]');
+          const loginTab = document.getElementById('login-tab');
+          
+          if (loginBtn && loginTab) {
+            loginBtn.classList.add('active');
+            loginTab.classList.add('active');
+          }
+        }, 2000);
+
+      } catch (error) {
+        console.error('Registration error:', error);
+        showModal('error', 'Registration Failed', 'Unable to create account. Please try again.');
+      }
     });
   }
 });

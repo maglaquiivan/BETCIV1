@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' ws: wss: http: https:; object-src 'none'; base-uri 'self';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' ws: wss: http: https: http://127.0.0.1:* http://localhost:*; object-src 'none'; base-uri 'self';">
     <title>BETCI | Admin Dashboard</title>
     <meta name="description" content="BETCI Admin Dashboard" />
     
@@ -17,6 +17,7 @@
     
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     
     <!-- Admin Dashboard CSS -->
     <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=6" />
@@ -42,43 +43,43 @@
                 <ul>
                     <li class="nav-item active">
                         <a href="dashboard.html" class="nav-link">
-                            <i class="bi bi-house-door"></i>
+                            <i class="bi bi-speedometer2"></i>
                             <span>Dashboard</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="trainees.html" class="nav-link">
-                            <i class="bi bi-people"></i>
+                            <i class="bi bi-people-fill"></i>
                             <span>Trainees</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="accounts.html" class="nav-link">
-                            <i class="bi bi-person-badge"></i>
+                            <i class="bi bi-person-badge-fill"></i>
                             <span>Accounts</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="training-catalog.html" class="nav-link">
-                            <i class="bi bi-book"></i>
+                            <i class="bi bi-mortarboard-fill"></i>
                             <span>Training Catalog</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="appointments.html" class="nav-link">
-                            <i class="bi bi-calendar-check"></i>
+                            <i class="bi bi-calendar-check-fill"></i>
                             <span>Appointments</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="records.html" class="nav-link">
-                            <i class="bi bi-file-earmark"></i>
+                            <i class="bi bi-folder-check"></i>
                             <span>Records</span>
                         </a>
                     </li>
                     <li class="nav-item">
                         <a href="settings.html" class="nav-link">
-                            <i class="bi bi-gear"></i>
+                            <i class="bi bi-gear-fill"></i>
                             <span>Settings</span>
                         </a>
                     </li>
@@ -136,13 +137,13 @@
                             </div>
                             <ul class="dropdown-menu">
                                 <li>
-                                    <a href="settings.html">
+                                    <a href="settings.html#manage-profile">
                                         <i class="bi bi-person"></i>
                                         <span>My Profile</span>
                                     </a>
                                 </li>
                                 <li>
-                                    <a href="settings.html">
+                                    <a href="settings.html#appearance">
                                         <i class="bi bi-gear"></i>
                                         <span>Settings</span>
                                     </a>
@@ -172,7 +173,7 @@
                 <div class="stats-grid">
                     <div class="stat-card">
                         <div class="stat-icon active-courses">
-                            <i class="bi bi-book-half"></i>
+                            <i class="bi bi-mortarboard-fill"></i>
                         </div>
                         <div class="stat-info">
                             <h3>3</h3>
@@ -183,7 +184,7 @@
                     
                     <div class="stat-card">
                         <div class="stat-icon completed">
-                            <i class="bi bi-check-circle"></i>
+                            <i class="bi bi-people-fill"></i>
                         </div>
                         <div class="stat-info">
                             <h3>1,245</h3>
@@ -194,7 +195,7 @@
                     
                     <div class="stat-card">
                         <div class="stat-icon progress">
-                            <i class="bi bi-graph-up"></i>
+                            <i class="bi bi-graph-up-arrow"></i>
                         </div>
                         <div class="stat-info">
                             <h3>48</h3>
@@ -204,262 +205,170 @@
                     </div>
                 </div>
 
-                <!-- Trainees Management Section -->
-                <div class="section-header">
-                    <h2>Trainees Management</h2>
-                    <button class="view-all-btn">View All</button>
-                </div>
-
-                <div class="trainees-grid">
-                    <!-- Trainee Card 1 -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar">
-                                <span>JD</span>
-                            </div>
-                            <div class="trainee-info">
-                                <h4>John Doe</h4>
-                                <p>Forklift Operation</p>
-                            </div>
-                            <span class="status-badge active">Active</span>
-                        </div>
-                        <div class="trainee-meta">
-                            <span class="meta-item"><i class="bi bi-envelope"></i> john@example.com</span>
-                            <span class="meta-item"><i class="bi bi-calendar"></i> Enrolled: Jan 15, 2024</span>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit" onclick="editTrainee(this)"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn-action delete" onclick="deleteTrainee(this)"><i class="bi bi-trash"></i> Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Trainee Card 2 -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar">
-                                <span>JS</span>
-                            </div>
-                            <div class="trainee-info">
-                                <h4>Jane Smith</h4>
-                                <p>Bulldozer Operation</p>
-                            </div>
-                            <span class="status-badge pending">Pending</span>
-                        </div>
-                        <div class="trainee-meta">
-                            <span class="meta-item"><i class="bi bi-envelope"></i> jane@example.com</span>
-                            <span class="meta-item"><i class="bi bi-calendar"></i> Enrolled: Jan 18, 2024</span>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit" onclick="editTrainee(this)"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn-action delete" onclick="deleteTrainee(this)"><i class="bi bi-trash"></i> Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Trainee Card 3 -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar">
-                                <span>MJ</span>
-                            </div>
-                            <div class="trainee-info">
-                                <h4>Mike Johnson</h4>
-                                <p>Excavator Operation</p>
-                            </div>
-                            <span class="status-badge completed">Completed</span>
-                        </div>
-                        <div class="trainee-meta">
-                            <span class="meta-item"><i class="bi bi-envelope"></i> mike@example.com</span>
-                            <span class="meta-item"><i class="bi bi-calendar"></i> Enrolled: Dec 20, 2023</span>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit" onclick="editTrainee(this)"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn-action delete" onclick="deleteTrainee(this)"><i class="bi bi-trash"></i> Delete</button>
-                        </div>
-                    </div>
-                </div>
-
                 <!-- Courses Management Section -->
                 <div class="section-header">
                     <h2>Courses Management</h2>
-                    <button class="view-all-btn">View All</button>
                 </div>
 
-                <div class="trainees-grid">
-                    <!-- Course Card 1 - Active -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar" style="background: #E67E22;">
-                                <i class="bi bi-book"></i>
-                            </div>
-                            <div class="trainee-info">
-                                <h4>Forklift Operation NC II</h4>
-                                <p>Heavy Equipment</p>
-                            </div>
-                            <span class="status-badge active">Active</span>
-                        </div>
-                        <div class="trainee-meta">
-                            <span class="meta-item"><i class="bi bi-people"></i> 45 Trainees</span>
-                            <span class="meta-item"><i class="bi bi-calendar"></i> Duration: 4 weeks</span>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn-action delete"><i class="bi bi-trash"></i> Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Course Card 2 - Active -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar" style="background: #27AE60;">
-                                <i class="bi bi-book"></i>
-                            </div>
-                            <div class="trainee-info">
-                                <h4>Bulldozer Operation NC II</h4>
-                                <p>Heavy Equipment</p>
-                            </div>
-                            <span class="status-badge active">Active</span>
-                        </div>
-                        <div class="trainee-meta">
-                            <span class="meta-item"><i class="bi bi-people"></i> 32 Trainees</span>
-                            <span class="meta-item"><i class="bi bi-calendar"></i> Duration: 6 weeks</span>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn-action delete"><i class="bi bi-trash"></i> Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Course Card 3 - Completed -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar" style="background: #3498DB;">
-                                <i class="bi bi-book"></i>
-                            </div>
-                            <div class="trainee-info">
-                                <h4>Hydraulic Excavator NC II</h4>
-                                <p>Heavy Equipment</p>
-                            </div>
-                            <span class="status-badge completed">Completed</span>
-                        </div>
-                        <div class="trainee-meta">
-                            <span class="meta-item"><i class="bi bi-people"></i> 28 Trainees</span>
-                            <span class="meta-item"><i class="bi bi-calendar"></i> Duration: 8 weeks</span>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn-action delete"><i class="bi bi-trash"></i> Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Course Card 4 - Available -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar" style="background: #F39C12;">
-                                <i class="bi bi-book"></i>
-                            </div>
-                            <div class="trainee-info">
-                                <h4>Dump Truck Operation NC II</h4>
-                                <p>Heavy Equipment</p>
-                            </div>
-                            <span class="status-badge pending">Available</span>
-                        </div>
-                        <div class="trainee-meta">
-                            <span class="meta-item"><i class="bi bi-people"></i> 0 Trainees</span>
-                            <span class="meta-item"><i class="bi bi-calendar"></i> Duration: 5 weeks</span>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn-action delete"><i class="bi bi-trash"></i> Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Course Card 5 - Available -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar" style="background: #9B59B6;">
-                                <i class="bi bi-book"></i>
-                            </div>
-                            <div class="trainee-info">
-                                <h4>Wheel Loader NC II</h4>
-                                <p>Heavy Equipment</p>
-                            </div>
-                            <span class="status-badge pending">Available</span>
-                        </div>
-                        <div class="trainee-meta">
-                            <span class="meta-item"><i class="bi bi-people"></i> 0 Trainees</span>
-                            <span class="meta-item"><i class="bi bi-calendar"></i> Duration: 6 weeks</span>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn-action delete"><i class="bi bi-trash"></i> Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Course Card 6 - Available -->
-                    <div class="trainee-card">
-                        <div class="trainee-header">
-                            <div class="trainee-avatar" style="background: #E74C3C;">
-                                <i class="bi bi-book"></i>
-                            </div>
-                            <div class="trainee-info">
-                                <h4>Backhoe Loader NC II</h4>
-                                <p>Heavy Equipment</p>
-                            </div>
-                            <span class="status-badge pending">Available</span>
-                        </div>
-                        <div class="trainee-meta">
-                            <span class="meta-item"><i class="bi bi-people"></i> 0 Trainees</span>
-                            <span class="meta-item"><i class="bi bi-calendar"></i> Duration: 7 weeks</span>
-                        </div>
-                        <div class="trainee-actions">
-                            <button class="btn-action edit"><i class="bi bi-pencil"></i> Edit</button>
-                            <button class="btn-action delete"><i class="bi bi-trash"></i> Delete</button>
-                        </div>
+                <div class="trainees-grid" id="coursesGrid">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                        <p>Loading courses...</p>
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
+                <!-- Trainees Management Section -->
                 <div class="section-header">
-                    <h2>Quick Actions</h2>
+                    <h2>Trainees Management</h2>
                 </div>
 
-                <div class="quick-actions">
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-person-plus"></i>
-                        </div>
-                        <h4>Add Trainee</h4>
-                        <p>Enroll a new trainee</p>
-                        <button class="action-btn">Add Now</button>
-                    </div>
-
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-file-earmark-text"></i>
-                        </div>
-                        <h4>View Reports</h4>
-                        <p>Generate system reports</p>
-                        <button class="action-btn">View</button>
-                    </div>
-
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-calendar-check"></i>
-                        </div>
-                        <h4>Manage Appointments</h4>
-                        <p>Schedule assessments</p>
-                        <button class="action-btn">Manage</button>
-                    </div>
-
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-gear"></i>
-                        </div>
-                        <h4>System Settings</h4>
-                        <p>Configure system</p>
-                        <button class="action-btn">Configure</button>
+                <div class="trainees-grid" id="traineesGrid">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                        <p>Loading trainees...</p>
                     </div>
                 </div>
+        </div>
+    </div>
+
+    <!-- Delete Course Confirmation Modal -->
+    <div class="modal" id="deleteCourseModal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3>Confirm Delete</h3>
+                <button class="modal-close" onclick="closeDeleteCourseModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="delete-warning">
+                    <i class="bi bi-exclamation-triangle" style="font-size: 48px; color: #e74c3c; display: block; margin-bottom: 16px;"></i>
+                    <p style="font-weight: 600; margin-bottom: 8px;">Are you sure you want to delete this course?</p>
+                    <p class="delete-course-name" id="deleteCourseNameModal" style="font-weight: 700; color: #333; margin-bottom: 16px;"></p>
+                    <p style="color: #666; font-size: 13px; margin-bottom: 20px;">This action cannot be undone.</p>
+                    
+                    <div class="form-group" style="text-align: left;">
+                        <label class="form-label" for="deleteConfirmCourseInput">Type the course name to confirm:</label>
+                        <input type="text" id="deleteConfirmCourseInput" class="form-control" placeholder="Enter course name" autocomplete="off">
+                        <p id="deleteErrorCourseMsg" style="color: #e74c3c; font-size: 12px; margin-top: 8px; display: none;">Name does not match. Please try again.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteCourseModal()">Cancel</button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteCourse()">
+                    <i class="bi bi-trash"></i> Delete Course
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Course Modal -->
+    <div class="modal" id="editCourseModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header">
+                <h3>Edit Course</h3>
+                <button class="modal-close" onclick="closeEditCourseModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="editCourseName">Course Name *</label>
+                        <input type="text" id="editCourseName" class="form-control" placeholder="e.g., Forklift Operation NC II" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editCourseCategory">Category *</label>
+                        <input type="text" id="editCourseCategory" class="form-control" placeholder="e.g., Heavy Equipment" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editCourseDuration">Duration *</label>
+                        <input type="text" id="editCourseDuration" class="form-control" placeholder="e.g., 4 weeks" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editCourseStatus">Status *</label>
+                        <select id="editCourseStatus" class="form-control" required>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label class="form-label" for="editCourseImage">Course Image URL</label>
+                        <input type="text" id="editCourseImage" class="form-control" placeholder="e.g., ../../assets/img/fork.png">
+                    </div>
+                    
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label class="form-label" for="editCourseDescription">Description</label>
+                        <textarea id="editCourseDescription" class="form-control" placeholder="Course description..." rows="4"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEditCourseModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveEditedCourse()">
+                    <i class="bi bi-check"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Trainee Modal -->
+    <div class="modal" id="editTraineeModal">
+        <div class="modal-content modal-wide">
+            <div class="modal-header">
+                <h3>Edit Trainee</h3>
+                <button class="modal-close" onclick="closeEditTraineeModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label class="form-label" for="editTraineeName">Full Name *</label>
+                        <input type="text" id="editTraineeName" class="form-control" placeholder="e.g., John Doe" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editTraineeEmail">Email Address *</label>
+                        <input type="email" id="editTraineeEmail" class="form-control" placeholder="e.g., john@example.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editTraineePhone">Phone Number *</label>
+                        <input type="tel" id="editTraineePhone" class="form-control" placeholder="e.g., +63 912 345 6789" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editTraineeLocation">Location *</label>
+                        <input type="text" id="editTraineeLocation" class="form-control" placeholder="e.g., Manila, Philippines" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editTraineeRole">Role/Course *</label>
+                        <input type="text" id="editTraineeRole" class="form-control" placeholder="e.g., Forklift Operation" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editTraineeStatus">Status *</label>
+                        <select id="editTraineeStatus" class="form-control" required>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="graduated">Graduated</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEditTraineeModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveEditedTrainee()">
+                    <i class="bi bi-check"></i> Save Changes
+                </button>
             </div>
         </div>
     </div>
@@ -468,70 +377,348 @@
     <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
-        // Sidebar toggle for mobile
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            const menuToggle = document.getElementById('menuToggle');
-            const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-            const mobileMenuClose = document.getElementById('mobileMenuClose');
-            
-            // Load saved sidebar state only on desktop
-            if (window.innerWidth > 768) {
-                const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.style.marginLeft = '60px';
-                }
+        // Force load dashboard data immediately
+        const API_BASE_URL = 'http://localhost:5500/api';
+        
+        async function loadTraineesNow() {
+            try {
+                const response = await fetch(API_BASE_URL + '/trainees');
+                const trainees = await response.json();
+                
+                const grid = document.getElementById('traineesGrid');
+                grid.innerHTML = '';
+                
+                trainees.slice(0, 6).forEach(trainee => {
+                    const initials = (trainee.firstName.charAt(0) + trainee.lastName.charAt(0)).toUpperCase();
+                    const course = trainee.enrolledCourses && trainee.enrolledCourses[0] ? trainee.enrolledCourses[0].courseName : 'No course';
+                    const status = trainee.status || 'active';
+                    
+                    const card = document.createElement('div');
+                    card.className = 'trainee-card';
+                    card.innerHTML = `
+                        <div class="trainee-header">
+                            <div class="trainee-avatar"><span>${initials}</span></div>
+                            <div class="trainee-info">
+                                <h4>${trainee.firstName} ${trainee.lastName}</h4>
+                                <p>${course}</p>
+                            </div>
+                            <span class="status-badge ${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                        </div>
+                        <div class="trainee-meta">
+                            <span class="meta-item"><i class="bi bi-envelope"></i> ${trainee.email}</span>
+                            <span class="meta-item"><i class="bi bi-phone"></i> ${trainee.phone || 'N/A'}</span>
+                            <span class="meta-item"><i class="bi bi-geo-alt"></i> ${trainee.address || 'N/A'}</span>
+                            <span class="meta-item"><i class="bi bi-calendar"></i> Enrolled: ${new Date(trainee.enrolledCourses && trainee.enrolledCourses[0] ? trainee.enrolledCourses[0].enrollmentDate : trainee.createdAt).toLocaleDateString()}</span>
+                        </div>
+                        <div class="trainee-actions">
+                            <button class="btn-action view" onclick="viewTraineeFromDashboard('${trainee.traineeId}')"><i class="bi bi-eye"></i></button>
+                            <button class="btn-action edit" onclick="editTraineeFromDashboard('${trainee.traineeId}')"><i class="bi bi-pencil"></i></button>
+                            <button class="btn-action delete" onclick="deleteTraineeFromDashboard('${trainee.traineeId}')"><i class="bi bi-trash"></i></button>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('traineesGrid').innerHTML = '<div style="grid-column: 1/-1; color: red; padding: 20px;">Error: ' + error.message + '</div>';
             }
-            
-            // Toggle sidebar or mobile menu based on screen size
-            if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        // Mobile: Show full-screen menu overlay
-                        mobileMenuOverlay.classList.add('active');
-                        document.body.style.overflow = 'hidden';
-                    } else {
-                        // Desktop: Toggle sidebar collapse
-                        sidebar.classList.toggle('collapsed');
-                        
-                        if (sidebar.classList.contains('collapsed')) {
-                            mainContent.style.marginLeft = '60px';
-                            localStorage.setItem('sidebarCollapsed', 'true');
+        }
+        
+        async function loadCoursesNow() {
+            try {
+                const response = await fetch(API_BASE_URL + '/courses');
+                const courses = await response.json();
+                
+                const grid = document.getElementById('coursesGrid');
+                grid.innerHTML = '';
+                
+                const courseImages = {
+                    'forklift': '/assets/img/fork.png',
+                    'bulldozer': '/assets/img/bulldozer.png',
+                    'dump truck': '/assets/img/dump truck.png',
+                    'excavator': '/assets/img/hydraulic excavator.png'
+                };
+                
+                courses.slice(0, 6).forEach(course => {
+                    const courseTitle = (course.title || course.courseName || 'Course').toLowerCase();
+                    let imageUrl = '/assets/img/logo.png';
+                    
+                    // First try to use image from database
+                    if (course.image) {
+                        // Handle different path formats
+                        if (course.image.startsWith('http')) {
+                            // Extract path from full URL
+                            try {
+                                const url = new URL(course.image);
+                                imageUrl = url.pathname;
+                            } catch (e) {
+                                imageUrl = course.image;
+                            }
+                        } else if (course.image.includes('/assets/img/')) {
+                            // Extract just the /assets/img/ part
+                            imageUrl = '/assets/img/' + course.image.split('/assets/img/')[1];
+                        } else if (course.image.startsWith('/assets/')) {
+                            // Already in correct format
+                            imageUrl = course.image;
                         } else {
-                            mainContent.style.marginLeft = '210px';
-                            localStorage.setItem('sidebarCollapsed', 'false');
+                            // Convert relative paths to absolute
+                            imageUrl = course.image.replace(/^(\.\.\/)+/, '/').replace(/^\.\//, '/');
+                        }
+                    } else {
+                        // Fall back to mapping
+                        for (const [key, url] of Object.entries(courseImages)) {
+                            if (courseTitle.includes(key)) {
+                                imageUrl = url;
+                                break;
+                            }
                         }
                     }
+                    
+                    const card = document.createElement('div');
+                    card.className = 'course-card-clean';
+                    card.innerHTML = `
+                        <div class="course-image-container">
+                            <img src="${imageUrl}" alt="${course.title || 'Course'}" onerror="this.src='/assets/img/logo.png'">
+                        </div>
+                        <div class="course-card-body">
+                            <div class="course-header-info">
+                                <h4 class="course-card-title">${course.title || course.courseName || 'Course'}</h4>
+                                <p class="course-card-category">${course.category || 'Heavy Equipment'}</p>
+                            </div>
+                            <div class="course-card-meta">
+                                <span class="meta-item"><i class="bi bi-people"></i> ${course.traineeCount || 24} Trainees</span>
+                                <span class="meta-item"><i class="bi bi-clock"></i> ${course.duration || '3'}</span>
+                            </div>
+                            <div class="course-card-actions">
+                                <button class="action-btn-clean action-btn-view" onclick="viewCourseFromDashboard('${course.courseId}')" title="View">
+                                    <i class="bi bi-eye-fill"></i>
+                                </button>
+                                <button class="action-btn-clean action-btn-edit" onclick="editCourseFromDashboard('${course.courseId}')" title="Edit">
+                                    <i class="bi bi-pencil-square"></i>
+                                </button>
+                                <button class="action-btn-clean action-btn-delete" onclick="deleteCourseFromDashboard('${course.courseId}')" title="Delete">
+                                    <i class="bi bi-trash3-fill"></i>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
                 });
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('coursesGrid').innerHTML = '<div style="grid-column: 1/-1; color: red; padding: 20px;">Error: ' + error.message + '</div>';
             }
+        }
+        
+        // Edit/Delete functions for dashboard
+        function editTraineeFromDashboard(traineeId) {
+            // Fetch trainee data and open modal
+            fetch(API_BASE_URL + '/trainees/' + traineeId)
+                .then(res => res.json())
+                .then(trainee => {
+                    // Populate modal with trainee data
+                    document.getElementById('editTraineeName').value = trainee.firstName + ' ' + trainee.lastName;
+                    document.getElementById('editTraineeEmail').value = trainee.email;
+                    document.getElementById('editTraineePhone').value = trainee.phone || '';
+                    document.getElementById('editTraineeLocation').value = trainee.address || '';
+                    document.getElementById('editTraineeRole').value = trainee.enrolledCourses && trainee.enrolledCourses[0] ? trainee.enrolledCourses[0].courseName : '';
+                    document.getElementById('editTraineeStatus').value = trainee.status || 'active';
+                    
+                    // Store trainee ID for saving
+                    window.currentEditTraineeId = traineeId;
+                    
+                    // Open modal
+                    document.getElementById('editTraineeModal').classList.add('active');
+                })
+                .catch(err => alert('Error loading trainee: ' + err.message));
+        }
+        
+        function closeEditTraineeModal() {
+            document.getElementById('editTraineeModal').classList.remove('active');
+            window.currentEditTraineeId = null;
+        }
+        
+        function saveEditedTrainee() {
+            const traineeId = window.currentEditTraineeId;
+            const fullName = document.getElementById('editTraineeName').value;
+            const nameParts = fullName.split(' ');
+            const firstName = nameParts[0];
+            const lastName = nameParts.slice(1).join(' ') || nameParts[0];
             
-            // Close mobile menu
-            if (mobileMenuClose) {
-                mobileMenuClose.addEventListener('click', function() {
-                    mobileMenuOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-            }
+            const traineeData = {
+                firstName,
+                lastName,
+                email: document.getElementById('editTraineeEmail').value,
+                phone: document.getElementById('editTraineePhone').value,
+                address: document.getElementById('editTraineeLocation').value,
+                status: document.getElementById('editTraineeStatus').value,
+                enrolledCourses: [{
+                    courseName: document.getElementById('editTraineeRole').value,
+                    status: 'active'
+                }]
+            };
             
-            // Close mobile menu when clicking a link
-            const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
-            mobileMenuLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    mobileMenuOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                });
-            });
-            
-            // Close mobile menu on window resize to desktop
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 768) {
-                    mobileMenuOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
+            fetch(API_BASE_URL + '/trainees/' + traineeId, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(traineeData)
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert('Trainee updated successfully');
+                    closeEditTraineeModal();
+                    loadTraineesNow();
+                } else {
+                    alert('Failed to update trainee');
                 }
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+        
+        async function deleteTraineeFromDashboard(traineeId) {
+            if (!confirm('Are you sure you want to delete this trainee?')) return;
+            
+            try {
+                const response = await fetch(API_BASE_URL + '/trainees/' + traineeId, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    alert('Trainee deleted successfully');
+                    loadTraineesNow();
+                } else {
+                    alert('Failed to delete trainee');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function editCourseFromDashboard(courseId) {
+            // Fetch course data and open modal
+            fetch(API_BASE_URL + '/courses/' + courseId)
+                .then(res => res.json())
+                .then(course => {
+                    // Populate modal with course data
+                    document.getElementById('editCourseName').value = course.title || course.courseName || '';
+                    document.getElementById('editCourseCategory').value = course.category || '';
+                    document.getElementById('editCourseDuration').value = course.duration || '';
+                    document.getElementById('editCourseStatus').value = course.status || 'active';
+                    document.getElementById('editCourseDescription').value = course.description || '';
+                    document.getElementById('editCourseImage').value = course.image || '';
+                    
+                    // Store course ID for saving
+                    window.currentEditCourseId = courseId;
+                    
+                    // Open modal
+                    document.getElementById('editCourseModal').classList.add('active');
+                })
+                .catch(err => alert('Error loading course: ' + err.message));
+        }
+        
+        function closeEditCourseModal() {
+            document.getElementById('editCourseModal').classList.remove('active');
+            window.currentEditCourseId = null;
+        }
+        
+        function saveEditedCourse() {
+            const courseId = window.currentEditCourseId;
+            
+            const courseData = {
+                title: document.getElementById('editCourseName').value,
+                category: document.getElementById('editCourseCategory').value,
+                duration: document.getElementById('editCourseDuration').value,
+                status: document.getElementById('editCourseStatus').value,
+                description: document.getElementById('editCourseDescription').value,
+                image: document.getElementById('editCourseImage').value || ''
+            };
+            
+            fetch(API_BASE_URL + '/courses/' + courseId, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(courseData)
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert('Course updated successfully');
+                    closeEditCourseModal();
+                    loadCoursesNow();
+                } else {
+                    alert('Failed to update course');
+                }
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+        
+        async function deleteCourseFromDashboard(courseId) {
+            // Fetch course name first
+            try {
+                const response = await fetch(API_BASE_URL + '/courses/' + courseId);
+                const course = await response.json();
+                
+                // Store course ID and show confirmation modal
+                window.currentDeleteCourseId = courseId;
+                document.getElementById('deleteCourseNameModal').textContent = course.title || course.courseName || 'Course';
+                document.getElementById('deleteConfirmCourseInput').value = '';
+                document.getElementById('deleteConfirmCourseInput').placeholder = 'Type "' + (course.title || course.courseName || 'Course') + '" to confirm';
+                document.getElementById('deleteErrorCourseMsg').style.display = 'none';
+                document.getElementById('deleteCourseModal').classList.add('active');
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function closeDeleteCourseModal() {
+            document.getElementById('deleteCourseModal').classList.remove('active');
+            document.getElementById('deleteConfirmCourseInput').value = '';
+            document.getElementById('deleteErrorCourseMsg').style.display = 'none';
+            window.currentDeleteCourseId = null;
+        }
+        
+        function confirmDeleteCourse() {
+            const courseName = document.getElementById('deleteCourseNameModal').textContent;
+            const confirmInput = document.getElementById('deleteConfirmCourseInput').value;
+            const errorMsg = document.getElementById('deleteErrorCourseMsg');
+            
+            if (confirmInput !== courseName) {
+                errorMsg.style.display = 'block';
+                document.getElementById('deleteConfirmCourseInput').style.borderColor = '#e74c3c';
+                return;
+            }
+            
+            fetch(API_BASE_URL + '/courses/' + window.currentDeleteCourseId, {
+                method: 'DELETE'
+            })
+            .then(res => {
+                if (res.ok) {
+                    alert('Course deleted successfully');
+                    closeDeleteCourseModal();
+                    loadCoursesNow();
+                } else {
+                    alert('Failed to delete course');
+                }
+            })
+            .catch(err => alert('Error: ' + err.message));
+        }
+        
+        // Load on page ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', function() {
+                setTimeout(() => {
+                    loadTraineesNow();
+                    loadCoursesNow();
+                }, 100);
             });
-        });
+        } else {
+            loadTraineesNow();
+            loadCoursesNow();
+        }
+        
+        // Auto-refresh dashboard every 10 seconds to show newly added items
+        setInterval(() => {
+            loadTraineesNow();
+            loadCoursesNow();
+        }, 10000);
     </script>
     <script>
         // PROFILE DROPDOWN - IMMEDIATE EXECUTION
@@ -579,11 +766,34 @@
                 localStorage.removeItem('adminSession');
                 sessionStorage.removeItem('adminSession');
                 
-                // Redirect to login page
-                window.location.href = '../login.html';
+                // Redirect to index page
+                window.location.href = '../../public/index.html';
             }
         }
-        // Burger menu is now handled by burger-menu.js
+        // Burger menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const menuToggle = document.getElementById('menuToggle');
+            const sidebar = document.querySelector('.sidebar');
+            const adminContainer = document.querySelector('.admin-container');
+            
+            if (menuToggle && sidebar) {
+                menuToggle.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    sidebar.classList.toggle('active');
+                    adminContainer.classList.toggle('sidebar-active');
+                });
+                
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', function(e) {
+                    if (window.innerWidth <= 768) {
+                        if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+                            sidebar.classList.remove('active');
+                            adminContainer.classList.remove('sidebar-active');
+                        }
+                    }
+                });
+            }
+        });
 
         // Ensure dark mode function is available
         if (typeof toggleDarkMode === 'undefined') {
@@ -598,14 +808,12 @@
         
         // Initialize dark mode on page load
         document.addEventListener('DOMContentLoaded', function() {
-            if (typeof loadTheme === 'function') {
-                loadTheme();
-            }
-            
-            // Attach dark mode button listener
-            const darkModeBtn = document.getElementById('darkModeBtn');
-            if (darkModeBtn) {
-                darkModeBtn.addEventListener('click', toggleDarkMode);
+            // Load saved theme
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'dark') {
+                document.body.classList.add('dark-mode');
+                const btn = document.getElementById('darkModeBtn');
+                if (btn) btn.innerHTML = '<i class="bi bi-sun-fill"></i>';
             }
         });
         

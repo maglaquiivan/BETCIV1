@@ -188,6 +188,7 @@ body {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: transform 0.3s ease;
 }
 
 .nav-link span {
@@ -200,10 +201,18 @@ body {
   color: var(--bg-white);
 }
 
+.nav-link:hover i {
+  transform: scale(1.15);
+}
+
 .nav-item.active .nav-link {
   background: rgba(0, 0, 0, 0.2);
   color: var(--bg-white);
   border-left-color: rgba(0, 0, 0, 0.3);
+}
+
+.nav-item.active .nav-link i {
+  transform: scale(1.1);
 }
 
 /* MAIN CONTENT */
@@ -343,6 +352,33 @@ body {
   background: var(--bg-light);
   border-color: var(--primary-color);
   color: var(--primary-color);
+}
+
+/* HEADER LOGOUT BUTTON */
+.header-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  background: var(--danger);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.header-logout-btn:hover {
+  background: #c0392b;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+}
+
+.header-logout-btn i {
+  font-size: 18px;
 }
 
 /* USER PROFILE */
@@ -582,14 +618,29 @@ body {
 }
 
 .stat-icon {
-  width: 60px;
-  height: 60px;
-  border-radius: 12px;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 12px;
   color: white;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+}
+
+.stat-icon i {
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card:hover .stat-icon i {
+  transform: scale(1.05);
 }
 
 .stat-icon.active-courses {
@@ -767,45 +818,62 @@ body {
 
 .trainee-actions {
   display: flex;
+  flex-direction: row;
   gap: 8px;
+  justify-content: center;
+  align-items: center;
 }
 
 .btn-action {
-  flex: 1;
-  display: flex;
+  flex: 0 0 auto;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 12px;
-  border: 1px solid var(--border-color);
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 2px solid #2c3e50;
   background: var(--bg-white);
   border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s ease;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 18px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .btn-action:hover {
-  background: var(--bg-light);
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.btn-action i {
+  font-weight: 600;
+}
+
+.btn-action.view {
+  background: white;
+  color: #E67E22;
+  border-color: #E67E22;
+  border-width: 2px;
 }
 
 .btn-action.edit {
-  color: var(--primary-color);
-  border-color: var(--primary-color);
-}
-
-.btn-action.edit:hover {
-  background: rgba(230, 126, 34, 0.1);
+  background: white;
+  color: #E67E22;
+  border-color: #E67E22;
+  border-width: 2px;
 }
 
 .btn-action.delete {
-  color: var(--danger);
-  border-color: var(--danger);
+  background: white;
+  color: #e74c3c;
+  border-color: #e74c3c;
+  border-width: 2px;
 }
 
-.btn-action.delete:hover {
-  background: rgba(231, 76, 60, 0.1);
+.btn-action.delete i {
+  font-size: 16px;
+  font-weight: 700;
 }
 
 /* QUICK ACTIONS */
@@ -1059,8 +1127,9 @@ body {
   }
 
   .stat-icon {
-    width: 70px;
-    height: 70px;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
     font-size: 32px;
     margin: 0 auto;
   }
@@ -1285,9 +1354,9 @@ body {
   }
 
   .stat-icon {
-    width: 60px;
-    height: 60px;
-    font-size: 28px;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
   }
 
   .stat-info h3 {
@@ -1718,6 +1787,16 @@ body.dark-mode .dark-mode-btn:hover {
   border-color: var(--primary-color);
 }
 
+body.dark-mode .header-logout-btn {
+  background: var(--danger);
+  color: white;
+}
+
+body.dark-mode .header-logout-btn:hover {
+  background: #c0392b;
+  box-shadow: 0 4px 12px rgba(231, 76, 60, 0.4);
+}
+
 body.dark-mode .user-profile:hover {
   background: #2a2a2a;
 }
@@ -1820,25 +1899,33 @@ body.dark-mode .meta-item {
   color: #b0b0b0;
 }
 
-body.dark-mode .btn-action.edit {
-  background: #2a2a2a;
-  color: #e0e0e0;
-  border-color: #3a3a3a;
+body.dark-mode .btn-action {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
 }
 
-body.dark-mode .btn-action.edit:hover {
-  background: var(--primary-color);
-  color: white;
+body.dark-mode .btn-action.view {
+  background: #2a2a2a;
+  color: #E67E22;
+  border-color: #E67E22;
+  border-width: 2px;
+}
+
+body.dark-mode .btn-action.edit {
+  background: #2a2a2a;
+  color: #E67E22;
+  border-color: #E67E22;
+  border-width: 2px;
 }
 
 body.dark-mode .btn-action.delete {
-  background: rgba(231, 76, 60, 0.1);
-  color: var(--danger);
+  background: #2a2a2a;
+  color: #ff6b6b;
+  border-color: #ff6b6b;
+  border-width: 2px;
 }
 
-body.dark-mode .btn-action.delete:hover {
-  background: var(--danger);
-  color: white;
+body.dark-mode .btn-action.delete i {
+  font-weight: 700;
 }
 
 /* Action cards in dark mode */
@@ -2129,4 +2216,281 @@ body.dark-mode .mobile-menu-dark-toggle {
   .mobile-menu-overlay {
     display: none !important;
   }
+}
+
+/* Action Buttons Row - Landscape Style */
+.action-buttons-row {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1px;
+  border: 1px solid #2c3e50;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 20px;
+  transition: all 0.3s ease;
+  flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+.action-btn i {
+  font-size: 20px;
+}
+
+.action-btn-view {
+  background: white;
+  border-color: #E67E22;
+  border-width: 2px;
+  color: #E67E22;
+}
+
+.action-btn-view:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.action-btn-edit {
+  background: white;
+  border-color: #E67E22;
+  border-width: 2px;
+  color: #E67E22;
+}
+
+.action-btn-edit:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.action-btn-delete {
+  background: white;
+  border-color: #e74c3c;
+  border-width: 2px;
+  color: #e74c3c;
+}
+
+.action-btn-delete:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark Mode Action Buttons */
+body.dark-mode .action-btn {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+body.dark-mode .action-btn-view {
+  background: #2a2a2a;
+  border-color: #E67E22;
+  border-width: 2px;
+  color: #E67E22;
+}
+
+body.dark-mode .action-btn-view:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .action-btn-edit {
+  background: #2a2a2a;
+  border-color: #E67E22;
+  border-width: 2px;
+  color: #E67E22;
+}
+
+body.dark-mode .action-btn-edit:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .action-btn-delete {
+  background: #2a2a2a;
+  border-color: #ff6b6b;
+  border-width: 2px;
+  color: #ff6b6b;
+}
+
+body.dark-mode .action-btn-delete:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+}
+}
+
+/* Clean Course Card Design */
+.course-card-clean {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  border: 1px solid #e0e0e0;
+}
+
+.course-card-clean:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.course-image-container {
+  width: 100%;
+  height: 180px;
+  background: #f5f5f5;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.course-image-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.course-card-body {
+  padding: 20px;
+}
+
+.course-header-info {
+  margin-bottom: 12px;
+}
+
+.course-card-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.course-card-category {
+  font-size: 13px;
+  color: #999;
+  margin: 0;
+}
+
+.course-card-meta {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.course-card-meta .meta-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #666;
+}
+
+.course-card-meta .meta-item i {
+  color: #E67E22;
+  font-size: 14px;
+}
+
+.course-card-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+}
+
+.action-btn-clean {
+  flex: 1;
+  height: 40px;
+  border: 2px solid;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.action-btn-clean i {
+  transition: transform 0.3s ease;
+}
+
+.action-btn-clean:hover i {
+  transform: scale(1.15);
+}
+
+.action-btn-view {
+  border-color: #3498db;
+  color: #3498db;
+}
+
+.action-btn-view:hover {
+  background: #3498db;
+  color: white;
+}
+
+.action-btn-edit {
+  border-color: #E67E22;
+  color: #E67E22;
+}
+
+.action-btn-edit:hover {
+  background: #E67E22;
+  color: white;
+}
+
+.action-btn-delete {
+  border-color: #e74c3c;
+  color: #e74c3c;
+}
+
+.action-btn-delete:hover {
+  background: #e74c3c;
+  color: white;
+}
+
+/* Dark Mode */
+body.dark-mode .course-card-clean {
+  background: #2a2a2a;
+  border-color: #3a3a3a;
+}
+
+body.dark-mode .course-card-title {
+  color: #e0e0e0;
+}
+
+body.dark-mode .course-card-category {
+  color: #999;
+}
+
+body.dark-mode .course-card-meta {
+  border-bottom-color: #3a3a3a;
+}
+
+body.dark-mode .course-card-meta .meta-item {
+  color: #b0b0b0;
+}
+
+body.dark-mode .action-btn-clean {
+  background: #2a2a2a;
+}
+
+body.dark-mode .action-btn-view:hover {
+  background: #3498db;
+}
+
+body.dark-mode .action-btn-edit:hover {
+  background: #E67E22;
+}
+
+body.dark-mode .action-btn-delete:hover {
+  background: #e74c3c;
+}
+
+body.dark-mode .course-image-container {
+  background: #1e1e1e;
 }

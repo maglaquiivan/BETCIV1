@@ -4,8 +4,9 @@
   "description": "BETCI Backend API",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "dev": "nodemon server.js"
+    "start": "node --max-http-header-size=80000 server.js",
+    "dev": "nodemon --max-http-header-size=80000 server.js",
+    "seed": "node scripts/seedData.js"
   },
   "keywords": ["betci", "courses", "api"],
   "author": "",

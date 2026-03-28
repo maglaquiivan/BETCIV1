@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Server Test</title>
+</head>
+<body>
+    <h1>Testing Image Loading</h1>
+    <p>If you see images below, the server is working correctly:</p>
+    
+    <h2>Test 1: Fork Image</h2>
+    <img src="/assets/img/fork.png" alt="Fork" style="max-width: 200px;">
+    
+    <h2>Test 2: Bulldozer Image</h2>
+    <img src="/assets/img/bulldozer.png" alt="Bulldozer" style="max-width: 200px;">
+    
+    <h2>Test 3: Logo Image</h2>
+    <img src="/assets/img/logo.png" alt="Logo" style="max-width: 200px;">
+    
+    <hr>
+    <p><strong>Instructions:</strong></p>
+    <ol>
+        <li>Make sure your Node.js backend is running (node server.js in backend folder)</li>
+        <li>Open this page at: <a href="http://localhost:5500/test-server.html">http://localhost:5500/test-server.html</a></li>
+        <li>DO NOT use Live Server - type the URL directly in your browser</li>
+    </ol>
+    
+    <script>
+        // Test API connection
+        fetch('/api/test')
+            .then(r => r.json())
+            .then(data => {
+                document.body.innerHTML += '<h2 style="color: green;">✓ API Connected: ' + data.message + '</h2>';
+            })
+            .catch(err => {
+                document.body.innerHTML += '<h2 style="color: red;">✗ API Not Connected: ' + err.message + '</h2>';
+            });
+    </script>
+</body>
+</html>
