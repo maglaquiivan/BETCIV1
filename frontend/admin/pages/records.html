@@ -154,10 +154,6 @@
                             <i class="bi bi-file-check"></i>
                             <span>Admission</span>
                         </button>
-                        <button class="tab-item" onclick="showSection('attendance', event)">
-                            <i class="bi bi-calendar2-check"></i>
-                            <span>Attendance</span>
-                        </button>
                     </div>
                 </div>
 
@@ -169,45 +165,41 @@
                                 <h2 class="card-title">Enrollment Records</h2>
                                 <p class="card-subtitle">View trainee enrollments</p>
                             </div>
-                            <button class="btn btn-primary" onclick="exportRecords('enrollment')">
-                                <i class="bi bi-download"></i> Export
-                            </button>
+                            <div style="display: flex; gap: 10px; align-items: center;">
+                                <select id="courseFilter" class="form-control" style="width: 250px;" onchange="filterByCourse(this.value)">
+                                    <option value="all">All Courses</option>
+                                    <option value="forklift">Forklift Operation NC II</option>
+                                    <option value="bulldozer">Bulldozer Operation NC II</option>
+                                    <option value="dump-truck">Dump Truck Operation NC II</option>
+                                    <option value="excavator">Hydraulic Excavator NC II</option>
+                                    <option value="wheel-loader">Wheel Loader NC II</option>
+                                    <option value="backhoe">Backhoe Loader NC II</option>
+                                </select>
+                                <button class="btn btn-primary" onclick="exportRecords('enrollment')">
+                                    <i class="bi bi-download"></i> Export
+                                </button>
+                            </div>
                         </div>
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="enrollmentTable">
                                 <thead>
                                     <tr>
-                                        <th>Enrollment ID</th>
-                                        <th>Trainee</th>
+                                        <th>#</th>
+                                        <th>Last Name</th>
+                                        <th>First Name</th>
+                                        <th>Email</th>
                                         <th>Course</th>
-                                        <th>Date</th>
+                                        <th>Enrollment Date</th>
                                         <th>Status</th>
+                                        <th>Progress</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>#ENR001</td>
-                                        <td>John Doe</td>
-                                        <td>Forklift Operation</td>
-                                        <td>Jan 15, 2024</td>
-                                        <td><span class="badge badge-success">Enrolled</span></td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn btn-sm btn-secondary" onclick="viewRecord(this)">View</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#ENR002</td>
-                                        <td>Jane Smith</td>
-                                        <td>Bulldozer Operation</td>
-                                        <td>Jan 18, 2024</td>
-                                        <td><span class="badge badge-success">Enrolled</span></td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn btn-sm btn-secondary" onclick="viewRecord(this)">View</button>
-                                            </div>
+                                        <td colspan="9" style="text-align: center; padding: 40px;">
+                                            <i class="bi bi-hourglass-split" style="font-size: 48px; color: #ccc;"></i>
+                                            <p style="margin-top: 10px; color: #999;">Loading enrollment records...</p>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -315,59 +307,6 @@
                 </div>
 
                 <!-- Attendance Records Section -->
-                <div id="attendance" class="records-section">
-                    <div class="card">
-                        <div class="card-header">
-                            <div>
-                                <h2 class="card-title">Attendance Records</h2>
-                                <p class="card-subtitle">View trainee attendance</p>
-                            </div>
-                            <button class="btn btn-primary" onclick="exportRecords('attendance')">
-                                <i class="bi bi-download"></i> Export
-                            </button>
-                        </div>
-                        <div class="table-responsive">
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>Trainee</th>
-                                        <th>Course</th>
-                                        <th>Date</th>
-                                        <th>Status</th>
-                                        <th>Hours</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td>John Doe</td>
-                                        <td>Forklift Operation</td>
-                                        <td>Jan 15, 2024</td>
-                                        <td><span class="badge badge-success">Present</span></td>
-                                        <td>8 hours</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn btn-sm btn-secondary" onclick="viewRecord(this)">View</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>Jane Smith</td>
-                                        <td>Bulldozer Operation</td>
-                                        <td>Jan 16, 2024</td>
-                                        <td><span class="badge badge-danger">Absent</span></td>
-                                        <td>0 hours</td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn btn-sm btn-secondary" onclick="viewRecord(this)">View</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
     </div>
@@ -376,6 +315,232 @@
     <script src="../../assets/js/dark-mode.js"></script>
     <script src="../../assets/js/admin-dashboard.js"></script>
     <script>
+        const API_BASE_URL = 'http://localhost:5500/api';
+        let allEnrollmentRecords = [];
+
+        // Load enrollment records on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEnrollmentRecords();
+        });
+
+        // Load enrollment records with user details
+        async function loadEnrollmentRecords() {
+            try {
+                const [recordsResponse, accountsResponse] = await Promise.all([
+                    fetch(`${API_BASE_URL}/records`),
+                    fetch(`${API_BASE_URL}/accounts`)
+                ]);
+
+                if (!recordsResponse.ok || !accountsResponse.ok) {
+                    throw new Error('Failed to fetch data');
+                }
+
+                const records = await recordsResponse.json();
+                const accounts = await accountsResponse.json();
+
+                // Create a map of accounts by accountId for quick lookup
+                const accountsMap = {};
+                accounts.forEach(account => {
+                    accountsMap[account.accountId] = account;
+                });
+
+                // Combine records with user details
+                allEnrollmentRecords = records.map(record => {
+                    const user = accountsMap[record.userId] || {};
+                    return {
+                        ...record,
+                        firstName: user.firstName || 'N/A',
+                        lastName: user.lastName || 'N/A',
+                        email: user.email || 'N/A'
+                    };
+                });
+
+                displayEnrollmentRecords(allEnrollmentRecords);
+
+            } catch (error) {
+                console.error('Error loading enrollment records:', error);
+                const tbody = document.querySelector('#enrollmentTable tbody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 40px; color: #e74c3c;">
+                                <i class="bi bi-exclamation-triangle" style="font-size: 48px;"></i>
+                                <p style="margin-top: 10px;">Failed to load enrollment records</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        // Display enrollment records in table
+        function displayEnrollmentRecords(records) {
+            const tbody = document.querySelector('#enrollmentTable tbody');
+            if (!tbody) return;
+
+            if (records.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px;">
+                            <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                            <p style="margin-top: 10px; color: #999;">No enrollment records found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            // Sort records by last name in ascending order (A-Z)
+            const sortedRecords = [...records].sort((a, b) => {
+                const lastNameA = (a.enrolleeData?.lastName || a.lastName || '').toLowerCase();
+                const lastNameB = (b.enrolleeData?.lastName || b.lastName || '').toLowerCase();
+                return lastNameA.localeCompare(lastNameB);
+            });
+
+            tbody.innerHTML = sortedRecords.map((record, index) => {
+                const enrollmentDate = new Date(record.startDate || record.createdAt).toLocaleDateString();
+                const statusClass = record.status.toLowerCase().replace(' ', '-');
+                const recordId = record._id || record.recordId || 'N/A';
+                
+                // Get enrollee data from the form submission
+                const firstName = record.enrolleeData?.firstName || record.firstName || 'N/A';
+                const lastName = record.enrolleeData?.lastName || record.lastName || 'N/A';
+                const email = record.enrolleeData?.email || record.email || 'N/A';
+
+                return `
+                    <tr data-course-id="${record.courseId}" data-record-id="${recordId}">
+                        <td><strong>${index + 1}</strong></td>
+                        <td>${lastName}</td>
+                        <td>${firstName}</td>
+                        <td>${email}</td>
+                        <td>${record.courseName}</td>
+                        <td>${enrollmentDate}</td>
+                        <td><span class="badge badge-${statusClass}">${record.status}</span></td>
+                        <td>
+                            <div class="progress-bar" style="width: 100px; height: 8px; background: #e0e0e0; border-radius: 4px; overflow: hidden;">
+                                <div class="progress-fill" style="width: ${record.progress || 0}%; height: 100%; background: #E67E22; transition: width 0.3s;"></div>
+                            </div>
+                            <span style="font-size: 12px; color: #666;">${record.progress || 0}%</span>
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-secondary" onclick="viewEnrollmentRecord('${recordId}')" title="View Details">
+                                    <i class="bi bi-eye"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Filter records by course
+        function filterByCourse(courseId) {
+            if (courseId === 'all') {
+                displayEnrollmentRecords(allEnrollmentRecords);
+            } else {
+                const filtered = allEnrollmentRecords.filter(record => 
+                    record.courseId === courseId || record.courseName.toLowerCase().includes(courseId.toLowerCase())
+                );
+                displayEnrollmentRecords(filtered);
+            }
+        }
+
+        // View enrollment record details
+        async function viewEnrollmentRecord(recordId) {
+            const record = allEnrollmentRecords.find(r => r._id === recordId || r.recordId === recordId);
+            if (!record) {
+                showNotification('Record not found', 'error');
+                return;
+            }
+
+            const enrolleeData = record.enrolleeData || {};
+            const enrollmentDate = new Date(record.startDate || record.createdAt).toLocaleDateString();
+            const completionDate = record.completionDate ? new Date(record.completionDate).toLocaleDateString() : 'N/A';
+
+            // Build detailed view
+            const modal = document.getElementById('recordViewModal');
+            const modalBody = modal.querySelector('.modal-body');
+            
+            modalBody.innerHTML = `
+                <div class="record-details">
+                    <h4 style="margin-bottom: 16px; color: var(--primary-color);">Enrollment Information</h4>
+                    <div class="detail-row">
+                        <label class="detail-label">Record ID:</label>
+                        <span class="detail-value">${recordId}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Trainee ID:</label>
+                        <span class="detail-value">${record.userId}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Course:</label>
+                        <span class="detail-value">${record.courseName}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Status:</label>
+                        <span class="detail-value">${record.status}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Progress:</label>
+                        <span class="detail-value">${record.progress || 0}%</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Enrollment Date:</label>
+                        <span class="detail-value">${enrollmentDate}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Completion Date:</label>
+                        <span class="detail-value">${completionDate}</span>
+                    </div>
+                    
+                    <h4 style="margin: 24px 0 16px; color: var(--primary-color);">Personal Information</h4>
+                    <div class="detail-row">
+                        <label class="detail-label">Full Name:</label>
+                        <span class="detail-value">${enrolleeData.firstName || 'N/A'} ${enrolleeData.lastName || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Email:</label>
+                        <span class="detail-value">${enrolleeData.email || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Phone:</label>
+                        <span class="detail-value">${enrolleeData.phone || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Address:</label>
+                        <span class="detail-value">${enrolleeData.address || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Date of Birth:</label>
+                        <span class="detail-value">${enrolleeData.dateOfBirth ? new Date(enrolleeData.dateOfBirth).toLocaleDateString() : 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Gender:</label>
+                        <span class="detail-value">${enrolleeData.gender || 'N/A'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <label class="detail-label">Education:</label>
+                        <span class="detail-value">${enrolleeData.education || 'N/A'}</span>
+                    </div>
+                    
+                    ${enrolleeData.emergencyContact && (enrolleeData.emergencyContact.name || enrolleeData.emergencyContact.phone) ? `
+                        <h4 style="margin: 24px 0 16px; color: var(--primary-color);">Emergency Contact</h4>
+                        <div class="detail-row">
+                            <label class="detail-label">Contact Name:</label>
+                            <span class="detail-value">${enrolleeData.emergencyContact.name || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Contact Phone:</label>
+                            <span class="detail-value">${enrolleeData.emergencyContact.phone || 'N/A'}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+            
+            modal.classList.add('active');
+        }
+
         // Load dark mode theme
         if (typeof loadTheme === 'function') {
             loadTheme();

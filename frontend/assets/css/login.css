@@ -211,10 +211,21 @@ body.login-page {
   flex-direction: column;
 }
 
+.form-row {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 0;
+}
+
 .form-group {
   margin-bottom: 20px;
   display: flex;
   flex-direction: column;
+}
+
+.form-group-half {
+  flex: 1;
+  min-width: 0;
 }
 
 .form-group label {
@@ -234,6 +245,40 @@ body.login-page {
   font-family: "Roboto", sans-serif;
   transition: all 0.3s ease;
   color: #333333;
+}
+
+.password-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.password-input-wrapper .form-control {
+  padding-right: 45px;
+  flex: 1;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 12px;
+  background: none;
+  border: none;
+  color: #999999;
+  cursor: pointer;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: color 0.3s ease;
+  font-size: 18px;
+}
+
+.password-toggle:hover {
+  color: #E67E22;
+}
+
+.password-toggle i {
+  pointer-events: none;
 }
 
 .form-control:focus {
@@ -333,6 +378,15 @@ body.login-page {
   .login-container {
     flex-direction: column;
     min-height: auto;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .form-group-half {
+    width: 100%;
   }
 
   .login-left {
@@ -703,6 +757,14 @@ body.dark-mode .form-group select:focus {
   background: #4a4a4a !important;
   border-color: #E67E22 !important;
   box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.2) !important;
+}
+
+body.dark-mode .password-toggle {
+  color: #cccccc !important;
+}
+
+body.dark-mode .password-toggle:hover {
+  color: #E67E22 !important;
 }
 
 body.dark-mode .login-btn {

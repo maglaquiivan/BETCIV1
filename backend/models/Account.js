@@ -38,6 +38,13 @@ const accountSchema = new mongoose.Schema({
     enum: ['active', 'inactive', 'suspended'],
     default: 'active'
   },
+  profilePicture: {
+    type: String,
+    default: null
+  },
+  phone: String,
+  course: String,
+  address: String,
   lastLogin: Date,
   permissions: [String]
 }, {

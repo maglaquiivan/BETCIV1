@@ -37,6 +37,28 @@
             margin-bottom: 0;
         }
         
+        /* Course Filter Styles */
+        .form-control {
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--bg-white);
+            color: var(--text-primary);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+        
+        .form-control:hover {
+            border-color: var(--primary-color);
+        }
+        
         @media (max-width: 768px) {
             .modal-content.modal-wide {
                 max-width: 95%;
@@ -44,6 +66,20 @@
             
             .form-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start !important;
+                gap: 12px;
+            }
+            
+            .section-header > div {
+                width: 100%;
+            }
+            
+            #courseFilterTrainees {
+                width: 100% !important;
             }
         }
     </style>
@@ -166,9 +202,20 @@
                 <!-- Trainees Management Section -->
                 <div class="section-header">
                     <h1 class="section-title">Trainees Management</h1>
-                    <button class="view-all-btn" onclick="openAddTraineeModal()">
-                        <i class="bi bi-plus"></i> Add Trainee
-                    </button>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <select id="courseFilterTrainees" class="form-control" style="width: 250px; padding: 10px 12px; border: 1px solid var(--border-color); border-radius: 6px; font-size: 14px;" onchange="filterTraineesByCourse(this.value)">
+                            <option value="all">All Courses</option>
+                            <option value="forklift">Forklift Operation NC II</option>
+                            <option value="bulldozer">Bulldozer Operation NC II</option>
+                            <option value="dump-truck">Dump Truck Operation NC II</option>
+                            <option value="excavator">Hydraulic Excavator NC II</option>
+                            <option value="wheel-loader">Wheel Loader NC II</option>
+                            <option value="backhoe">Backhoe Loader NC II</option>
+                        </select>
+                        <button class="view-all-btn" onclick="openAddTraineeModal()">
+                            <i class="bi bi-plus"></i> Add Trainee
+                        </button>
+                    </div>
                 </div>
 
                 <!-- Trainees Grid -->

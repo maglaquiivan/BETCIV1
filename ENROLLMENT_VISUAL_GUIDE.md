@@ -1,0 +1,298 @@
+# Enrollment Visual Guide
+
+## System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     TRAINEE DASHBOARD                            │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │  Training Courses Page (courses.html)                   │    │
+│  │  ┌──────────┐  ┌──────────┐  ┌──────────┐            │    │
+│  │  │ Course 1 │  │ Course 2 │  │ Course 3 │            │    │
+│  │  │  [View]  │  │  [View]  │  │  [View]  │            │    │
+│  │  │ [Enroll] │  │ [Enroll] │  │ [Enroll] │ ◄─── Click │    │
+│  │  └──────────┘  └──────────┘  └──────────┘            │    │
+│  └────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+                            │
+                            │ POST /api/enrollments
+                            │ { userId, courseId, courseName }
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    BACKEND SERVER (Node.js)                      │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │  Enrollment Route (enrollments.js)                      │    │
+│  │                                                          │    │
+│  │  1. Create Enrollment Record                            │    │
+│  │     ├─ enrollmentId: ENR1234567890                     │    │
+│  │     ├─ userId: USR1234567890                           │    │
+│  │     ├─ courseId: COURSE123                             │    │
+│  │     ├─ status: 'active'                                │    │
+│  │     └─ progress: 0                                      │    │
+│  │                                                          │    │
+│  │  2. Fetch User Data                                     │    │
+│  │     └─ User.findOne({ userId })                        │    │
+│  │                                                          │    │
+│  │  3. Check if Trainee Exists                            │    │
+│  │     └─ Trainee.findOne({ email })                      │    │
+│  │                                                          │    │
+│  │  4a. If Trainee Exists:                                │    │
+│  │      └─ Add course to enrolledCourses[]               │    │
+│  │                                                          │    │
+│  │  4b. If New Trainee:                                   │    │
+│  │      └─ Create new Trainee record                      │    │
+│  │         ├─ traineeId: TRN1234567890                    │    │
+│  │         ├─ firstName, lastName, email                  │    │
+│  │         ├─ phone, address                              │    │
+│  │         └─ enrolledCourses: [{ course details }]       │    │
+│  └────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+                            │
+                            │ Saves to MongoDB
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                    MONGODB DATABASE                              │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────────┐ │
+│  │   Enrollments    │  │     Trainees     │  │    Users     │ │
+│  │   Collection     │  │    Collection    │  │  Collection  │ │
+│  │                  │  │                  │  │              │ │
+│  │  ┌────────────┐  │  │  ┌────────────┐  │  │ ┌─────────┐ │ │
+│  │  │ Enrollment │  │  │  │  Trainee   │  │  │ │  User   │ │ │
+│  │  │   Record   │  │  │  │   Record   │  │  │ │  Data   │ │ │
+│  │  └────────────┘  │  │  └────────────┘  │  │ └─────────┘ │ │
+│  └──────────────────┘  └──────────────────┘  └──────────────┘ │
+└─────────────────────────────────────────────────────────────────┘
+                            │
+                            │ GET /api/trainees
+                            ▼
+┌─────────────────────────────────────────────────────────────────┐
+│                     ADMIN DASHBOARD                              │
+│  ┌────────────────────────────────────────────────────────┐    │
+│  │  Trainees Page (trainees.html)                          │    │
+│  │  ┌──────────────────────────────────────────────────┐  │    │
+│  │  │  Trainee Cards                                    │  │    │
+│  │  │  ┌────────────┐  ┌────────────┐  ┌────────────┐ │  │    │
+│  │  │  │ John Doe   │  │ Jane Smith │  │ Bob Wilson │ │  │    │
+│  │  │  │ Forklift   │  │ Bulldozer  │  │ Excavator  │ │  │    │
+│  │  │  │ Active     │  │ Active     │  │ Active     │ │  │    │
+│  │  │  │ [View]     │  │ [View]     │  │ [View]     │ │  │    │
+│  │  │  │ [Edit]     │  │ [Edit]     │  │ [Edit]     │ │  │    │
+│  │  │  │ [Delete]   │  │ [Delete]   │  │ [Delete]   │ │  │    │
+│  │  │  └────────────┘  └────────────┘  └────────────┘ │  │    │
+│  │  └──────────────────────────────────────────────────┘  │    │
+│  └────────────────────────────────────────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Data Relationship Diagram
+
+```
+┌─────────────────┐
+│     USERS       │
+│  Collection     │
+├─────────────────┤
+│ userId (PK)     │
+│ email           │◄────────┐
+│ firstName       │         │
+│ lastName        │         │ Links by email
+│ phone           │         │
+│ address         │         │
+│ role            │         │
+└─────────────────┘         │
+        │                   │
+        │ userId            │
+        │                   │
+        ▼                   │
+┌─────────────────┐         │
+│  ENROLLMENTS    │         │
+│   Collection    │         │
+├─────────────────┤         │
+│ enrollmentId(PK)│         │
+│ userId (FK)     │         │
+│ courseId        │         │
+│ courseName      │         │
+│ status          │         │
+│ progress        │         │
+│ enrollmentDate  │         │
+└─────────────────┘         │
+                            │
+                            │
+┌─────────────────┐         │
+│   TRAINEES      │         │
+│  Collection     │         │
+├─────────────────┤         │
+│ traineeId (PK)  │         │
+│ email           │─────────┘
+│ firstName       │
+│ lastName        │
+│ phone           │
+│ address         │
+│ status          │
+│ enrolledCourses │ ◄── Array of courses
+│   ├─ courseId   │
+│   ├─ courseName │
+│   ├─ status     │
+│   └─ progress   │
+└─────────────────┘
+```
+
+## Enrollment Process Flow
+
+```
+START
+  │
+  ▼
+┌─────────────────────────┐
+│ User clicks "Enroll"    │
+└─────────────────────────┘
+  │
+  ▼
+┌─────────────────────────┐
+│ Check if user logged in │
+└─────────────────────────┘
+  │
+  ├─ NO ──► Show "Please log in" message ──► END
+  │
+  ▼ YES
+┌─────────────────────────┐
+│ Send enrollment request │
+│ to backend API          │
+└─────────────────────────┘
+  │
+  ▼
+┌─────────────────────────┐
+│ Check if already        │
+│ enrolled in course      │
+└─────────────────────────┘
+  │
+  ├─ YES ──► Return error "Already enrolled" ──► END
+  │
+  ▼ NO
+┌─────────────────────────┐
+│ Create Enrollment       │
+│ Record in DB            │
+└─────────────────────────┘
+  │
+  ▼
+┌─────────────────────────┐
+│ Fetch User data         │
+│ from Users collection   │
+└─────────────────────────┘
+  │
+  ▼
+┌─────────────────────────┐
+│ Check if Trainee        │
+│ exists (by email)       │
+└─────────────────────────┘
+  │
+  ├─ YES ──► ┌──────────────────────────┐
+  │          │ Add course to existing   │
+  │          │ trainee's enrolledCourses│
+  │          └──────────────────────────┘
+  │                    │
+  ▼ NO                 │
+┌─────────────────────────┐│
+│ Create new Trainee      ││
+│ record with:            ││
+│ - User info             ││
+│ - Course details        ││
+│ - Status: active        ││
+└─────────────────────────┘│
+  │                        │
+  └────────────────────────┘
+  │
+  ▼
+┌─────────────────────────┐
+│ Return success response │
+└─────────────────────────┘
+  │
+  ▼
+┌─────────────────────────┐
+│ Show success message    │
+│ to user                 │
+└─────────────────────────┘
+  │
+  ▼
+┌─────────────────────────┐
+│ Trainee now visible     │
+│ in Admin Dashboard      │
+└─────────────────────────┘
+  │
+  ▼
+END
+```
+
+## Data Synchronization
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                  ENROLLMENT CREATED                       │
+└──────────────────────────────────────────────────────────┘
+                          │
+          ┌───────────────┴───────────────┐
+          ▼                               ▼
+┌─────────────────────┐         ┌─────────────────────┐
+│   Enrollments DB    │         │    Trainees DB      │
+│                     │         │                     │
+│  status: active     │◄───────►│  status: active     │
+│  progress: 0        │  SYNC   │  progress: 0        │
+└─────────────────────┘         └─────────────────────┘
+          │                               │
+          │    Progress Update (50%)      │
+          ├───────────────────────────────┤
+          │                               │
+┌─────────────────────┐         ┌─────────────────────┐
+│  progress: 50       │◄───────►│  progress: 50       │
+└─────────────────────┘  SYNC   └─────────────────────┘
+          │                               │
+          │    Status Update (completed)  │
+          ├───────────────────────────────┤
+          │                               │
+┌─────────────────────┐         ┌─────────────────────┐
+│  status: completed  │◄───────►│  status: completed  │
+│  progress: 100      │  SYNC   │  progress: 100      │
+└─────────────────────┘         └─────────────────────┘
+```
+
+## Admin Dashboard View
+
+```
+┌────────────────────────────────────────────────────────────┐
+│  BETCI Admin - Trainees Management                         │
+├────────────────────────────────────────────────────────────┤
+│                                                             │
+│  [Search: ___________]  [Filter: All ▼]  [+ Add Trainee]  │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │  ┌────┐                                              │ │
+│  │  │ JD │  John Doe                        [Active]   │ │
+│  │  └────┘  Forklift Operation                         │ │
+│  │          ✉ john.doe@email.com                       │ │
+│  │          ☎ +1234567890                              │ │
+│  │          📍 123 Main Street                         │ │
+│  │          📅 Enrolled: Jan 15, 2024                  │ │
+│  │          [👁 View] [✏ Edit] [🗑 Delete]             │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                             │
+│  ┌──────────────────────────────────────────────────────┐ │
+│  │  ┌────┐                                              │ │
+│  │  │ JS │  Jane Smith                      [Active]   │ │
+│  │  └────┘  Bulldozer Operation                        │ │
+│  │          ✉ jane.smith@email.com                     │ │
+│  │          ☎ +0987654321                              │ │
+│  │          📍 456 Oak Avenue                          │ │
+│  │          📅 Enrolled: Jan 20, 2024                  │ │
+│  │          [👁 View] [✏ Edit] [🗑 Delete]             │ │
+│  └──────────────────────────────────────────────────────┘ │
+│                                                             │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Key Points
+
+1. **Automatic Creation**: Trainee records are created automatically when users enroll
+2. **No Manual Entry**: Admins don't need to manually add trainees who enroll through the system
+3. **Real-time Sync**: Changes to enrollment status/progress sync to trainee records
+4. **Single Source of Truth**: User data comes from the Users collection
+5. **Multiple Courses**: Trainees can enroll in multiple courses (stored in array)
+6. **Immediate Visibility**: Enrolled trainees appear instantly in admin dashboard

@@ -482,7 +482,7 @@ body {
 
 .course-image {
   width: 100%;
-  height: 180px;
+  height: 200px;
   background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
   position: relative;
   overflow: hidden;
@@ -1313,47 +1313,214 @@ body.dark-mode .profile-section {
    ============================================ */
 
 @media (max-width: 768px) {
+  /* Sidebar mobile - hidden by default, slides in when toggled */
   .sidebar {
-    width: 70px;
+    width: 100%;
+    max-width: 320px;
+    position: fixed;
+    left: -100%;
+    top: 0;
+    height: 100vh;
+    z-index: 2001;
+    transition: left 0.3s ease;
     padding: 0;
+    background: #1a1a1a;
   }
 
+  .sidebar.collapsed {
+    left: 0;
+  }
+
+  /* Dark overlay when sidebar is open */
+  .sidebar.collapsed::after {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 320px;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: -1;
+  }
+
+  /* Close button at top right */
+  .sidebar.collapsed::before {
+    content: '✕';
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    color: white;
+    cursor: pointer;
+    z-index: 10;
+    transition: all 0.3s ease;
+  }
+
+  .sidebar.collapsed::before:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  /* Sidebar header with dark background */
   .sidebar-header {
-    padding: 15px;
-    gap: 8px;
+    padding: 25px 20px;
+    gap: 10px;
+    background: #2a2a2a;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   .logo-image {
-    width: 50px;
-    height: 50px;
+    width: auto;
+    height: auto;
+    border-bottom: none;
+    padding-bottom: 10px;
+    margin-bottom: 10px;
   }
 
   .sidebar-logo {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
   }
 
   .logo-text {
-    display: none;
+    display: block;
+    text-align: center;
   }
 
+  .logo-text h3 {
+    color: white;
+    font-size: 18px;
+  }
+
+  .logo-text p {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 13px;
+  }
+
+  /* Nav links with orange highlight for active */
   .sidebar-nav .nav-link {
-    justify-content: center;
-    padding: 12px;
-    gap: 0;
+    justify-content: flex-start;
+    padding: 16px 20px;
+    gap: 12px;
+    color: rgba(255, 255, 255, 0.8);
+    border-left: 4px solid transparent;
   }
 
   .sidebar-nav .nav-link span {
+    display: inline;
+    font-size: 15px;
+  }
+
+  .sidebar-nav i {
+    font-size: 20px;
+    width: 24px;
+  }
+
+  .sidebar-nav .nav-link:hover {
+    background: rgba(255, 255, 255, 0.05);
+    color: white;
+  }
+
+  .nav-item.active .nav-link {
+    background: linear-gradient(90deg, rgba(230, 126, 34, 0.3), transparent);
+    color: #E67E22;
+    border-left-color: #E67E22;
+  }
+
+  .sidebar-toggle {
     display: none;
   }
 
-  .assessment-grid {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  /* Main content - full width on mobile */
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  /* Top header mobile */
+  .top-header {
+    flex-direction: row;
+    gap: 8px;
+    padding: 12px 16px;
+    flex-wrap: nowrap;
+    align-items: center;
+    min-height: 60px;
+  }
+
+  .header-left {
+    flex: 0 0 auto;
+    width: auto;
+    gap: 10px;
+  }
+
+  .header-right {
+    width: auto;
+    justify-content: flex-end;
+    gap: 12px;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-container {
+    flex: 1;
+    max-width: 200px;
+    padding: 8px 12px;
+  }
+
+  .search-input {
+    font-size: 14px;
+  }
+
+  .menu-toggle {
+    display: flex !important;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .user-name {
+    display: none;
+  }
+
+  .dark-mode-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
+  }
+
+  /* Dashboard content mobile */
+  .dashboard-content {
+    padding: 16px;
+  }
+
+  /* Grids mobile */
+  .courses-grid,
+  .assessment-grid,
+  .quick-actions {
+    grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  .assessment-card {
-    padding: 20px 16px;
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* Cards mobile */
+  .assessment-card,
+  .course-card,
+  .action-card,
+  .stat-card {
+    padding: 16px;
   }
 
   .assessment-icon {
@@ -1364,25 +1531,27 @@ body.dark-mode .profile-section {
   }
 
   .assessment-card h3 {
-    font-size: 15px;
+    font-size: 16px;
   }
 
   .assessment-card p {
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .assessment-btn {
-    padding: 8px 16px;
-    font-size: 12px;
+    padding: 10px 16px;
+    font-size: 13px;
   }
 
+  /* Settings mobile */
   .settings-tabs {
     gap: 8px;
+    flex-wrap: wrap;
   }
 
   .settings-tab {
     padding: 10px 12px;
-    font-size: 12px;
+    font-size: 13px;
   }
 
   .settings-card {
@@ -1400,6 +1569,7 @@ body.dark-mode .profile-section {
     text-align: center;
   }
 
+  /* Forms mobile */
   .form-row {
     grid-template-columns: 1fr;
     gap: 16px;
@@ -1411,70 +1581,7 @@ body.dark-mode .profile-section {
     align-items: flex-start;
   }
 
-  .sidebar-nav i {
-    font-size: 20px;
-  }
-
-  .sidebar-toggle {
-    display: block;
-  }
-
-  .main-content {
-    margin-left: 70px;
-  }
-
-  .top-header {
-    flex-direction: row;
-    gap: 8px;
-    padding: 10px;
-    flex-wrap: nowrap;
-    align-items: center;
-  }
-
-  .header-left {
-    flex: 0 0 auto;
-    width: auto;
-    max-width: 140px;
-    min-width: 0;
-  }
-
-  .header-right {
-    width: auto;
-    justify-content: flex-end;
-    gap: 8px;
-    flex: 1;
-    display: flex;
-    align-items: center;
-  }
-
-  .search-container {
-    width: 100%;
-    max-width: 140px;
-    padding: 8px 10px;
-  }
-
-  .search-input {
-    font-size: 12px;
-  }
-
-  .menu-toggle {
-    display: flex !important;
-    width: 36px;
-    height: 36px;
-    padding: 0;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .dashboard-content {
-    padding: 16px;
-  }
-
-  .courses-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-
+  /* Filter tabs mobile */
   .filter-tabs {
     flex-direction: row;
     gap: 8px;
@@ -1486,63 +1593,138 @@ body.dark-mode .profile-section {
     padding: 8px 16px;
     font-size: 13px;
   }
+
+  /* Section headers mobile */
+  .section-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .view-all-btn {
+    width: 100%;
+  }
+
+  /* Welcome banner mobile */
+  .welcome-banner {
+    flex-direction: column;
+    text-align: center;
+    padding: 30px 20px;
+  }
+
+  .welcome-text h1 {
+    font-size: 22px;
+  }
+
+  .welcome-illustration {
+    margin-top: 20px;
+    font-size: 60px;
+  }
+
+  /* Modal mobile */
+  .modal-content {
+    width: 95%;
+    max-width: 95%;
+  }
+
+  .modal-footer {
+    flex-direction: column-reverse;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+
+  /* User dropdown mobile */
+  .user-dropdown {
+    position: fixed;
+    top: 60px;
+    right: 8px;
+    left: 8px;
+    width: auto;
+  }
+
+  /* Tables mobile */
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table {
+    min-width: 600px;
+  }
 }
 
 @media (max-width: 480px) {
-  .sidebar {
-    width: 60px;
-  }
-
-  .main-content {
-    margin-left: 60px;
-  }
-
-  .top-header {
-    padding: 10px;
-    flex-direction: row;
-    gap: 8px;
-    flex-wrap: nowrap;
-    align-items: center;
-  }
-
-  .header-left {
-    flex: 0 0 auto;
-    width: auto;
-    max-width: 140px;
-    min-width: 0;
-  }
-
-  .header-right {
-    width: auto;
-    flex: 1;
-    justify-content: flex-end;
-    gap: 8px;
-  }
-
-  .search-container {
-    width: 100%;
-    max-width: 140px;
-    padding: 8px 10px;
-  }
-
-  .search-input {
-    font-size: 12px;
-  }
-
+  /* Even smaller screens */
   .dashboard-content {
     padding: 12px;
   }
 
-  .assessment-grid {
-    grid-template-columns: 1fr;
-    gap: 12px;
+  .welcome-text h1 {
+    font-size: 20px;
+  }
+
+  .welcome-text p {
+    font-size: 14px;
+  }
+
+  .stat-card {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .stat-icon {
+    margin: 0 auto 12px;
+  }
+
+  .stat-info h3 {
+    font-size: 28px;
+  }
+
+  .section-title {
+    font-size: 18px;
+  }
+
+  .course-card,
+  .action-card,
+  .assessment-card {
+    padding: 16px;
+  }
+
+  /* Form inputs - prevent iOS zoom */
+  .form-control,
+  .form-input,
+  .form-select,
+  .search-input {
+    font-size: 16px;
+  }
+
+  /* Buttons */
+  .btn,
+  .view-btn,
+  .action-btn,
+  .assessment-btn {
+    font-size: 14px;
+    padding: 12px 16px;
+  }
+
+  .top-header {
+    padding: 10px 12px;
+  }
+
+  .search-container {
+    max-width: 120px;
   }
 
   .assessment-card {
     padding: 16px 12px;
   }
-
-  .assessment-icon {
+}  .assessment-icon {
     width: 50px;
     height: 50px;
     font-size: 24px;
@@ -1835,7 +2017,6 @@ body.dark-mode .profile-section {
     width: 100%;
     height: 100%;
     background: rgba(0, 0, 0, 0.7);
-    backdrop-filter: blur(5px);
 }
 
 .course-details-modal {

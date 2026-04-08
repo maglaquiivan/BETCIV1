@@ -11,6 +11,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeHamburgerMenu();
     initializeDarkMode();
     initializeQuickActions();
+    loadAdminProfilePicture();
 });
 
 /* ============================================
@@ -874,5 +875,72 @@ async function deleteCourse(courseId) {
     } catch (error) {
         console.error('Error deleting course:', error);
         showNotification('Failed to delete course', 'error');
+    }
+}
+
+
+/* ============================================
+   PROFILE PICTURE MANAGEMENT
+   ============================================ */
+
+// Load admin profile picture from session
+function loadAdminProfilePicture() {
+    try {
+        const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+        
+        if (userSession.profilePicture) {
+            updateAllAvatars(userSession.profilePicture);
+        }
+        
+        // Also update user name if available
+        if (userSession.firstName && userSession.lastName) {
+            const userName = `${userSession.firstName} ${userSession.lastName}`;
+            document.querySelectorAll('.user-name').forEach(el => {
+                el.textContent = userName;
+            });
+            
+            // Update dropdown header name
+            const dropdownUserInfo = document.querySelector('.dropdown-user-info h4');
+            if (dropdownUserInfo) {
+                dropdownUserInfo.textContent = userName;
+            }
+            
+            // Update profile avatar info name
+            const profileAvatarInfo = document.querySelector('.profile-avatar-info h3');
+            if (profileAvatarInfo) {
+                profileAvatarInfo.textContent = userName;
+            }
+        }
+        
+        // Update email if available
+        if (userSession.email) {
+            const dropdownEmail = document.querySelector('.dropdown-user-info p');
+            if (dropdownEmail) {
+                dropdownEmail.textContent = userSession.email;
+            }
+        }
+        
+    } catch (error) {
+        console.error('Error loading admin profile picture:', error);
+    }
+}
+
+// Update all avatar elements with profile picture
+function updateAllAvatars(imageUrl) {
+    // Update header avatars
+    document.querySelectorAll('.user-avatar, .dropdown-avatar').forEach(avatar => {
+        avatar.style.backgroundImage = `url(${imageUrl})`;
+        avatar.style.backgroundSize = 'cover';
+        avatar.style.backgroundPosition = 'center';
+        avatar.textContent = '';
+    });
+    
+    // Update large profile avatar if exists
+    const profileAvatarLarge = document.querySelector('.profile-avatar-large');
+    if (profileAvatarLarge) {
+        profileAvatarLarge.style.backgroundImage = `url(${imageUrl})`;
+        profileAvatarLarge.style.backgroundSize = 'cover';
+        profileAvatarLarge.style.backgroundPosition = 'center';
+        profileAvatarLarge.textContent = '';
     }
 }

@@ -361,29 +361,160 @@
         }
 
         @media (max-width: 768px) {
+            .main-content {
+                margin-left: 0;
+                width: 100%;
+            }
+
+            .dashboard-content {
+                padding: 16px;
+            }
+
+            .profile-container {
+                padding: 0;
+            }
+
+            .profile-header {
+                padding: 24px 16px;
+                margin-bottom: 16px;
+            }
+
             .profile-overview {
                 grid-template-columns: 1fr;
-                gap: 20px;
+                gap: 24px;
+                text-align: center;
+            }
+
+            .profile-picture-section {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .profile-avatar {
+                width: 120px;
+                height: 120px;
+                font-size: 48px;
+                margin-bottom: 16px;
+            }
+
+            .upload-btn {
+                width: 100%;
+                max-width: 200px;
+            }
+
+            .profile-info {
+                text-align: center;
+            }
+
+            .info-item {
+                justify-content: center;
+                text-align: center;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .info-item i {
+                margin-right: 0;
+            }
+
+            .card {
+                padding: 20px 16px;
+                margin-bottom: 16px;
             }
 
             .form-row {
                 grid-template-columns: 1fr;
+                gap: 16px;
             }
 
-            .profile-header {
-                padding: 20px;
+            .form-actions {
+                flex-direction: column;
+                gap: 12px;
             }
 
-            .card {
-                padding: 20px;
+            .btn-primary, .btn-secondary {
+                width: 100%;
+            }
+
+            .table-responsive {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
             }
 
             .table {
                 font-size: 12px;
+                min-width: 600px;
             }
 
             .table th, .table td {
-                padding: 8px;
+                padding: 8px 6px;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                flex-wrap: nowrap;
+            }
+
+            .tab-btn {
+                white-space: nowrap;
+                font-size: 13px;
+                padding: 10px 16px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            h2 {
+                font-size: 20px;
+            }
+
+            h3 {
+                font-size: 18px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .dashboard-content {
+                padding: 12px;
+            }
+
+            .profile-header {
+                padding: 20px 12px;
+            }
+
+            .profile-avatar {
+                width: 100px;
+                height: 100px;
+                font-size: 40px;
+            }
+
+            .card {
+                padding: 16px 12px;
+            }
+
+            .form-group label {
+                font-size: 13px;
+            }
+
+            .form-control {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .btn-primary, .btn-secondary {
+                padding: 12px;
+                font-size: 14px;
+            }
+
+            h1 {
+                font-size: 20px;
+            }
+
+            h2 {
+                font-size: 18px;
             }
         }
 
@@ -881,10 +1012,141 @@
         </div>
     </div>
 
-    <script src="../../assets/js/dark-mode.js"></script>
+    <script src="../assets/js/common.js"></script>
     <script>
-        // Sidebar toggle for mobile
-        document.addEventListener('DOMContentLoaded', function() {
+        // API Base URL
+        const API_URL = 'http://localhost:5500/api';
+        let currentUser = null;
+
+        // Load user profile on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            await loadUserProfile();
+            initializePage();
+        });
+
+        // Load user profile from database
+        async function loadUserProfile() {
+            try {
+                // Get logged-in user from session
+                const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+                
+                if (!userSession.accountId && !userSession.userId) {
+                    window.location.href = '../../auth/login.html';
+                    return;
+                }
+
+                // Determine API endpoint based on user role
+                const apiEndpoint = (userSession.role === 'admin' || userSession.role === 'instructor') 
+                    ? 'admin-accounts' 
+                    : 'trainee-accounts';
+                
+                const userId = userSession.accountId || userSession.userId;
+
+                // Fetch user data from correct accounts API
+                const response = await fetch(`${API_URL}/${apiEndpoint}/${userId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load user profile');
+                }
+
+                currentUser = await response.json();
+                
+                // Update UI with user data
+                updateProfileUI(currentUser);
+                
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                alert('Failed to load profile. Please try again.');
+            }
+        }
+
+        // Update UI with user data
+        function updateProfileUI(user) {
+            // Update profile picture if exists
+            if (user.profilePicture) {
+                const profileAvatars = document.querySelectorAll('.profile-avatar');
+                profileAvatars.forEach(avatar => {
+                    avatar.innerHTML = `<img src="${user.profilePicture}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
+                });
+                
+                // Update all user avatars in the page
+                const userAvatars = document.querySelectorAll('.user-avatar');
+                userAvatars.forEach(avatar => {
+                    avatar.innerHTML = `<img src="${user.profilePicture}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
+                });
+                
+                // Update dropdown avatar
+                const dropdownAvatar = document.querySelector('.dropdown-avatar');
+                if (dropdownAvatar) {
+                    dropdownAvatar.innerHTML = `<img src="${user.profilePicture}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
+                }
+            }
+            
+            // Update profile header
+            const infoValues = document.querySelectorAll('.info-value');
+            if (infoValues[0]) infoValues[0].textContent = `${user.firstName} ${user.lastName}`;
+            if (infoValues[1]) infoValues[1].textContent = user.email;
+            
+            // Update user name displays
+            document.querySelectorAll('.user-name').forEach(el => {
+                el.textContent = user.firstName.toUpperCase();
+            });
+            
+            // Update dropdown header
+            const dropdownUserInfo = document.querySelector('.dropdown-user-info h4');
+            if (dropdownUserInfo) {
+                dropdownUserInfo.textContent = `${user.firstName} ${user.lastName}`.toUpperCase();
+            }
+            
+            const dropdownEmail = document.querySelector('.dropdown-user-info p');
+            if (dropdownEmail) {
+                dropdownEmail.textContent = user.email;
+            }
+            
+            // Update personal information form
+            const firstNameInputs = document.querySelectorAll('input[readonly]');
+            if (firstNameInputs[0]) firstNameInputs[0].value = user.firstName;
+            if (firstNameInputs[1]) firstNameInputs[1].value = user.lastName;
+            if (firstNameInputs[2]) firstNameInputs[2].value = user.phone || '+63 912 345 6789';
+            if (firstNameInputs[3]) firstNameInputs[3].value = user.course || 'Not Assigned';
+            
+            // Update address
+            const addressTextarea = document.querySelector('textarea[readonly]');
+            if (addressTextarea) {
+                addressTextarea.value = user.address || 'Building Equipment Training and Certification Institute, Philippines';
+            }
+            
+            // Update edit modal
+            document.getElementById('editFirstName').value = user.firstName;
+            document.getElementById('editLastName').value = user.lastName;
+            document.getElementById('editPhone').value = user.phone || '+63 912 345 6789';
+            document.getElementById('editCourse').value = user.course || 'Forklift Operation NC II';
+            document.getElementById('editAddress').value = user.address || 'Building Equipment Training and Certification Institute, Philippines';
+            
+            // Update last login
+            if (user.lastLogin) {
+                const lastLoginDate = new Date(user.lastLogin);
+                const formattedDate = lastLoginDate.toLocaleDateString('en-US', { 
+                    year: 'numeric', 
+                    month: 'long', 
+                    day: 'numeric' 
+                });
+                const formattedTime = lastLoginDate.toLocaleTimeString('en-US', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                if (infoValues[4]) infoValues[4].textContent = `${formattedDate} - ${formattedTime}`;
+            }
+            
+            // Update status badge
+            const statusBadge = document.querySelector('.badge-success');
+            if (statusBadge) {
+                statusBadge.textContent = user.status.charAt(0).toUpperCase() + user.status.slice(1);
+            }
+        }
+
+        // Initialize page functionality
+        function initializePage() {
             const sidebar = document.querySelector('.sidebar');
             const mainContent = document.querySelector('.main-content');
             const menuToggle = document.getElementById('menuToggle');
@@ -901,10 +1163,8 @@
             // Toggle sidebar
             if (menuToggle) {
                 menuToggle.addEventListener('click', function() {
-                    // Toggle sidebar - use 'collapsed' class
                     sidebar.classList.toggle('collapsed');
                     
-                    // Update main-content margin based on sidebar state and screen size
                     if (window.innerWidth > 768) {
                         if (sidebar.classList.contains('collapsed')) {
                             mainContent.style.marginLeft = '60px';
@@ -925,7 +1185,7 @@
                     }
                 }
             });
-        });
+        }
 
         // Load dark mode theme
         if (typeof loadTheme === 'function') {
@@ -942,6 +1202,10 @@
         }
 
         function openEditModal() {
+            if (currentUser) {
+                document.getElementById('editFirstName').value = currentUser.firstName;
+                document.getElementById('editLastName').value = currentUser.lastName;
+            }
             document.getElementById('editModal').classList.add('active');
         }
 
@@ -949,13 +1213,154 @@
             document.getElementById('editModal').classList.remove('active');
         }
 
-        function saveChanges() {
-            alert('Changes saved successfully!');
-            closeEditModal();
+        async function saveChanges() {
+            try {
+                const firstName = document.getElementById('editFirstName').value.trim();
+                const lastName = document.getElementById('editLastName').value.trim();
+                const phone = document.getElementById('editPhone').value.trim();
+                const course = document.getElementById('editCourse').value.trim();
+                const address = document.getElementById('editAddress').value.trim();
+
+                if (!firstName || !lastName) {
+                    alert('First name and last name are required!');
+                    return;
+                }
+
+                // Update user data
+                const response = await fetch(`${API_URL}/accounts/${currentUser._id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        firstName,
+                        lastName,
+                        phone,
+                        course,
+                        address
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Failed to update profile');
+                }
+
+                const updatedUser = await response.json();
+                currentUser = updatedUser;
+                
+                // Update UI
+                updateProfileUI(updatedUser);
+                
+                alert('Profile updated successfully!');
+                closeEditModal();
+                
+            } catch (error) {
+                console.error('Error saving changes:', error);
+                alert('Failed to save changes. Please try again.');
+            }
         }
 
-        function uploadPhoto() {
-            alert('Photo upload functionality would be implemented here');
+        async function uploadPhoto() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/jpeg,image/png,image/jpg';
+            
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                
+                if (!file) return;
+                
+                // Check file size (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size must be less than 2MB');
+                    return;
+                }
+                
+                // Show loading indicator
+                const uploadBtn = document.querySelector('.upload-btn');
+                const originalText = uploadBtn.innerHTML;
+                uploadBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Uploading...';
+                uploadBtn.disabled = true;
+                
+                // Convert to base64
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    try {
+                        const base64Image = event.target.result;
+                        
+                        // Get user session to determine correct API endpoint
+                        const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+                        
+                        // Determine API endpoint based on user role
+                        const apiEndpoint = (userSession.role === 'admin' || userSession.role === 'instructor') 
+                            ? 'admin-accounts' 
+                            : 'trainee-accounts';
+                        
+                        const accountId = currentUser.accountId || userSession.accountId;
+                        
+                        if (!accountId) {
+                            throw new Error('Account ID not found');
+                        }
+                        
+                        // Update profile picture in database
+                        const response = await fetch(`${API_URL}/${apiEndpoint}/${accountId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                profilePicture: base64Image
+                            })
+                        });
+
+                        if (!response.ok) {
+                            throw new Error('Failed to upload photo');
+                        }
+
+                        const updatedUser = await response.json();
+                        currentUser = updatedUser;
+                        
+                        // Update all profile pictures in the page
+                        const profileAvatars = document.querySelectorAll('.profile-avatar');
+                        profileAvatars.forEach(avatar => {
+                            avatar.innerHTML = `<img src="${base64Image}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
+                        });
+                        
+                        // Update all user avatars
+                        const userAvatars = document.querySelectorAll('.user-avatar');
+                        userAvatars.forEach(avatar => {
+                            avatar.innerHTML = `<img src="${base64Image}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
+                        });
+                        
+                        // Update dropdown avatar
+                        const dropdownAvatar = document.querySelector('.dropdown-avatar');
+                        if (dropdownAvatar) {
+                            dropdownAvatar.innerHTML = `<img src="${base64Image}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
+                        }
+                        
+                        // Store in session for other pages
+                        userSession.profilePicture = base64Image;
+                        if (localStorage.getItem('userSession')) {
+                            localStorage.setItem('userSession', JSON.stringify(userSession));
+                        } else {
+                            sessionStorage.setItem('userSession', JSON.stringify(userSession));
+                        }
+                        
+                        alert('Profile picture updated successfully!');
+                        
+                    } catch (error) {
+                        console.error('Error uploading photo:', error);
+                        alert('Failed to upload photo. Please try again.');
+                    } finally {
+                        // Restore button
+                        uploadBtn.innerHTML = originalText;
+                        uploadBtn.disabled = false;
+                    }
+                };
+                reader.readAsDataURL(file);
+            };
+            
+            input.click();
         }
 
         // Close modal when clicking outside
@@ -969,7 +1374,7 @@
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('userSession');
                 sessionStorage.removeItem('userSession');
-                window.location.href = '../auth/login.html';
+                window.location.href = '../../auth/login.html';
             }
         }
         

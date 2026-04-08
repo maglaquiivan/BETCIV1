@@ -28,7 +28,22 @@ const recordSchema = new mongoose.Schema({
   },
   completionDate: Date,
   grade: String,
-  certificate: String
+  certificate: String,
+  // Enrollee data from enrollment form
+  enrolleeData: {
+    firstName: String,
+    lastName: String,
+    email: String,
+    phone: String,
+    address: String,
+    dateOfBirth: Date,
+    gender: String,
+    education: String,
+    emergencyContact: {
+      name: String,
+      phone: String
+    }
+  }
 }, {
   timestamps: true
 });

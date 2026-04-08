@@ -1,6 +1,7 @@
 // Trainees Page - MongoDB Integration with Full CRUD
 const API_BASE_URL = 'http://localhost:5500/api';
 let currentEditTraineeId = null;
+let allTrainees = [];
 
 document.addEventListener('DOMContentLoaded', function() {
     loadTrainees();
@@ -24,9 +25,9 @@ async function loadTrainees() {
             throw new Error('Failed to fetch trainees');
         }
         
-        const trainees = await response.json();
-        console.log('Loaded trainees:', trainees.length, 'trainees');
-        displayTrainees(trainees);
+        allTrainees = await response.json();
+        console.log('Loaded trainees:', allTrainees.length, 'trainees');
+        displayTrainees(allTrainees);
         
     } catch (error) {
         console.error('Error loading trainees:', error);
@@ -348,4 +349,32 @@ function manageAppointments() {
 
 function openSettings() {
     window.location.href = 'settings.html';
+}
+
+// Filter trainees by course
+function filterTraineesByCourse(courseId) {
+    if (courseId === 'all') {
+        displayTrainees(allTrainees);
+    } else {
+        const courseMap = {
+            'forklift': 'forklift',
+            'bulldozer': 'bulldozer',
+            'dump-truck': 'dump truck',
+            'excavator': 'excavator',
+            'wheel-loader': 'wheel loader',
+            'backhoe': 'backhoe'
+        };
+        
+        const searchTerm = courseMap[courseId] || courseId;
+        
+        const filtered = allTrainees.filter(trainee => {
+            if (trainee.enrolledCourses && trainee.enrolledCourses.length > 0) {
+                const courseName = trainee.enrolledCourses[0].courseName.toLowerCase();
+                return courseName.includes(searchTerm.toLowerCase());
+            }
+            return false;
+        });
+        
+        displayTrainees(filtered);
+    }
 }

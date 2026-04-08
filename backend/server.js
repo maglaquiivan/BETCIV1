@@ -33,7 +33,11 @@ const traineeRoutes = require('./routes/trainees');
 const appointmentRoutes = require('./routes/appointments');
 const competencyRoutes = require('./routes/competencies');
 const accountRoutes = require('./routes/accounts');
+const adminAccountRoutes = require('./routes/adminAccounts');
+const traineeAccountRoutes = require('./routes/traineeAccounts');
 const enrollmentRoutes = require('./routes/enrollments');
+const applicationRoutes = require('./routes/applications');
+const admissionRoutes = require('./routes/admissions');
 
 // ============================================
 // API ROUTES - MUST BE FIRST!
@@ -46,11 +50,20 @@ app.use('/api/trainees', traineeRoutes);
 app.use('/api/appointments', appointmentRoutes);
 app.use('/api/competencies', competencyRoutes);
 app.use('/api/accounts', accountRoutes);
+app.use('/api/admin-accounts', adminAccountRoutes);
+app.use('/api/trainee-accounts', traineeAccountRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
+app.use('/api/applications', applicationRoutes);
+app.use('/api/admissions', admissionRoutes);
 
 // Test route
 app.get('/api/test', (req, res) => {
-  res.json({ status: 'ok', message: 'API is working!', timestamp: new Date() });
+  res.json({ 
+    status: 'ok', 
+    message: 'API is working!', 
+    timestamp: new Date(),
+    version: '2.0' // Added version to verify server restart
+  });
 });
 
 // ============================================
@@ -68,10 +81,27 @@ if (fs.existsSync(path.join(frontendPath, 'assets/img/fork.png'))) {
   console.log('✗ fork.png NOT FOUND at expected location');
 }
 
+// Add CSP headers middleware - permissive for development
+app.use((req, res, next) => {
+  res.setHeader(
+    'Content-Security-Policy',
+    "default-src 'self'; " +
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: chrome-extension:; " +
+    "style-src 'self' 'unsafe-inline' https:; " +
+    "img-src 'self' data: https: blob:; " +
+    "font-src 'self' https: data:; " +
+    "connect-src 'self' ws: wss: http: https:; " +
+    "object-src 'none'; " +
+    "base-uri 'self'; " +
+    "frame-src 'self';"
+  );
+  next();
+});
+
 // Log all requests for debugging
 app.use((req, res, next) => {
-  if (req.path.includes('/assets/img/')) {
-    console.log(`Image request: ${req.method} ${req.path}`);
+  if (req.path.includes('/assets/')) {
+    console.log(`Asset request: ${req.method} ${req.path}`);
   }
   next();
 });

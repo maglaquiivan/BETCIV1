@@ -320,27 +320,15 @@
         </div>
     </div>
 
-    <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../assets/js/dashboard-fixed.js"></script>
+    <script src="../assets/js/common.js"></script>
     <script>
-        // Load dark mode theme
-        if (typeof loadTheme === 'function') {
-            loadTheme();
-        }
-        
         let currentPage = 1;
         const recordsPerPage = 6;
 
         document.addEventListener('DOMContentLoaded', function() {
-            loadUserData();
             document.getElementById('attendanceDate').valueAsDate = new Date();
             loadAttendanceHistory();
         });
-
-        function loadUserData() {
-            const userName = localStorage.getItem('userName') || 'TRAINEE';
-            document.getElementById('userName').textContent = userName.toUpperCase();
-        }
 
         function previewImage(event) {
             const file = event.target.files[0];
@@ -356,31 +344,92 @@
             }
         }
 
-        function submitAttendance(event) {
+        async function submitAttendance(event) {
             event.preventDefault();
             
-            const attendance = {
-                id: Date.now(),
-                course: document.getElementById('courseSelect').value,
-                courseLabel: document.getElementById('courseSelect').options[document.getElementById('courseSelect').selectedIndex].text,
-                attendanceType: document.getElementById('attendanceType').value,
-                status: document.getElementById('statusSelect').value,
-                date: document.getElementById('attendanceDate').value,
-                timeIn: document.getElementById('timeIn').value || '--',
-                notes: document.getElementById('notes').value || 'Regular attendance',
-                submittedAt: new Date().toLocaleString()
+            const courseId = document.getElementById('courseSelect').value;
+            const courseLabel = document.getElementById('courseSelect').options[document.getElementById('courseSelect').selectedIndex].text;
+            const attendanceType = document.getElementById('attendanceType').value;
+            const status = document.getElementById('statusSelect').value;
+            const date = document.getElementById('attendanceDate').value;
+            const timeIn = document.getElementById('timeIn').value || '--';
+            const notes = document.getElementById('notes').value || 'Regular attendance';
+            
+            // Get user session
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            const userId = userSession.accountId || userSession._id || 'GUEST';
+            const firstName = userSession.firstName || 'Guest';
+            const lastName = userSession.lastName || 'User';
+            
+            console.log('User session:', userSession);
+            console.log('Submitting attendance with:', { userId, firstName, lastName, courseId, status, date, timeIn });
+            
+            const attendanceData = {
+                userId: userId,
+                firstName: firstName,
+                lastName: lastName,
+                courseId: courseId,
+                date: new Date(date),
+                status: status,
+                timeIn: timeIn,
+                timeOut: '', // Can be added later if needed
+                remarks: `${attendanceType} - ${notes}`
             };
             
-            let records = JSON.parse(localStorage.getItem('attendanceSubmissions') || '[]');
-            records.unshift(attendance);
-            localStorage.setItem('attendanceSubmissions', JSON.stringify(records));
+            console.log('Attendance data to send:', attendanceData);
             
-            alert('Attendance submitted successfully!');
-            document.getElementById('attendanceForm').reset();
-            document.getElementById('imagePreview').innerHTML = '<i class="bi bi-image"></i> No image selected';
-            document.getElementById('imagePreview').classList.add('empty');
-            document.getElementById('attendanceDate').valueAsDate = new Date();
-            loadAttendanceHistory();
+            try {
+                // Save to MongoDB via API
+                const response = await fetch('http://localhost:5500/api/attendance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(attendanceData)
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Error response:', errorData);
+                    throw new Error(errorData.message || 'Failed to submit attendance');
+                }
+                
+                const result = await response.json();
+                console.log('Attendance saved to database:', result);
+                
+                // Also save to localStorage for offline viewing
+                const localAttendance = {
+                    id: result._id || Date.now(),
+                    course: courseId,
+                    courseLabel: courseLabel,
+                    firstName: firstName,
+                    lastName: lastName,
+                    fullName: `${firstName} ${lastName}`,
+                    attendanceType: attendanceType,
+                    status: status,
+                    date: date,
+                    timeIn: timeIn,
+                    notes: notes,
+                    submittedAt: new Date().toLocaleString()
+                };
+                
+                let records = JSON.parse(localStorage.getItem('attendanceSubmissions') || '[]');
+                records.unshift(localAttendance);
+                localStorage.setItem('attendanceSubmissions', JSON.stringify(records));
+                
+                alert('Attendance submitted successfully!');
+                document.getElementById('attendanceForm').reset();
+                document.getElementById('imagePreview').innerHTML = '<i class="bi bi-image"></i> No image selected';
+                document.getElementById('imagePreview').classList.add('empty');
+                document.getElementById('attendanceDate').valueAsDate = new Date();
+                loadAttendanceHistory();
+                
+            } catch (error) {
+                console.error('Error submitting attendance:', error);
+                alert('Failed to submit attendance: ' + error.message);
+            }
         }
 
         function filterAttendance() {

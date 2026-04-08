@@ -5,6 +5,14 @@ const attendanceSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  firstName: {
+    type: String,
+    required: true
+  },
+  lastName: {
+    type: String,
+    required: true
+  },
   courseId: {
     type: String,
     required: true

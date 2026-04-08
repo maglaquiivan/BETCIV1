@@ -2,6 +2,16 @@ const express = require('express');
 const router = express.Router();
 const Record = require('../models/Record');
 
+// Get all records
+router.get('/', async (req, res) => {
+  try {
+    const records = await Record.find().sort({ startDate: -1 });
+    res.json(records);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Get records by user
 router.get('/user/:userId', async (req, res) => {
   try {

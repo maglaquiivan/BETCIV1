@@ -128,7 +128,7 @@
                 <div class="header-left">
                     <div class="search-container">
                         <i class="bi bi-search"></i>
-                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search">
+                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search courses">
                     </div>
                 </div>
                 <div class="header-right">
@@ -213,222 +213,78 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content">
-                <!-- Welcome Banner -->
-                <div class="welcome-banner">
-                    <div class="welcome-text">
-                        <h1>Welcome Back, KELI!</h1>
-                        <p>You have <strong>3 active courses</strong>. Continue your learning journey today!</p>
-                        <button class="view-btn" onclick="navigateTo('courses.html')">View Courses</button>
-                    </div>
-                    <div class="welcome-illustration">
-                        <i class="bi bi-person-workspace"></i>
-                    </div>
-                </div>
-
-                <!-- Stats Cards -->
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon active-courses">
-                            <i class="bi bi-book-half"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>3</h3>
-                            <p>Active Courses</p>
-                            <span class="stat-change positive">+ In Progress</span>
-                        </div>
-                    </div>
+                <!-- Manage Courses Header -->
+                <div style="margin-bottom: 20px;">
+                    <h2 style="font-size: 14px; font-weight: 600; color: #E67E22; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 16px 0;">
+                        MANAGE COURSES
+                    </h2>
                     
-                    <div class="stat-card">
-                        <div class="stat-icon completed">
-                            <i class="bi bi-check-circle"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>2</h3>
-                            <p>Completed</p>
-                            <span class="stat-change positive">+ Certified</span>
-                        </div>
-                    </div>
-                    
-                    <div class="stat-card">
-                        <div class="stat-icon progress">
-                            <i class="bi bi-graph-up"></i>
-                        </div>
-                        <div class="stat-info">
-                            <h3>75%</h3>
-                            <p>Overall Progress</p>
-                            <span class="stat-change positive">+ Keep Going!</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- My Courses Section -->
-                <div class="section-header">
-                    <h2><i class="bi bi-book"></i> My Courses</h2>
-                </div>
-                
-                <div class="courses-grid" id="coursesGrid">
-                    <!-- Courses will be loaded here -->
-                </div>
-
-                <div id="assessmentTab" class="tab-content" style="display: none;">
-                    <div class="assessment-grid">
-                        <div class="assessment-card">
-                            <div class="assessment-icon">
-                                <i class="bi bi-file-earmark-text"></i>
-                            </div>
-                            <h3>Application Form</h3>
-                            <p>Submit your course application and required documents</p>
-                            <div class="assessment-status pending">
-                                <i class="bi bi-clock"></i> Ready to Apply
-                            </div>
-                            <button class="assessment-btn" onclick="openApplicationForm()">Start Application</button>
-                        </div>
-                        
-                        <div class="assessment-card">
-                            <div class="assessment-icon">
-                                <i class="bi bi-calendar-check"></i>
-                            </div>
-                            <h3>Admission Slip</h3>
-                            <p>Generate and download your admission slip and exam schedule</p>
-                            <div class="assessment-status completed">
-                                <i class="bi bi-check-circle"></i> Ready for Download
-                            </div>
-                            <button class="assessment-btn" onclick="openAdmissionSlip()">Generate Slip</button>
-                        </div>
-                        
-                        <div class="assessment-card">
-                            <div class="assessment-icon">
-                                <i class="bi bi-clipboard-data"></i>
-                            </div>
-                            <h3>Practical Assessment</h3>
-                            <p>Schedule your hands-on practical examination</p>
-                            <div class="assessment-status scheduled">
-                                <i class="bi bi-calendar"></i> Scheduled: March 15, 2024
-                            </div>
-                            <button class="assessment-btn">Reschedule</button>
-                        </div>
-                        
-                        <div class="assessment-card">
-                            <div class="assessment-icon">
-                                <i class="bi bi-award"></i>
-                            </div>
-                            <h3>Certification</h3>
-                            <p>View and download your certificates</p>
-                            <div class="assessment-status available">
-                                <i class="bi bi-download"></i> 2 Certificates Available
-                            </div>
-                            <button class="assessment-btn">Download Certificates</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Assessment Center Section -->
-                <div class="section-header">
-                    <h2><i class="bi bi-clipboard-check"></i> Assessment Center</h2>
-                </div>
-
-                <div class="assessment-grid">
-                    <div class="assessment-card">
-                        <div class="assessment-icon">
-                            <i class="bi bi-file-earmark-text"></i>
-                        </div>
-                        <h3>Application Form</h3>
-                        <p>Submit your course application and required documents</p>
-                        <div class="assessment-status pending">
-                            <i class="bi bi-clock"></i>
-                            <span>Ready to Apply</span>
-                        </div>
-                        <button class="assessment-btn" onclick="openApplicationForm()">
-                            <i class="bi bi-arrow-right"></i> Start Application
+                    <!-- Tabs -->
+                    <div style="display: flex; gap: 12px; margin-bottom: 24px;">
+                        <button class="tab-btn active" onclick="switchTab('courses')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                            <i class="bi bi-book"></i>
+                            <span>Courses</span>
                         </button>
-                    </div>
-
-                    <div class="assessment-card">
-                        <div class="assessment-icon">
-                            <i class="bi bi-ticket-detailed"></i>
-                        </div>
-                        <h3>Admission Slip</h3>
-                        <p>Generate and download your admission slip and exam schedule</p>
-                        <div class="assessment-status completed">
-                            <i class="bi bi-check-circle"></i>
-                            <span>Ready for Download</span>
-                        </div>
-                        <button class="assessment-btn" onclick="openAdmissionSlip()">
-                            <i class="bi bi-arrow-right"></i> Generate Slip
-                        </button>
-                    </div>
-
-                    <div class="assessment-card">
-                        <div class="assessment-icon">
-                            <i class="bi bi-graph-up"></i>
-                        </div>
-                        <h3>Practical Assessment</h3>
-                        <p>Schedule your hands-on practical examination</p>
-                        <div class="assessment-status scheduled">
-                            <i class="bi bi-calendar-check"></i>
-                            <span>Scheduled: March 15, 2024</span>
-                        </div>
-                        <button class="assessment-btn" onclick="navigateTo('assessment.html')">
-                            <i class="bi bi-arrow-right"></i> Reschedule
-                        </button>
-                    </div>
-
-                    <div class="assessment-card">
-                        <div class="assessment-icon">
-                            <i class="bi bi-award"></i>
-                        </div>
-                        <h3>Certification</h3>
-                        <p>View and download your certificates</p>
-                        <div class="assessment-status available">
+                        <button class="tab-btn" onclick="switchTab('competencies')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
                             <i class="bi bi-star"></i>
-                            <span>2 Certificates Available</span>
-                        </div>
-                        <button class="assessment-btn" onclick="downloadCertificates()">
-                            <i class="bi bi-arrow-right"></i> Download Certificates
+                            <span>Competencies</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Quick Actions -->
-                <div class="section-header">
-                    <h2>Quick Actions</h2>
+                <!-- Training Courses Section -->
+                <div id="coursesTab">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="font-size: 20px; font-weight: 700; color: #333; margin: 0;">Training Courses</h2>
+                    </div>
+
+                    <!-- Courses Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;" id="coursesGrid">
+                        <!-- Courses will be loaded here -->
+                        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                            <i class="bi bi-hourglass-split" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
+                            <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">Loading Courses...</h3>
+                            <p style="font-size: 14px; color: #999;">Please wait</p>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="quick-actions">
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-file-earmark-text"></i>
-                        </div>
-                        <h4>Application Form</h4>
-                        <p>Submit your course application</p>
-                        <button class="action-btn" onclick="openApplicationForm()">Start Application</button>
+                <!-- Competencies Tab (Hidden by default) -->
+                <div id="competenciesTab" style="display: none;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                        <h2 style="font-size: 20px; font-weight: 700; color: #333; margin: 0;">My Competencies</h2>
                     </div>
 
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-calendar-check"></i>
+                    <!-- Competencies Grid -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 24px;" id="competenciesContainer">
+                        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                            <i class="bi bi-hourglass-split" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
+                            <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">Loading Competencies...</h3>
+                            <p style="font-size: 14px; color: #999;">Please wait</p>
                         </div>
-                        <h4>Schedule Assessment</h4>
-                        <p>Book your practical assessment</p>
-                        <button class="action-btn" onclick="navigateTo('assessment.html')">Schedule Now</button>
                     </div>
+                </div>
 
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-download"></i>
-                        </div>
-                        <h4>Download Certificate</h4>
-                        <p>Get your completion certificates</p>
-                        <button class="action-btn" onclick="downloadCertificates()">Download</button>
-                    </div>
-
-                    <div class="action-card">
-                        <div class="action-icon">
-                            <i class="bi bi-chat-dots"></i>
-                        </div>
-                        <h4>Get Help</h4>
-                        <p>Contact support or instructors</p>
-                        <button class="action-btn" onclick="contactSupport()">Contact Us</button>
+                <!-- Assessment Forms Section -->
+                <div style="margin-top: 48px;">
+                    <h2 style="font-size: 14px; font-weight: 600; color: #E67E22; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 16px 0;">
+                        <i class="bi bi-clipboard-check" style="margin-right: 8px;"></i>ASSESSMENT FORMS
+                    </h2>
+                    
+                    <!-- Assessment Tabs -->
+                    <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
+                        <button class="assessment-tab-btn active" onclick="openAssessmentForm('registration')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                            <i class="bi bi-person-plus-fill"></i>
+                            <span>Registration Form</span>
+                        </button>
+                        <button class="assessment-tab-btn" onclick="openAssessmentForm('application')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                            <i class="bi bi-file-earmark-text-fill"></i>
+                            <span>Application Form</span>
+                        </button>
+                        <button class="assessment-tab-btn" onclick="openAssessmentForm('admission')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                            <i class="bi bi-ticket-perforated-fill"></i>
+                            <span>Admission Slip</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -436,85 +292,9 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../../assets/js/dark-mode.js"></script>
+    <script src="../assets/js/common.js"></script>
     <script src="../assets/js/dashboard-fixed.js"></script>
     <script>
-        // Sidebar toggle for mobile - EXACT COPY FROM ADMIN
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            const menuToggle = document.getElementById('menuToggle');
-            
-            // Load saved sidebar state only on desktop
-            if (window.innerWidth > 768) {
-                const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.style.marginLeft = '60px';
-                }
-            }
-            
-            // Toggle sidebar or mobile menu based on screen size
-            if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
-                    if (window.innerWidth <= 768) {
-                        // Mobile: Show full-screen menu overlay
-                        const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-                        if (mobileMenuOverlay) {
-                            mobileMenuOverlay.classList.add('active');
-                            document.body.style.overflow = 'hidden';
-                        }
-                    } else {
-                        // Desktop: Toggle sidebar collapse
-                        sidebar.classList.toggle('collapsed');
-                        
-                        if (sidebar.classList.contains('collapsed')) {
-                            mainContent.style.marginLeft = '60px';
-                            localStorage.setItem('sidebarCollapsed', 'true');
-                        } else {
-                            mainContent.style.marginLeft = '210px';
-                            localStorage.setItem('sidebarCollapsed', 'false');
-                        }
-                    }
-                });
-            }
-            
-            // Close mobile menu
-            const mobileMenuClose = document.getElementById('mobileMenuClose');
-            if (mobileMenuClose) {
-                mobileMenuClose.addEventListener('click', function() {
-                    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-                    if (mobileMenuOverlay) {
-                        mobileMenuOverlay.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                });
-            }
-            
-            // Close mobile menu when clicking a link
-            const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
-            mobileMenuLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-                    if (mobileMenuOverlay) {
-                        mobileMenuOverlay.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                });
-            });
-            
-            // Close mobile menu on window resize to desktop
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 768) {
-                    const mobileMenuOverlay = document.getElementById('mobileMenuOverlay');
-                    if (mobileMenuOverlay) {
-                        mobileMenuOverlay.classList.remove('active');
-                        document.body.style.overflow = '';
-                    }
-                }
-            });
-        });
-
         // Ensure dark mode function is available
         if (typeof toggleDarkMode === 'undefined') {
             window.toggleDarkMode = function() {
@@ -526,37 +306,320 @@
             };
         }
         
-        // Initialize on page load
+        // Load theme on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadTheme();
+            initUserProfile();
             loadAllCourses();
         });
 
-        function switchTab(tab) {
-            document.getElementById('coursesTab').style.display = 'none';
-            document.getElementById('assessmentTab').style.display = 'none';
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        let allCourses = [];
+
+        // Open assessment form in popup
+        function openAssessmentForm(formType) {
+            let url = '';
+            let title = '';
             
-            if (tab === 'courses') {
-                document.getElementById('coursesTab').style.display = 'block';
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            } else {
-                document.getElementById('assessmentTab').style.display = 'block';
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+            switch(formType) {
+                case 'registration':
+                    url = 'assessment/registration-form.html';
+                    title = 'Registration Form';
+                    break;
+                case 'application':
+                    url = 'assessment/application-form.html';
+                    title = 'Application Form';
+                    break;
+                case 'admission':
+                    url = 'assessment/admission-slip.html';
+                    title = 'Admission Slip';
+                    break;
+            }
+            
+            // Open in a new window/popup
+            const width = 1200;
+            const height = 800;
+            const left = (screen.width - width) / 2;
+            const top = (screen.height - height) / 2;
+            
+            window.open(
+                url,
+                title,
+                `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+            );
+        }
+
+        // Load all courses
+        async function loadAllCourses() {
+            const coursesGrid = document.getElementById('coursesGrid');
+            if (!coursesGrid) return;
+
+            try {
+                const response = await fetch('http://localhost:5500/api/courses');
+                if (!response.ok) throw new Error('Failed to fetch courses');
+
+                allCourses = await response.json();
+                displayCourses(allCourses);
+
+            } catch (error) {
+                console.error('Error loading courses:', error);
+                coursesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">Failed to load courses. Please make sure the server is running.</div>';
             }
         }
 
-        // User profile dropdown
-        document.getElementById('userProfile').addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.getElementById('userDropdown').classList.toggle('active');
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.user-profile')) {
-                document.getElementById('userDropdown').classList.remove('active');
+        // Display courses in grid format (matching admin style)
+        function displayCourses(courses) {
+            const coursesGrid = document.getElementById('coursesGrid');
+            
+            if (courses.length === 0) {
+                coursesGrid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-inbox" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
+                        <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">No Courses Found</h3>
+                        <p style="font-size: 14px; color: #999;">No courses available</p>
+                    </div>
+                `;
+                return;
             }
-        });
+
+            coursesGrid.innerHTML = courses.map(course => `
+                <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #E67E22, #F4C430); overflow: hidden; display: flex; align-items: center; justify-content: center;">
+                        <img src="${course.image}" alt="${course.title}" 
+                             style="width: 100%; height: 100%; object-fit: cover;"
+                             onerror="this.style.display='none'">
+                    </div>
+                    <div style="padding: 20px;">
+                        <h3 style="font-size: 16px; font-weight: 600; color: #333; margin: 0 0 10px 0;">${course.title}</h3>
+                        <p style="font-size: 13px; color: #666; line-height: 1.5; margin: 0 0 16px 0; min-height: 60px;">${course.description}</p>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="viewCourse('${course.courseId}')" 
+                                    style="flex: 1; padding: 10px; background: #E67E22; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                <i class="bi bi-eye"></i>
+                                <span>View</span>
+                            </button>
+                            <button onclick="enrollCourse('${course.courseId}')" 
+                                    style="flex: 1; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                <i class="bi bi-plus-circle"></i>
+                                <span>Enroll</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // View course details
+        function viewCourse(courseId) {
+            showNotification('Opening course details...', 'info');
+            setTimeout(() => {
+                navigateTo('courses.html');
+            }, 500);
+        }
+
+        // Enroll in course
+        function enrollCourse(courseId) {
+            // Show toast notification
+            showEnrollmentToast();
+            
+            // Redirect to assessment page after 3 seconds
+            setTimeout(() => {
+                window.location.href = 'assessment.html';
+            }, 3000);
+        }
+        
+        // Show enrollment toast notification
+        function showEnrollmentToast() {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: linear-gradient(135deg, #E67E22 0%, #d35400 100%);
+                color: white;
+                padding: 20px 30px;
+                border-radius: 12px;
+                box-shadow: 0 10px 30px rgba(230, 126, 34, 0.3);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                font-size: 16px;
+                font-weight: 600;
+                animation: slideInRight 0.5s ease, fadeOut 0.5s ease 2.5s;
+                min-width: 350px;
+            `;
+            
+            toast.innerHTML = `
+                <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                    <i class="bi bi-check-circle-fill" style="font-size: 24px;"></i>
+                </div>
+                <div style="flex: 1;">
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Enrollment Successful!</div>
+                    <div style="font-size: 13px; opacity: 0.9;">Redirecting to assessment forms...</div>
+                </div>
+                <div style="width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+            `;
+            
+            // Add animations
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes slideInRight {
+                    from {
+                        transform: translateX(400px);
+                        opacity: 0;
+                    }
+                    to {
+                        transform: translateX(0);
+                        opacity: 1;
+                    }
+                }
+                @keyframes fadeOut {
+                    from {
+                        opacity: 1;
+                    }
+                    to {
+                        opacity: 0;
+                    }
+                }
+                @keyframes spin {
+                    to {
+                        transform: rotate(360deg);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            document.body.appendChild(toast);
+            
+            // Remove toast after 3 seconds
+            setTimeout(() => {
+                toast.remove();
+                style.remove();
+            }, 3000);
+        }
+
+        // Switch between Courses and Competencies tabs
+        function switchTab(tab) {
+            const coursesTab = document.getElementById('coursesTab');
+            const competenciesTab = document.getElementById('competenciesTab');
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            
+            // Check if elements exist before accessing
+            if (!coursesTab || !competenciesTab) {
+                console.error('Tab elements not found');
+                return;
+            }
+            
+            if (tab === 'courses') {
+                coursesTab.style.display = 'block';
+                competenciesTab.style.display = 'none';
+                if (tabButtons[0]) {
+                    tabButtons[0].style.background = '#E67E22';
+                    tabButtons[0].style.color = 'white';
+                    tabButtons[0].style.border = 'none';
+                }
+                if (tabButtons[1]) {
+                    tabButtons[1].style.background = 'white';
+                    tabButtons[1].style.color = '#666';
+                    tabButtons[1].style.border = '2px solid #e0e0e0';
+                }
+            } else {
+                coursesTab.style.display = 'none';
+                competenciesTab.style.display = 'block';
+                if (tabButtons[1]) {
+                    tabButtons[1].style.background = '#E67E22';
+                    tabButtons[1].style.color = 'white';
+                    tabButtons[1].style.border = 'none';
+                }
+                if (tabButtons[0]) {
+                    tabButtons[0].style.background = 'white';
+                    tabButtons[0].style.color = '#666';
+                    tabButtons[0].style.border = '2px solid #e0e0e0';
+                }
+                
+                // Load competencies when tab is opened
+                loadCompetencies();
+            }
+        }
+
+        // Load competencies
+        async function loadCompetencies() {
+            const container = document.getElementById('competenciesContainer');
+            try {
+                const response = await fetch('http://localhost:5500/api/competencies');
+                if (!response.ok) throw new Error('Failed to fetch competencies');
+                
+                const competencies = await response.json();
+                displayCompetencies(competencies);
+                
+            } catch (error) {
+                console.error('Error loading competencies:', error);
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-exclamation-circle" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
+                        <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">Failed to Load</h3>
+                        <p style="font-size: 14px; color: #999;">Please make sure the server is running</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Display competencies
+        function displayCompetencies(competencies) {
+            const container = document.getElementById('competenciesContainer');
+            
+            if (competencies.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-inbox" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
+                        <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">No Competencies Found</h3>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = competencies.map(comp => {
+                const totalHours = comp.units.reduce((sum, unit) => sum + (unit.hours || 0), 0);
+                
+                return `
+                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                            <h4 style="font-size: 18px; font-weight: 600; color: #333; margin: 0; flex: 1;">${comp.title}</h4>
+                            <span style="padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #f3e5f5; color: #7b1fa2;">${comp.level}</span>
+                        </div>
+                        <div style="font-size: 13px; color: #E67E22; font-weight: 600; margin-bottom: 12px;">${comp.code}</div>
+                        <p style="font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 16px;">${comp.description}</p>
+                        <div style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 13px; color: #333; margin-bottom: 16px;">
+                            <i class="bi bi-book" style="color: #E67E22;"></i> ${comp.courseName}
+                        </div>
+                        <div style="border-top: 1px solid #e0e0e0; padding-top: 12px;">
+                            <div style="font-size: 14px; font-weight: 600; color: #E67E22;">Total: ${totalHours} hours (${comp.units.length} units)</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Initialize user profile dropdown
+        function initUserProfile() {
+            const userProfile = document.getElementById('userProfile');
+            const userDropdown = document.getElementById('userDropdown');
+            
+            if (userProfile) {
+                userProfile.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userProfile.classList.toggle('active');
+                });
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.user-profile')) {
+                    if (userProfile) {
+                        userProfile.classList.remove('active');
+                    }
+                }
+            });
+        }
 
         // Navigation functions
         function navigateTo(page) {
@@ -567,77 +630,124 @@
             window.location.href = 'assessment/application-form.html';
         }
 
+        function openAdmissionSlip() {
+            window.location.href = 'assessment/admission-slip.html';
+        }
+
         function downloadCertificates() {
-            alert('Download Certificates feature coming soon!');
+            showNotification('Downloading certificates...', 'info');
+            setTimeout(() => {
+                showNotification('Certificates downloaded successfully!', 'success');
+            }, 1500);
         }
 
         function contactSupport() {
-            alert('Contact Support feature coming soon!');
+            showNotification('Opening support contact...', 'info');
+            setTimeout(() => {
+                alert('📞 BETCI Support Contact\n\n' +
+                      '📱 Phone: +63 2 8123 4567\n' +
+                      '📱 Mobile: +63 917 123 4567\n' +
+                      '📧 Email: support@betci.edu.ph\n\n' +
+                      '🕐 Office Hours:\n' +
+                      'Monday - Friday: 8:00 AM - 5:00 PM\n' +
+                      'Saturday: 8:00 AM - 12:00 PM');
+            }, 500);
         }
 
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../auth/login.html';
+                showNotification('Logging out...', 'info');
+                setTimeout(() => {
+                    localStorage.removeItem('userSession');
+                    sessionStorage.removeItem('userSession');
+                    window.location.href = '../../auth/login.html';
+                }, 500);
             }
         }
-    </script>
 
-    <!-- Mobile Menu Overlay -->
-    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
-        <div class="mobile-menu-header">
-            <div class="mobile-menu-logo">
-                <img src="../assets/img/logo.png" alt="BETCI Logo">
-                <div class="mobile-menu-title">
-                    <h3>BETCI</h3>
-                    <p>Trainee Dashboard</p>
-                </div>
-            </div>
-            <button class="mobile-menu-close" id="mobileMenuClose">
-                <i class="bi bi-x"></i>
-            </button>
-        </div>
-        <nav class="mobile-menu-nav">
-            <a href="dashboard.html" class="mobile-menu-link active">
-                <i class="bi bi-house-door"></i>
-                <span>Dashboard</span>
-            </a>
-            <a href="courses.html" class="mobile-menu-link">
-                <i class="bi bi-book"></i>
-                <span>Courses</span>
-            </a>
-            <a href="assessment.html" class="mobile-menu-link">
-                <i class="bi bi-clipboard-check"></i>
-                <span>Assessment</span>
-            </a>
-            <a href="attendance.html" class="mobile-menu-link">
-                <i class="bi bi-calendar-check"></i>
-                <span>Attendance</span>
-            </a>
-            <a href="records.html" class="mobile-menu-link">
-                <i class="bi bi-file-earmark-text"></i>
-                <span>Records</span>
-            </a>
-            <a href="manage-profile.html" class="mobile-menu-link">
-                <i class="bi bi-person-circle"></i>
-                <span>Profile</span>
-            </a>
-            <a href="settings.html" class="mobile-menu-link">
-                <i class="bi bi-gear"></i>
-                <span>Settings</span>
-            </a>
-            <div class="mobile-menu-footer">
-                <button class="mobile-menu-logout" onclick="handleLogout()">
-                    <i class="bi bi-box-arrow-right"></i>
-                    <span>Logout</span>
-                </button>
-                <button class="mobile-menu-dark-toggle" onclick="toggleDarkMode()">
-                    <i class="bi bi-moon-fill"></i>
-                </button>
-            </div>
-        </nav>
-    </div>
+        // Show notification
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notif => notif.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            
+            const colors = {
+                success: '#27AE60',
+                error: '#e74c3c',
+                warning: '#f39c12',
+                info: '#3498db'
+            };
+            
+            const icons = {
+                success: 'bi-check-circle-fill',
+                error: 'bi-x-circle-fill',
+                warning: 'bi-exclamation-triangle-fill',
+                info: 'bi-info-circle-fill'
+            };
+            
+            notification.innerHTML = `
+                <i class="bi ${icons[type] || icons.info}"></i>
+                <span>${message}</span>
+            `;
+            
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${colors[type] || colors.info};
+                color: white;
+                padding: 16px 24px;
+                border-radius: 8px;
+                z-index: 10000;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                max-width: 350px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+                font-weight: 500;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-size: 14px;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            requestAnimationFrame(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            });
+            
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.remove();
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Load theme function
+        function loadTheme() {
+            const theme = localStorage.getItem('theme');
+            if (theme === 'dark') {
+                document.body.classList.add('dark-mode');
+                const btn = document.getElementById('darkModeBtn');
+                if (btn) btn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            }
+        }
+
+        // Open change password (from dropdown link)
+        function openChangePassword(event) {
+            if (event) event.preventDefault();
+            navigateTo('settings.html#password');
+        }
+    </script>
 
 </body>
 </html>

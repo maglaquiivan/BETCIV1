@@ -304,92 +304,23 @@
 
         <!-- Courses Section -->
         <div class="dashboard-content">
-            <div class="section-header">
-                <h2><i class="bi bi-book"></i> Course & Programs</h2>
-            </div>
-            
-            <div class="courses-filter">
-                <div class="filter-tabs">
-                    <button class="filter-tab active" onclick="filterCourses('all', this)">All Courses</button>
-                    <button class="filter-tab" onclick="filterCourses('active', this)">Active</button>
-                    <button class="filter-tab" onclick="filterCourses('completed', this)">Completed</button>
-                    <button class="filter-tab" onclick="filterCourses('available', this)">Available</button>
-                </div>
-            </div>
+            <!-- Training Courses Header -->
+            <h2 style="font-size: 20px; font-weight: 700; color: #333; margin: 0 0 24px 0;">Training Courses</h2>
                 
-            <div class="courses-grid" id="all-courses-grid">
+            <div class="courses-grid" id="all-courses-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;">
                 <!-- All courses will be loaded here -->
+                <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                    <i class="bi bi-hourglass-split" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
+                    <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">Loading Courses...</h3>
+                    <p style="font-size: 14px; color: #999;">Please wait</p>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../assets/js/script.js"></script>
+    <script src="../assets/js/common.js"></script>
     <script src="../assets/js/courses.js"></script>
-    <script>
-        // Sidebar toggle for mobile
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            const menuToggle = document.getElementById('menuToggle');
-            
-            // Load saved sidebar state only on desktop
-            if (window.innerWidth > 768) {
-                const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.style.marginLeft = '60px';
-                }
-            }
-            
-            // Toggle sidebar
-            if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
-                    sidebar.classList.toggle('collapsed');
-                    
-                    if (window.innerWidth > 768) {
-                        if (sidebar.classList.contains('collapsed')) {
-                            mainContent.style.marginLeft = '60px';
-                            localStorage.setItem('sidebarCollapsed', 'true');
-                        } else {
-                            mainContent.style.marginLeft = '210px';
-                            localStorage.setItem('sidebarCollapsed', 'false');
-                        }
-                    }
-                });
-            }
-            
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
-                        sidebar.classList.remove('collapsed');
-                    }
-                }
-            });
-        });
 
-        // User profile dropdown
-        document.getElementById('userProfile').addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.getElementById('userDropdown').classList.toggle('active');
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.user-profile')) {
-                document.getElementById('userDropdown').classList.remove('active');
-            }
-        });
-
-        // Handle logout
-        function handleLogout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../../auth/login.html';
-            }
-        }
-    </script>
     </div>
 </body>
 </html>

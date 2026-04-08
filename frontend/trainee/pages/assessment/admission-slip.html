@@ -3,73 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none'; base-uri 'self';">
     <title>BETCI Admission Slip</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com" rel="preconnect">
     <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- Vendor CSS Files -->
-    <link href="../assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <link href="../assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <!-- Icons from CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <style>
-        /* Tab Navigation Styles */
-        .tab-navigation {
-            display: flex;
-            gap: 10px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 0;
-            overflow-x: auto;
-        }
-
-        .tab-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border: none;
-            background: transparent;
-            color: #666;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            white-space: nowrap;
-        }
-
-        .tab-btn i {
-            font-size: 18px;
-        }
-
-        .tab-btn:hover {
-            color: #E67E22;
-            background: rgba(230, 126, 34, 0.05);
-        }
-
-        .tab-btn.active {
-            color: #E67E22;
-            border-bottom-color: #E67E22;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .tab-btn span {
-                display: none;
-            }
-            
-            .tab-btn {
-                padding: 12px 16px;
-            }
-        }
-
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+        }
+        
+        /* Hide scrollbar */
+        body {
+            overflow-y: scroll;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE and Edge */
+        }
+        
+        body::-webkit-scrollbar {
+            display: none; /* Chrome, Safari, Opera */
         }
 
         body.admission-page {
@@ -92,9 +51,9 @@
             overflow: hidden;
         }
 
-        /* Header - matching application form */
+        /* Header - matching application form with BETCI orange */
         .slip-title {
-            background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%);
+            background: linear-gradient(135deg, #E67E22 0%, #d35400 100%);
             padding: 30px 20px;
             text-align: center;
             color: white;
@@ -106,6 +65,10 @@
             font-weight: 700;
             margin: 0 0 10px 0;
             font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
         .slip-title p {
@@ -728,26 +691,6 @@
 </head>
 <body class="admission-page">
     <main class="main">
-        <!-- Tab Navigation -->
-        <div class="tab-navigation" style="background: white; padding: 15px 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
-            <button class="tab-btn" onclick="window.location.href='../assessment.html'">
-                <i class="bi bi-grid"></i>
-                <span>Overview</span>
-            </button>
-            <button class="tab-btn" onclick="window.location.href='application-form.html'">
-                <i class="bi bi-file-earmark-text"></i>
-                <span>Application Form</span>
-            </button>
-            <button class="tab-btn active">
-                <i class="bi bi-calendar-check"></i>
-                <span>Admission Slip</span>
-            </button>
-            <button class="tab-btn" onclick="alert('Results will be available after assessment completion')">
-                <i class="bi bi-trophy"></i>
-                <span>Results</span>
-            </button>
-        </div>
-
         <div class="admission-slip-container">
             <!-- Title -->
             <div class="slip-title">
@@ -912,11 +855,6 @@
         </div>
     </main>
 
-    <!-- Vendor JS Files -->
-    <script src="../../../assets/js/dark-mode.js"></script>
-    <script src="../../../assets/js/burger-menu.js"></script>
-    <script src="../assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-    
     <!-- HTML2PDF Library for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     
@@ -1001,13 +939,83 @@
             }, 500);
         }
 
-        function submitAdmissionSlip() {
-            alert('Admission Slip submitted successfully!');
-            goBack();
+        async function submitAdmissionSlip() {
+            // Validate required fields
+            const applicantName = document.getElementById('applicantName').value;
+            const assessmentApplied = document.getElementById('assessmentApplied').value;
+
+            if (!applicantName || !assessmentApplied) {
+                alert('Please fill in required fields: Applicant Name and Assessment Applied');
+                return;
+            }
+
+            // Get user session
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            if (!userSession.accountId) {
+                alert('User session not found. Please login again.');
+                return;
+            }
+
+            // Get picture if uploaded
+            const picturePreview = document.getElementById('picturePreview');
+            let pictureBase64 = '';
+            if (picturePreview && picturePreview.src && !picturePreview.src.includes('data:,')) {
+                pictureBase64 = picturePreview.src;
+            }
+
+            // Collect admission data
+            const admissionData = {
+                admissionId: `ADM${Date.now()}`,
+                userId: userSession.accountId,
+                applicantName: applicantName,
+                telNumber: document.getElementById('telNumber').value,
+                picture: pictureBase64,
+                assessmentApplied: assessmentApplied,
+                officialReceiptNumber: document.getElementById('receiptNumber').value,
+                dateIssued: document.getElementById('dateIssued').value,
+                assessmentCenter: document.getElementById('assessmentCenter').value,
+                requirements: {
+                    selfAssessmentGuide: document.getElementById('selfAssessment')?.checked || false,
+                    passportPictures: document.getElementById('pictures')?.checked || false
+                },
+                remarks: {
+                    bringPPE: document.getElementById('ppe')?.checked || false,
+                    others: document.getElementById('others')?.checked || false,
+                    othersSpecify: ''
+                },
+                assessmentDate: document.getElementById('assessmentDate').value,
+                assessmentTime: document.getElementById('assessmentTime').value,
+                status: 'pending'
+            };
+
+            try {
+                // Submit to database
+                const response = await fetch('http://localhost:5500/api/admissions', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(admissionData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Admission slip submitted:', result);
+                    
+                    // Show success message
+                    alert('Admission Slip submitted successfully!');
+                    goBack();
+                } else {
+                    throw new Error('Failed to submit admission slip');
+                }
+            } catch (error) {
+                console.error('Error submitting admission slip:', error);
+                alert('Failed to submit admission slip. Please try again.');
+            }
         }
 
         function goBack() {
-            window.location.href = '../dashboard.html';
+            window.location.href = '../assessment.html';
         }
     </script>
 </body>

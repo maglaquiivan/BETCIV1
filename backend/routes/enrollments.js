@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const Trainee = require('../models/Trainee');
+const User = require('../models/User');
 
 // Enrollment Schema
 const enrollmentSchema = new mongoose.Schema({
@@ -12,10 +14,35 @@ const enrollmentSchema = new mongoose.Schema({
     progress: { type: Number, default: 0, min: 0, max: 100 },
     enrollmentDate: { type: Date, default: Date.now },
     completionDate: { type: Date },
-    lastAccessedDate: { type: Date, default: Date.now }
+    lastAccessedDate: { type: Date, default: Date.now },
+    // Enrollee data from enrollment form
+    enrolleeData: {
+        firstName: String,
+        lastName: String,
+        email: String,
+        phone: String,
+        address: String,
+        dateOfBirth: Date,
+        gender: String,
+        education: String,
+        emergencyContact: {
+            name: String,
+            phone: String
+        }
+    }
 }, { timestamps: true });
 
 const Enrollment = mongoose.model('Enrollment', enrollmentSchema);
+
+// GET all enrollments (for admin dashboard)
+router.get('/', async (req, res) => {
+    try {
+        const enrollments = await Enrollment.find().sort({ enrollmentDate: -1 });
+        res.json(enrollments);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // GET all enrollments for a user
 router.get('/user/:userId', async (req, res) => {
@@ -43,7 +70,7 @@ router.get('/:enrollmentId', async (req, res) => {
 // POST create new enrollment
 router.post('/', async (req, res) => {
     try {
-        const { userId, courseId, courseName } = req.body;
+        const { userId, courseId, courseName, enrolleeData } = req.body;
         
         // Check if already enrolled
         const existing = await Enrollment.findOne({ userId, courseId });
@@ -60,10 +87,58 @@ router.post('/', async (req, res) => {
             courseId,
             courseName,
             status: 'active',
-            progress: 0
+            progress: 0,
+            enrolleeData: enrolleeData || {} // Save the complete form data
         });
         
         const newEnrollment = await enrollment.save();
+        
+        // Get user information
+        const user = await User.findOne({ userId: userId });
+        
+        if (user) {
+            // Check if trainee already exists
+            let trainee = await Trainee.findOne({ email: user.email });
+            
+            if (trainee) {
+                // Update existing trainee - add course to enrolledCourses if not already there
+                const courseExists = trainee.enrolledCourses.some(c => c.courseId === courseId);
+                
+                if (!courseExists) {
+                    trainee.enrolledCourses.push({
+                        courseId: courseId,
+                        courseName: courseName,
+                        enrollmentDate: new Date(),
+                        status: 'active',
+                        progress: 0
+                    });
+                    await trainee.save();
+                }
+            } else {
+                // Create new trainee record
+                const traineeId = 'TRN' + Date.now();
+                
+                trainee = new Trainee({
+                    traineeId: traineeId,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    email: user.email,
+                    phone: user.phone || '',
+                    address: user.address || '',
+                    status: 'active',
+                    enrolledCourses: [{
+                        courseId: courseId,
+                        courseName: courseName,
+                        enrollmentDate: new Date(),
+                        status: 'active',
+                        progress: 0
+                    }]
+                });
+                
+                await trainee.save();
+            }
+        }
+        
         res.status(201).json(newEnrollment);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -90,6 +165,21 @@ router.put('/:enrollmentId/progress', async (req, res) => {
         }
         
         const updatedEnrollment = await enrollment.save();
+        
+        // Update trainee record as well
+        const user = await User.findOne({ userId: enrollment.userId });
+        if (user) {
+            const trainee = await Trainee.findOne({ email: user.email });
+            if (trainee) {
+                const courseIndex = trainee.enrolledCourses.findIndex(c => c.courseId === enrollment.courseId);
+                if (courseIndex !== -1) {
+                    trainee.enrolledCourses[courseIndex].progress = progress;
+                    trainee.enrolledCourses[courseIndex].status = enrollment.status;
+                    await trainee.save();
+                }
+            }
+        }
+        
         res.json(updatedEnrollment);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -112,6 +202,20 @@ router.put('/:enrollmentId/status', async (req, res) => {
         }
         
         const updatedEnrollment = await enrollment.save();
+        
+        // Update trainee record as well
+        const user = await User.findOne({ userId: enrollment.userId });
+        if (user) {
+            const trainee = await Trainee.findOne({ email: user.email });
+            if (trainee) {
+                const courseIndex = trainee.enrolledCourses.findIndex(c => c.courseId === enrollment.courseId);
+                if (courseIndex !== -1) {
+                    trainee.enrolledCourses[courseIndex].status = status;
+                    await trainee.save();
+                }
+            }
+        }
+        
         res.json(updatedEnrollment);
     } catch (error) {
         res.status(400).json({ message: error.message });

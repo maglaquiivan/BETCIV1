@@ -1,4 +1,4 @@
-# Admin Pages MongoDB Integration Guide
+    # Admin Pages MongoDB Integration Guide
 
 ## ✅ All Collections and JavaScript Files Created!
 

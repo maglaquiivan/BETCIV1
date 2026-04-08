@@ -137,13 +137,14 @@ document.addEventListener('DOMContentLoaded', function() {
   if (registerForm) {
     registerForm.addEventListener('submit', async function(e) {
       e.preventDefault();
-      const name = document.getElementById('register-name').value;
+      const firstName = document.getElementById('register-firstname').value.trim();
+      const lastName = document.getElementById('register-lastname').value.trim();
       const email = document.getElementById('register-email').value;
-      const course = document.getElementById('register-course').value;
+      const address = document.getElementById('register-address').value.trim();
       const password = document.getElementById('register-password').value;
       const confirm = document.getElementById('register-confirm').value;
 
-      if (!name || !email || !password || !confirm) {
+      if (!firstName || !lastName || !email || !address || !password || !confirm) {
         showModal('error', 'Missing Information', 'Please fill in all required fields');
         return;
       }
@@ -154,30 +155,44 @@ document.addEventListener('DOMContentLoaded', function() {
       }
 
       try {
-        // Split name into first and last name
-        const nameParts = name.trim().split(' ');
-        const firstName = nameParts[0];
-        const lastName = nameParts.slice(1).join(' ') || nameParts[0];
-
         // Create username from email (before @ symbol)
         const username = email.split('@')[0];
 
-        // Call MongoDB API for registration - save to accounts collection
-        const response = await fetch('http://localhost:5500/api/accounts', {
+        // Get the next trainee ID in ascending order
+        const traineeIdResponse = await fetch('http://localhost:5500/api/trainee-accounts');
+        const existingTrainees = await traineeIdResponse.json();
+        
+        // Find the highest TRN number
+        let maxTrnNumber = 0;
+        existingTrainees.forEach(trainee => {
+          if (trainee.accountId && trainee.accountId.startsWith('TRN-')) {
+            const trnNumber = parseInt(trainee.accountId.split('-')[1]);
+            if (!isNaN(trnNumber) && trnNumber > maxTrnNumber) {
+              maxTrnNumber = trnNumber;
+            }
+          }
+        });
+        
+        // Generate next TRN-ID in format TRN-0001, TRN-0002, etc.
+        const nextTrnNumber = maxTrnNumber + 1;
+        const traineeId = `TRN-${String(nextTrnNumber).padStart(4, '0')}`;
+
+        // Call MongoDB API for registration - save to trainee-accounts collection
+        const response = await fetch('http://localhost:5500/api/trainee-accounts', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            accountId: `ACC${Date.now()}`,
+            accountId: traineeId,
             username: username,
             email: email,
             password: password,
             firstName: firstName,
             lastName: lastName,
+            address: address,
             role: 'trainee',
-            status: 'active',
-            permissions: []
+            status: 'active'
           })
         });
 
@@ -187,6 +202,33 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const user = await response.json();
+        
+        // Create trainee record in trainees collection
+        try {
+          const traineeData = {
+            traineeId: user.accountId || traineeId,
+            firstName: firstName,
+            lastName: lastName,
+            email: email,
+            phone: '',
+            address: address,
+            status: 'active'
+          };
+          
+          const traineeResponse = await fetch('http://localhost:5500/api/trainees', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(traineeData)
+          });
+          
+          if (traineeResponse.ok) {
+            console.log('Trainee record created successfully');
+          }
+        } catch (traineeError) {
+          console.error('Error creating trainee record:', traineeError);
+        }
         
         showModal('success', 'Registration Successful!', 'Your account has been created. Please login with your credentials.');
         
@@ -226,6 +268,19 @@ function toggleChat() {
   } else {
     chatIcon.className = 'bi bi-x';
   }
+}
+
+// Helper function to get course name from course ID
+function getCourseNameFromId(courseId) {
+  const courseMap = {
+    'forklift': 'Heavy Equipment Operation Forklift NC II',
+    'bulldozer': 'Heavy Equipment Operation Bulldozer NC II',
+    'dump-truck': 'Heavy Equipment Operation Rigid on Highway Dump Truck NC II',
+    'excavator': 'Heavy Equipment Operation Hydraulic Excavator NC II',
+    'wheel-loader': 'Heavy Equipment Operation Wheel Loader NC II',
+    'backhoe': 'Heavy Equipment Operation Backhoe Loader NC II'
+  };
+  return courseMap[courseId] || courseId;
 }
 
 function sendMessage() {

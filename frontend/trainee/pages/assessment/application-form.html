@@ -3,210 +3,279 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none'; base-uri 'self';">
-    <title>BETCI - Assessment Center</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="../../assets/css/dashboard.css" rel="stylesheet">
-    <link href="../../assets/css/styles.css" rel="stylesheet">
+    <title>BETCI Application Form</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons from CDN -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <style>
-<<<<<<< HEAD
-        .assessment-section { padding: 20px; }
-        .section-title { font-size: 24px; font-weight: 600; margin-bottom: 20px; color: #333; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
         
-        .assessment-tabs { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .assessment-tab-btn { padding: 12px 24px; border: 2px solid #ddd; background: white; border-radius: 6px; cursor: pointer; font-weight: 600; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
-        .assessment-tab-btn.active { background: #E67E22; color: white; border-color: #E67E22; }
-        .assessment-tab-btn:hover { border-color: #E67E22; }
+        /* Hide scrollbar */
+        html {
+            overflow-y: scroll;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
         
-        .assessment-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
-        .assessment-card { background: white; border-radius: 12px; padding: 25px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s; border-left: 5px solid #E67E22; }
-        .assessment-card:hover { box-shadow: 0 6px 16px rgba(0,0,0,0.15); transform: translateY(-4px); }
+        html::-webkit-scrollbar {
+            display: none;
+        }
         
-        .assessment-icon { font-size: 48px; color: #E67E22; margin-bottom: 15px; }
-        .assessment-card h3 { font-size: 18px; font-weight: 700; color: #333; margin-bottom: 10px; }
-        .assessment-card p { font-size: 14px; color: #666; margin-bottom: 15px; line-height: 1.5; }
+        body {
+            overflow-y: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+        }
         
-        .assessment-status { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; margin-bottom: 15px; }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-completed { background: #d4edda; color: #155724; }
-        .status-scheduled { background: #cfe2ff; color: #084298; }
-        .status-available { background: #d1ecf1; color: #0c5460; }
-        
-        .assessment-btn { width: 100%; padding: 12px; background: #E67E22; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: 14px; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .assessment-btn:hover { background: #d35400; transform: translateY(-2px); }
-        
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        
-        .empty-state { text-align: center; padding: 60px 20px; color: #999; grid-column: 1/-1; }
-        .empty-state i { font-size: 48px; color: #ddd; margin-bottom: 15px; }
-=======
-        /* Tab Navigation Styles */
-        .tab-navigation {
-            display: flex;
-            gap: 10px;
-            margin: 0 0 30px 0;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 0;
-            overflow-x: auto;
+        body::-webkit-scrollbar {
+            display: none;
         }
 
-        .tab-btn {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 24px;
-            border: none;
-            background: transparent;
-            color: #666;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border-bottom: 3px solid transparent;
-            white-space: nowrap;
+        body.application-page {
+            font-family: 'Roboto', sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+            min-height: 100vh;
         }
 
-        .tab-btn i {
-            font-size: 18px;
-        }
-
-        .tab-btn:hover {
-            color: #E67E22;
-            background: rgba(230, 126, 34, 0.05);
-        }
-
-        .tab-btn.active {
-            color: #E67E22;
-            border-bottom-color: #E67E22;
-            font-weight: 600;
-        }
-
-        @media (max-width: 768px) {
-            .tab-btn span {
-                display: none;
-            }
-            
-            .tab-btn {
-                padding: 12px 16px;
-            }
-        }
-
-        .application-wrapper {
+        .application-form-container {
+            background: white;
             max-width: 1000px;
             margin: 0 auto;
-            background: white;
             border-radius: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
             overflow: hidden;
         }
 
-        .form-header {
-            background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%);
+        /* Header */
+        .form-title {
+            background: linear-gradient(135deg, #E67E22 0%, #d35400 100%);
             padding: 30px 20px;
             text-align: center;
             color: white;
+            border: none;
         }
 
-        .form-header h1 {
+        .form-title h1 {
             font-size: 28px;
             font-weight: 700;
             margin: 0 0 10px 0;
             font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
         }
 
-        .form-header p {
+        .form-title p {
             font-size: 14px;
             margin: 0;
             opacity: 0.95;
         }
 
-        .form-body {
+        /* Form Content */
+        .form-content {
             padding: 30px;
         }
 
-        .form-section {
+        /* Reference Number Section */
+        .ref-section {
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 2px solid #f0f0f0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #fafafa;
         }
 
-        .form-section:last-child {
-            border-bottom: none;
-        }
-
-        .section-title {
-            font-size: 16px;
+        .ref-label {
             font-weight: 600;
-            color: #E67E22;
-            margin: 0 0 20px 0;
-            padding-bottom: 10px;
-            border-bottom: 3px solid #E67E22;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 15px;
-        }
-
-        .form-row.full {
-            grid-template-columns: 1fr;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .form-label {
+            margin-bottom: 10px;
+            display: block;
             font-size: 13px;
-            font-weight: 600;
             color: #333;
-            margin-bottom: 8px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
 
-        .form-label .required {
-            color: #e74c3c;
+        .ref-boxes {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
         }
 
-        .form-input, .form-select, .form-textarea {
-            padding: 12px;
+        .ref-input {
+            width: 45px;
+            height: 45px;
             border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 13px;
+            padding: 5px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
             font-family: 'Roboto', sans-serif;
+            cursor: pointer;
+            border-radius: 4px;
             transition: all 0.3s ease;
         }
 
-        .form-input:focus, .form-select:focus, .form-textarea:focus {
+        .ref-input:focus {
             outline: none;
             border-color: #E67E22;
             box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
         }
 
-        .form-textarea {
-            resize: vertical;
-            min-height: 80px;
+        /* Main Grid */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 140px;
+            gap: 15px;
+            margin-bottom: 20px;
         }
 
-        .checkbox-group {
+        .form-field {
             display: flex;
-            flex-wrap: wrap;
+            flex-direction: column;
+        }
+
+        .field-label {
+            font-weight: 700;
+            font-size: 13px;
+            margin-bottom: 6px;
+            color: #333;
+        }
+
+        .field-input {
+            border: 2px solid #ddd;
+            padding: 10px;
+            font-size: 14px;
+            font-family: 'Roboto', sans-serif;
+            min-height: 40px;
+            background: white;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: #E67E22;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+
+        /* Picture Box */
+        .picture-box {
+            border: 1px dashed #999;
+            padding: 6px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 110px;
+            position: relative;
+            background: #fafafa;
+            cursor: pointer;
+        }
+
+        .picture-text {
+            font-weight: 700;
+            font-size: 11px;
+            margin-bottom: 3px;
+            color: #333;
+        }
+
+        .picture-placeholder {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .picture-placeholder-text {
+            font-size: 10px;
+            color: #999;
+            margin-bottom: 2px;
+        }
+
+        .picture-subtext {
+            font-size: 9px;
+            color: #999;
+        }
+
+        #picturePreview {
+            display: none;
+            width: 80px;
+            height: 100px;
+            object-fit: cover;
+            border: 1px solid #333;
+        }
+
+        #pictureUpload {
+            display: none;
+        }
+
+        /* Two Column Grid */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
             gap: 15px;
-            margin-top: 8px;
+            margin-bottom: 20px;
+        }
+
+        /* Full Width Field */
+        .full-width-field {
+            margin-bottom: 20px;
+        }
+
+        /* Section Headers */
+        .section-header {
+            border: 2px solid #E67E22;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            margin-top: 30px;
+            background: #fff5ed;
+            border-radius: 4px;
+        }
+
+        .section-title {
+            font-weight: 700;
+            font-style: normal;
+            font-size: 15px;
+            color: #E67E22;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Checkbox Section */
+        .checkbox-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 4px;
+            background: #fafafa;
         }
 
         .checkbox-item {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+            font-size: 14px;
+            font-weight: 500;
         }
 
         .checkbox-item input[type="checkbox"] {
@@ -217,774 +286,1203 @@
         }
 
         .checkbox-item label {
-            font-size: 13px;
             cursor: pointer;
-            margin: 0;
         }
 
-        .picture-upload {
-            border: 2px dashed #E67E22;
-            border-radius: 8px;
-            padding: 30px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
+        /* Signature Section */
+        .signature-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+            margin-top: 30px;
+            border: 2px solid #ddd;
+            padding: 20px;
+            border-radius: 4px;
             background: #fafafa;
         }
 
-        .picture-upload:hover {
-            background: #f5f5f5;
-            border-color: #d35400;
+        .signature-box {
+            text-align: center;
         }
 
-        .picture-upload i {
-            font-size: 40px;
-            color: #E67E22;
+        .signature-line {
+            border-bottom: 2px solid #333;
+            height: 60px;
             margin-bottom: 10px;
         }
 
-        .picture-upload p {
-            margin: 0;
-            font-size: 13px;
-            color: #666;
+        .signature-label {
+            font-weight: 700;
+            font-size: 12px;
+            color: #333;
+            margin-bottom: 10px;
         }
 
-        .picture-preview {
-            max-width: 150px;
-            max-height: 150px;
+        .date-label {
+            font-weight: 700;
+            font-size: 12px;
+            text-align: left;
             margin-top: 10px;
-            border-radius: 4px;
+            color: #333;
         }
 
-        .signature-box {
+        .date-input {
             border: 2px solid #ddd;
             border-radius: 4px;
-            background: white;
-            padding: 10px;
-        }
-
-        #signatureCanvas {
             width: 100%;
-            height: 120px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            cursor: crosshair;
-            background: white;
-            display: block;
-        }
-
-        .signature-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 10px;
-        }
-
-        .btn-small {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .btn-clear {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .btn-clear:hover {
-            background: #c0392b;
-        }
-
-        .btn-upload {
-            background: #3498db;
-            color: white;
-        }
-
-        .btn-upload:hover {
-            background: #2980b9;
-        }
-
-        .table-responsive {
-            overflow-x: auto;
-            margin-bottom: 15px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 12px;
-        }
-
-        table th {
-            background: #E67E22;
-            color: white;
-            padding: 12px;
-            text-align: left;
-            font-weight: 600;
-        }
-
-        table td {
-            padding: 10px 12px;
-            border-bottom: 1px solid #eee;
-        }
-
-        table tr:hover {
-            background: #f9f9f9;
-        }
-
-        table input {
-            width: 100%;
-            padding: 6px;
-            border: 1px solid #ddd;
-            border-radius: 3px;
-            font-size: 12px;
-        }
-
-        .form-actions {
-            display: flex;
-            gap: 15px;
-            justify-content: center;
-            margin-top: 30px;
-            padding-top: 20px;
-            border-top: 2px solid #f0f0f0;
-            flex-wrap: wrap;
-        }
-
-        .btn-save, .btn-print, .btn-submit, .btn-back {
-            padding: 14px 35px;
-            border: none;
-            border-radius: 8px;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
+            padding: 8px;
+            font-size: 13px;
             font-family: 'Roboto', sans-serif;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            margin-top: 5px;
         }
 
-        .btn-save {
-            background: #E67E22;
-            color: white;
-        }
-
-        .btn-save:hover {
-            background: #d35400;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
-        }
-
-        .btn-print {
-            background: #3498db;
-            color: white;
-        }
-
-        .btn-print:hover {
-            background: #2980b9;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
-        }
-
-        .btn-submit {
-            background: #27ae60;
-            color: white;
-        }
-
-        .btn-submit:hover {
-            background: #229954;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
-        }
-
-        .btn-back {
-            background: #95a5a6;
-            color: white;
-        }
-
-        .btn-back:hover {
-            background: #7f8c8d;
-            transform: translateY(-2px);
-        }
-
-        .btn-primary, .btn-secondary {
-            padding: 12px 30px;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-family: 'Roboto', sans-serif;
-        }
-
-        .btn-primary {
-            background: #E67E22;
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: #d35400;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
-        }
-
-        .btn-secondary {
-            background: #95a5a6;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #7f8c8d;
-        }
-
-        /* Dark mode support */
-        body.dark-mode .application-wrapper {
-            background: #2c3e50;
-        }
-
-        body.dark-mode .form-body {
-            background: #2c3e50;
-            color: #ecf0f1;
-        }
-
-        body.dark-mode .form-input, 
-        body.dark-mode .form-select, 
-        body.dark-mode .form-textarea {
-            background: #34495e;
-            color: #ecf0f1;
-            border-color: #555;
-        }
-
-        body.dark-mode .form-label {
-            color: #ecf0f1;
-        }
-
-        body.dark-mode .section-title {
-            color: #f39c12;
-        }
-
-        body.dark-mode .picture-upload {
-            background: #34495e;
+        .date-input:focus {
+            outline: none;
             border-color: #E67E22;
         }
 
-        body.dark-mode table th {
-            background: #d35400;
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 30px;
         }
 
-        body.dark-mode table tr:hover {
-            background: #34495e;
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
         }
 
-        body.dark-mode table input {
-            background: #34495e;
-            color: #ecf0f1;
-            border-color: #555;
+        .save-btn {
+            background: #E67E22;
+            color: white;
         }
->>>>>>> 20257f4b9b72fcb0a4e822e8e7c0a8c920866b48
+
+        .save-btn:hover {
+            background: #D35400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+        }
+
+        .print-btn {
+            background: #2196F3;
+            color: white;
+        }
+
+        .print-btn:hover {
+            background: #1976D2;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+        }
+
+        .submit-btn {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .submit-btn:hover {
+            background: #45a049;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+
+        .back-btn {
+            background: #757575;
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: #616161;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+                margin: 0;
+            }
+
+            .action-buttons {
+                display: none;
+            }
+
+            .application-form-container {
+                box-shadow: none;
+                max-width: 100%;
+                border-radius: 0;
+                margin: 0;
+            }
+
+            .form-title {
+                padding: 8px;
+                margin: 0;
+            }
+
+            .form-content {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .two-col-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .picture-box {
+                min-height: 80px;
+            }
+        }
     </style>
 </head>
-<body>
-    <div class="admin-container">
-        <!-- Sidebar Container -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="logo-image">
-                    <img src="../../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
-                </div>
-                <div class="logo-text">
-                    <h3>BETCI</h3>
-                    <p>Trainee</p>
-                </div>
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="bi bi-list"></i>
-                </button>
+<body class="application-page">
+    <main class="main">
+        <div class="application-form-container">
+            <!-- Title -->
+            <div class="form-title">
+                <h1><i class="bi bi-file-earmark-text"></i> Application Form</h1>
+                <p>TESDA Assessment Center | Competency Assessment Application</p>
             </div>
-            
-            <nav class="sidebar-nav">
-                <ul>
-                    <li class="nav-item">
-                        <a href="../dashboard.html" class="nav-link">
-                            <i class="bi bi-house-door"></i>
-                            <span>Dashboard</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../courses.html" class="nav-link">
-                            <i class="bi bi-book"></i>
-                            <span>Courses</span>
-                        </a>
-                    </li>
-                    <li class="nav-item active">
-                        <a href="../assessment.html" class="nav-link">
-                            <i class="bi bi-clipboard-check"></i>
-                            <span>Assessment</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../records.html" class="nav-link">
-                            <i class="bi bi-file-earmark-text"></i>
-                            <span>Records</span>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="../settings.html" class="nav-link">
-                            <i class="bi bi-gear"></i>
-                            <span>Settings</span>
-                        </a>
-                    </li>
-                </ul>
-            </nav>
-        </aside>
 
-        <!-- Main Content -->
-        <div class="main-content" id="mainContent">
-            <!-- Top Header -->
-            <header class="top-header">
-                <div class="header-left">
-                    <div class="search-container">
-                        <i class="bi bi-search"></i>
-                        <input type="text" placeholder="Search..." class="search-input">
-                    </div>
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="bi bi-list"></i>
-                    </button>
-                </div>
-                <div class="header-right">
-                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
-                        <i class="bi bi-moon-fill"></i>
-                    </button>
-                    <div class="user-profile" id="userProfile">
-                        <div class="user-avatar">
-                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="20" cy="20" r="20" fill="#E67E22"/>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
-                                    <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
-                                    <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
-                                </svg>
-                            </svg>
-                        </div>
-                        <span class="user-name">KELI</span>
-                        <i class="bi bi-chevron-down dropdown-arrow"></i>
-                        
-                        <!-- User Dropdown Menu -->
-                        <div class="user-dropdown" id="userDropdown">
-                            <div class="dropdown-header">
-                                <div class="dropdown-avatar">
-                                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="20" cy="20" r="20" fill="#E67E22"/>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
-                                            <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
-                                            <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
-                                        </svg>
-                                    </svg>
-                                </div>
-                                <div class="dropdown-user-info">
-                                    <h4>KELI STUDENT</h4>
-                                    <p>keli.student@betci.edu.ph</p>
-                                </div>
-                            </div>
-                            <div class="dropdown-divider"></div>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <a href="../manage-profile.html">
-                                        <i class="bi bi-person"></i>
-                                        <span>My Profile</span>
-                                    </a>
-                                </li>
-                                <li>
-                                    <a href="../settings.html">
-                                        <i class="bi bi-gear"></i>
-                                        <span>Settings</span>
-                                    </a>
-                                </li>
-                                <li class="theme-toggle-item">
-                                    <div class="theme-toggle-wrapper">
-                                        <i class="bi bi-palette"></i>
-                                        <span>Dark Mode</span>
-                                        <label class="theme-switch">
-                                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                                            <span class="theme-slider"></span>
-                                        </label>
-                                    </div>
-                                </li>
-                            </ul>
-                            <div class="dropdown-divider"></div>
-                            <div class="dropdown-footer">
-                                <button class="logout-btn" onclick="handleLogout()">
-                                    <i class="bi bi-box-arrow-right"></i>
-                                    <span>Log Out</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </header>
-
-<<<<<<< HEAD
-            <!-- Assessment Section -->
-            <div class="assessment-section">
-                <h2 class="section-title"><i class="bi bi-clipboard-check"></i> Assessment Center</h2>
-                
-                <!-- Assessment Tabs -->
-                <div class="assessment-tabs">
-                    <button class="assessment-tab-btn active" onclick="switchAssessmentTab('application')">
-                        <i class="bi bi-file-earmark-text"></i> Application Form
-                    </button>
-                    <button class="assessment-tab-btn" onclick="switchAssessmentTab('admission')">
-                        <i class="bi bi-ticket-detailed"></i> Admission Slip
-                    </button>
-                    <button class="assessment-tab-btn" onclick="switchAssessmentTab('practical')">
-                        <i class="bi bi-graph-up"></i> Practical Assessment
-                    </button>
-                    <button class="assessment-tab-btn" onclick="switchAssessmentTab('certification')">
-                        <i class="bi bi-award"></i> Certification
-                    </button>
+            <!-- Form Content -->
+            <div class="form-content">
+                <!-- Application Information Header -->
+                <div class="section-header">
+                    <div class="section-title">Application Information</div>
                 </div>
 
-                <!-- Application Form Tab -->
-                <div id="application-tab" class="tab-content active">
-                    <div class="assessment-grid">
-                        <div class="assessment-card">
-                            <div class="assessment-icon">
-                                <i class="bi bi-file-earmark-text"></i>
-                            </div>
-                            <h3>Application Form</h3>
-                            <p>Submit your course application and required documents for enrollment consideration.</p>
-                            <div class="assessment-status status-pending">
-                                <i class="bi bi-clock"></i> Ready to Apply
-                            </div>
-                            <button class="assessment-btn" onclick="startApplication()">
-                                <i class="bi bi-arrow-right"></i> Start Application
-                            </button>
-                        </div>
-=======
-            <!-- Application Form Content -->
-            <div class="dashboard-content">
-                <!-- Tab Navigation -->
-                <div class="tab-navigation">
-                    <button class="tab-btn" onclick="window.location.href='../assessment.html'">
-                        <i class="bi bi-grid"></i>
-                        <span>Overview</span>
-                    </button>
-                    <button class="tab-btn active">
-                        <i class="bi bi-file-earmark-text"></i>
-                        <span>Application Form</span>
-                    </button>
-                    <button class="tab-btn" onclick="window.location.href='admission-slip.html'">
-                        <i class="bi bi-calendar-check"></i>
-                        <span>Admission Slip</span>
-                    </button>
-                    <button class="tab-btn" onclick="alert('Results will be available after assessment completion')">
-                        <i class="bi bi-trophy"></i>
-                        <span>Results</span>
-                    </button>
-                </div>
-
-                <div class="application-wrapper">
-                    <div class="form-header">
-                        <h1><i class="bi bi-file-earmark-text"></i> Application Form</h1>
-                        <p>TESDA-OP-CO-05-F26 | Rev. 00 – 03/08/17</p>
->>>>>>> 20257f4b9b72fcb0a4e822e8e7c0a8c920866b48
+                <!-- Reference Number & ULI -->
+                <div class="ref-section">
+                    <label class="ref-label">REFERENCE NUMBER</label>
+                    <div class="ref-boxes">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="Q">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="Y">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="Y">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="R">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="R">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="P">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="P">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="A">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="A">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="A">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="N">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="N">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="N">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="N">
+                        <input type="text" class="ref-input" maxlength="1" placeholder="N">
                     </div>
                 </div>
 
-                <!-- Admission Slip Tab -->
-                <div id="admission-tab" class="tab-content">
-                    <div class="assessment-grid">
-                        <div class="assessment-card">
-                            <div class="assessment-icon">
-                                <i class="bi bi-ticket-detailed"></i>
-                            </div>
-                            <h3>Admission Slip</h3>
-                            <p>Generate and download your admission slip and exam schedule for your course.</p>
-                            <div class="assessment-status status-completed">
-                                <i class="bi bi-check-circle"></i> Ready for Download
-                            </div>
-                            <button class="assessment-btn" onclick="generateAdmissionSlip()">
-                                <i class="bi bi-arrow-right"></i> Generate Slip
-                            </button>
+                <!-- ULI Section -->
+                <div class="ref-section">
+                    <label class="ref-label">UNIQUE LEARNERS IDENTIFIER (ULI)</label>
+                    <div class="ref-boxes">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <span style="margin: 0 5px;">-</span>
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <span style="margin: 0 5px;">-</span>
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <span style="margin: 0 5px;">-</span>
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                        <input type="text" class="ref-input" maxlength="1">
+                    </div>
+                </div>
+
+                <!-- School/Training Center Information -->
+                <div class="two-col-grid">
+                    <div class="form-field">
+                        <label class="field-label">Name of School/Training Center/Company:</label>
+                        <select id="schoolName" class="field-input">
+                            <option value="">Select school/training center...</option>
+                            <option value="Creative Aesthetic Academy & Technical Education Inc.">Creative Aesthetic Academy & Technical Education Inc.</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">Title of Assessment applied for:</label>
+                        <select id="assessmentTitle" class="field-input">
+                            <option value="">Select an assessment...</option>
+                            <option value="Heavy Equipment Operation NC II">Heavy Equipment Operation NC II</option>
+                            <option value="Shielded Metal Arc Welding NC I">Shielded Metal Arc Welding NC I</option>
+                            <option value="Construction Painting NC II">Construction Painting NC II</option>
+                            <option value="Plumbing NC II">Plumbing NC II</option>
+                            <option value="Carpentry NC II">Carpentry NC II</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- School Address & Date -->
+                <div class="two-col-grid">
+                    <div class="form-field">
+                        <label class="field-label">School Address:</label>
+                        <input type="text" id="schoolAddress" class="field-input" placeholder="">
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">Date of Application:</label>
+                        <input type="date" id="applicationDate" class="field-input">
+                    </div>
+                </div>
+
+                <!-- Assessment Type -->
+                <div class="form-field">
+                    <label class="field-label">Assessment Type:</label>
+                    <div class="checkbox-section" style="margin-top: 10px;">
+                        <div class="checkbox-item">
+                            <input type="radio" id="fullQualification" name="assessmentType" value="Full Qualification COC">
+                            <label for="fullQualification">Full Qualification COC</label>
+                        </div>
+                        <div class="checkbox-item">
+                            <input type="radio" id="renewal" name="assessmentType" value="Renewal">
+                            <label for="renewal">Renewal</label>
                         </div>
                     </div>
                 </div>
 
-                <!-- Practical Assessment Tab -->
-                <div id="practical-tab" class="tab-content">
-                    <div class="assessment-grid">
-                        <div class="assessment-card">
-                            <div class="assessment-icon">
-                                <i class="bi bi-graph-up"></i>
-                            </div>
-                            <h3>Practical Assessment</h3>
-                            <p>Schedule your hands-on practical examination with our training instructors.</p>
-                            <div class="assessment-status status-scheduled">
-                                <i class="bi bi-calendar"></i> Scheduled: March 15, 2024
-                            </div>
-                            <button class="assessment-btn" onclick="rescheduleAssessment()">
-                                <i class="bi bi-arrow-right"></i> Reschedule
-                            </button>
-                        </div>
+                <!-- Client Type -->
+                <div class="section-header">
+                    <div class="section-title">1. Client Type</div>
+                </div>
+
+                <div class="checkbox-section">
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="tvetGraduating" name="clientType">
+                        <label for="tvetGraduating">TVET Graduating Student</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="tvetGraduate" name="clientType">
+                        <label for="tvetGraduate">TVET graduate</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="industryWorker" name="clientType">
+                        <label for="industryWorker">Industry worker</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="k12" name="clientType">
+                        <label for="k12">K-12</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="checkbox" id="owf" name="clientType">
+                        <label for="owf">OWF</label>
                     </div>
                 </div>
 
-                <!-- Certification Tab -->
-                <div id="certification-tab" class="tab-content">
-                    <div class="assessment-grid">
-                        <div class="assessment-card">
-                            <div class="assessment-icon">
-                                <i class="bi bi-award"></i>
-                            </div>
-                            <h3>Certification</h3>
-                            <p>View and download your completion certificates and credentials.</p>
-                            <div class="assessment-status status-available">
-                                <i class="bi bi-download"></i> 2 Certificates Available
-                            </div>
-<<<<<<< HEAD
-                            <button class="assessment-btn" onclick="downloadCertificates()">
-                                <i class="bi bi-arrow-right"></i> Download Certificates
-                            </button>
-                        </div>
-=======
+                <!-- Profile Section -->
+                <div class="section-header">
+                    <div class="section-title">2. Profile</div>
+                </div>
 
-                            <!-- SECTION 7: TRAINING/SEMINARS -->
-                            <div class="form-section">
-                                <div class="section-title">4. Training/Seminars Attended</div>
-                                <div class="table-responsive">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>Venue</th>
-                                                <th>Dates</th>
-                                                <th>Hours</th>
-                                                <th>Conducted By</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><input type="text" name="trainingTitle1"></td>
-                                                <td><input type="text" name="trainingVenue1"></td>
-                                                <td><input type="text" name="trainingDates1"></td>
-                                                <td><input type="text" name="trainingHours1"></td>
-                                                <td><input type="text" name="trainingConductor1"></td>
-                                            </tr>
-                                            <tr>
-                                                <td><input type="text" name="trainingTitle2"></td>
-                                                <td><input type="text" name="trainingVenue2"></td>
-                                                <td><input type="text" name="trainingDates2"></td>
-                                                <td><input type="text" name="trainingHours2"></td>
-                                                <td><input type="text" name="trainingConductor2"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
+                <!-- 2.1 Name -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.1 Name</div>
+                </div>
 
-                            <!-- SECTION 8: LICENSURE EXAMINATION -->
-                            <div class="form-section">
-                                <div class="section-title">5. Licensure Examination(s) Passed</div>
-                                <div class="table-responsive">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>Year Taken</th>
-                                                <th>Venue</th>
-                                                <th>Rating</th>
-                                                <th>Remarks</th>
-                                                <th>Expiry Date</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><input type="text" name="licenseTitle1"></td>
-                                                <td><input type="number" name="licenseYear1"></td>
-                                                <td><input type="text" name="licenseVenue1"></td>
-                                                <td><input type="text" name="licenseRating1"></td>
-                                                <td><input type="text" name="licenseRemarks1"></td>
-                                                <td><input type="date" name="licenseExpiry1"></td>
-                                            </tr>
-                                            <tr>
-                                                <td><input type="text" name="licenseTitle2"></td>
-                                                <td><input type="number" name="licenseYear2"></td>
-                                                <td><input type="text" name="licenseVenue2"></td>
-                                                <td><input type="text" name="licenseRating2"></td>
-                                                <td><input type="text" name="licenseRemarks2"></td>
-                                                <td><input type="date" name="licenseExpiry2"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <!-- SECTION 9: COMPETENCY ASSESSMENT -->
-                            <div class="form-section">
-                                <div class="section-title">6. Competency Assessment(s) Passed</div>
-                                <div class="table-responsive">
-                                    <table>
-                                        <thead>
-                                            <tr>
-                                                <th>Title</th>
-                                                <th>Qualification Level</th>
-                                                <th>Industry Sector</th>
-                                                <th>Certificate Number</th>
-                                                <th>Date of Issuance</th>
-                                                <th>Expiration Date</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td><input type="text" name="competencyTitle1"></td>
-                                                <td><input type="text" name="competencyLevel1"></td>
-                                                <td><input type="text" name="competencySector1"></td>
-                                                <td><input type="text" name="competencyCertNum1"></td>
-                                                <td><input type="date" name="competencyIssued1"></td>
-                                                <td><input type="date" name="competencyExpiry1"></td>
-                                            </tr>
-                                            <tr>
-                                                <td><input type="text" name="competencyTitle2"></td>
-                                                <td><input type="text" name="competencyLevel2"></td>
-                                                <td><input type="text" name="competencySector2"></td>
-                                                <td><input type="text" name="competencyCertNum2"></td>
-                                                <td><input type="date" name="competencyIssued2"></td>
-                                                <td><input type="date" name="competencyExpiry2"></td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-
-                            <!-- ACTION BUTTONS -->
-                            <div class="form-actions">
-                                <button type="button" class="btn-save" onclick="saveAsPDF()">
-                                    <i class="bi bi-file-earmark-pdf"></i> Save
-                                </button>
-                                <button type="button" class="btn-print" onclick="window.print()">
-                                    <i class="bi bi-printer"></i> Print
-                                </button>
-                                <button type="submit" class="btn-submit">
-                                    <i class="bi bi-check-circle"></i> Submit
-                                </button>
-                                <button type="button" class="btn-back" onclick="goBackToDashboard()">
-                                    <i class="bi bi-arrow-left"></i> Back
-                                </button>
-                            </div>
-                        </form>
->>>>>>> 20257f4b9b72fcb0a4e822e8e7c0a8c920866b48
+                <div class="form-grid">
+                    <div class="form-field">
+                        <label class="field-label">SURNAME:</label>
+                        <input type="text" id="lastName" class="field-input" placeholder="">
                     </div>
+
+                    <div class="form-field">
+                        <label class="field-label">FIRST NAME:</label>
+                        <input type="text" id="firstName" class="field-input" placeholder="">
+                    </div>
+
+                    <div class="picture-box" onclick="document.getElementById('pictureUpload').click()">
+                        <div class="picture-text">PICTURE</div>
+                        <div id="pictureTextBox" class="picture-placeholder">
+                            <div class="picture-placeholder-text">Click To Insert Picture</div>
+                            <div class="picture-subtext">colored, passport size (max 2MB)</div>
+                        </div>
+                        <img id="picturePreview">
+                        <input type="file" id="pictureUpload" accept="image/*" onchange="handlePictureUpload(event)">
+                    </div>
+                </div>
+
+                <div class="two-col-grid">
+                    <div class="form-field">
+                        <label class="field-label">SECOND NAME:</label>
+                        <input type="text" id="secondName" class="field-input" placeholder="">
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">MIDDLE NAME:</label>
+                        <input type="text" id="middleName" class="field-input" placeholder="">
+                    </div>
+                </div>
+
+                <div class="two-col-grid">
+                    <div class="form-field">
+                        <label class="field-label">MIDDLE INITIAL:</label>
+                        <input type="text" id="middleInitial" class="field-input" maxlength="1" placeholder="">
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">Name Extension (Jr, Sr, III):</label>
+                        <input type="text" id="extension" class="field-input" placeholder="">
+                    </div>
+                </div>
+
+                <!-- 2.2 Mailing Address -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.2 Mailing Address</div>
+                </div>
+
+                <div class="two-col-grid">
+                    <div class="form-field">
+                        <label class="field-label">Number Street:</label>
+                        <input type="text" id="numberStreet" class="field-input" placeholder="">
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">Barangay:</label>
+                        <input type="text" id="barangay" class="field-input" placeholder="">
+                    </div>
+                </div>
+
+                <div class="two-col-grid">
+                    <div class="form-field">
+                        <label class="field-label">District:</label>
+                        <input type="text" id="district" class="field-input" placeholder="">
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">City:</label>
+                        <input type="text" id="city" class="field-input" placeholder="">
+                    </div>
+                </div>
+
+                <div class="two-col-grid">
+                    <div class="form-field">
+                        <label class="field-label">Province:</label>
+                        <input type="text" id="province" class="field-input" placeholder="">
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">Region:</label>
+                        <select id="region" class="field-input">
+                            <option value="">Select region...</option>
+                            <option value="Ilocos Region (Region I)">Ilocos Region (Region I)</option>
+                            <option value="Cagayan Valley (Region II)">Cagayan Valley (Region II)</option>
+                            <option value="Central Luzon (Region III)">Central Luzon (Region III)</option>
+                            <option value="CALABARZON (Region IV-A)">CALABARZON (Region IV-A)</option>
+                            <option value="MIMAROPA (Region IV-B)">MIMAROPA (Region IV-B)</option>
+                            <option value="Bicol Region (Region V)">Bicol Region (Region V)</option>
+                            <option value="Western Visayas (Region VI)">Western Visayas (Region VI)</option>
+                            <option value="Central Visayas (Region VII)">Central Visayas (Region VII)</option>
+                            <option value="Eastern Visayas (Region VIII)">Eastern Visayas (Region VIII)</option>
+                            <option value="Zamboanga Peninsula (Region IX)">Zamboanga Peninsula (Region IX)</option>
+                            <option value="Northern Mindanao (Region X)">Northern Mindanao (Region X)</option>
+                            <option value="Davao Region (Region XI)">Davao Region (Region XI)</option>
+                            <option value="SOCCSKSARGEN (Region XII)">SOCCSKSARGEN (Region XII)</option>
+                            <option value="Caraga (Region XIII)">Caraga (Region XIII)</option>
+                            <option value="National Capital Region (NCR)">National Capital Region (NCR)</option>
+                            <option value="Cordillera Administrative Region (CAR)">Cordillera Administrative Region (CAR)</option>
+                            <option value="Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)">Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label class="field-label">Zip:</label>
+                    <input type="text" id="zip" class="field-input" placeholder="">
+                </div>
+
+                <!-- 2.3 & 2.4 Parents Names -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.3 Mother's Name</div>
+                </div>
+                <div class="form-field">
+                    <input type="text" id="motherName" class="field-input" placeholder="">
+                </div>
+
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.4 Father's Name</div>
+                </div>
+                <div class="form-field">
+                    <input type="text" id="fatherName" class="field-input" placeholder="">
+                </div>
+
+                <!-- 2.5 Sex -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.5 Sex</div>
+                </div>
+                <div class="checkbox-section">
+                    <div class="checkbox-item">
+                        <input type="radio" id="male" name="sex" value="Male">
+                        <label for="male">Male</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="female" name="sex" value="Female">
+                        <label for="female">Female</label>
+                    </div>
+                </div>
+
+                <!-- 2.6 Civil Status -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.6 Civil Status</div>
+                </div>
+                <div class="checkbox-section">
+                    <div class="checkbox-item">
+                        <input type="radio" id="single" name="civilStatus" value="Single">
+                        <label for="single">Single</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="married" name="civilStatus" value="Married">
+                        <label for="married">Married</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="widower" name="civilStatus" value="Widower">
+                        <label for="widower">Widower</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="separated" name="civilStatus" value="Separated">
+                        <label for="separated">Separated</label>
+                    </div>
+                </div>
+
+                <!-- 2.7 Contact Numbers -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.7 Contact Number(s)</div>
+                </div>
+                <div class="two-col-grid">
+                    <div class="form-field">
+                        <label class="field-label">Tel:</label>
+                        <input type="tel" id="tel" class="field-input" placeholder="">
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">Mobile:</label>
+                        <input type="tel" id="mobile" class="field-input" placeholder="">
+                    </div>
+                </div>
+                <div class="two-col-grid">
+                    <div class="form-field">
+                        <label class="field-label">E-mail:</label>
+                        <input type="email" id="email" class="field-input" placeholder="">
+                    </div>
+                    <div class="form-field">
+                        <label class="field-label">Fax:</label>
+                        <input type="text" id="fax" class="field-input" placeholder="">
+                    </div>
+                </div>
+                <div class="form-field">
+                    <label class="field-label">Others:</label>
+                    <input type="text" id="othersContact" class="field-input" placeholder="">
+                </div>
+
+                <!-- 2.8 Highest Educational Attainment -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.8 Highest Educational Attainment</div>
+                </div>
+                <div class="checkbox-section">
+                    <div class="checkbox-item">
+                        <input type="radio" id="elemGrad" name="education" value="Elementary Graduate">
+                        <label for="elemGrad">Elementary Graduate</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="hsGrad" name="education" value="High School Graduate">
+                        <label for="hsGrad">High School Graduate</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="tvetGrad" name="education" value="TVET Graduate">
+                        <label for="tvetGrad">TVET Graduate</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="collegeLevel" name="education" value="College Level">
+                        <label for="collegeLevel">College Level</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="collegeGrad" name="education" value="College Graduate">
+                        <label for="collegeGrad">College Graduate</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="othersEd" name="education" value="Others">
+                        <label for="othersEd">Others</label>
+                    </div>
+                </div>
+
+                <!-- 2.9 Employment Status -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.9 Employment Status</div>
+                </div>
+                <div class="checkbox-section">
+                    <div class="checkbox-item">
+                        <input type="radio" id="casual" name="employmentStatus" value="Casual">
+                        <label for="casual">Casual</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="jobOrder" name="employmentStatus" value="Job Order">
+                        <label for="jobOrder">Job Order</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="probationary" name="employmentStatus" value="Probationary">
+                        <label for="probationary">Probationary</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="permanent" name="employmentStatus" value="Permanent">
+                        <label for="permanent">Permanent</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="selfEmployed" name="employmentStatus" value="Self-Employed">
+                        <label for="selfEmployed">Self-Employed</label>
+                    </div>
+                    <div class="checkbox-item">
+                        <input type="radio" id="ofw" name="employmentStatus" value="OFW">
+                        <label for="ofw">OFW</label>
+                    </div>
+                </div>
+
+                <!-- 2.10 Birthdate -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.10 Birth date (mm/dd/yyyy)</div>
+                </div>
+                <div class="form-field">
+                    <input type="date" id="birthdate" class="field-input">
+                </div>
+
+                <!-- 2.11 Birthplace -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.11 Birth place</div>
+                </div>
+                <div class="form-field">
+                    <input type="text" id="birthplace" class="field-input" placeholder="">
+                </div>
+
+                <!-- 2.12 Age -->
+                <div class="section-header" style="background: #f9f9f9; border: 1px solid #ddd;">
+                    <div class="section-title" style="color: #333; font-size: 13px;">2.12 Age</div>
+                </div>
+                <div class="form-field">
+                    <input type="number" id="age" class="field-input" placeholder="">
+                </div>
+
+                <!-- 3. Work Experience -->
+                <div class="section-header">
+                    <div class="section-title">3. Work Experience (National Qualification-related)</div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table id="workExperienceTable" style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+                        <thead>
+                            <tr style="background: #E67E22; color: white;">
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">3.1 Name of Company</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">3.2 Position</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">3.3 Inclusive Dates</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">3.4 Monthly Salary</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">3.5 Status of Appointment</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">3.6 No. of Yrs. Working Exp.</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="workExperienceBody">
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 150px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 100px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="number" class="field-input" style="width: 100%; min-width: 80px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">
+                                    <button type="button" class="action-btn" style="background: #e74c3c; padding: 5px 10px; font-size: 11px;" onclick="removeRow(this)">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="action-btn" style="background: #27ae60; color: white; padding: 8px 16px; font-size: 12px;" onclick="addWorkExperienceRow()">
+                        <i class="bi bi-plus-circle"></i> Add Work Experience Row
+                    </button>
+                    <p style="font-size: 11px; color: #666; margin-top: 5px;">(For more information, please use separate sheet)</p>
+                </div>
+
+                <!-- 4. Other Training/Seminars Attended -->
+                <div class="section-header">
+                    <div class="section-title">4. Other Training/Seminars Attended (National Qualification-related)</div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table id="trainingTable" style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+                        <thead>
+                            <tr style="background: #E67E22; color: white;">
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">4.1 Title</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">4.2 Venue</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">4.3 Inclusive Dates</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">4.4 No. of Hours</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">4.5 Conducted By</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trainingBody">
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 150px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="number" class="field-input" style="width: 100%; min-width: 80px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 150px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">
+                                    <button type="button" class="action-btn" style="background: #e74c3c; padding: 5px 10px; font-size: 11px;" onclick="removeRow(this)">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="action-btn" style="background: #27ae60; color: white; padding: 8px 16px; font-size: 12px;" onclick="addTrainingRow()">
+                        <i class="bi bi-plus-circle"></i> Add Training/Seminar Row
+                    </button>
+                    <p style="font-size: 11px; color: #666; margin-top: 5px;">(For more information, please use separate sheet)</p>
+                </div>
+
+                <!-- 5. Licensure Examination(s) Passed -->
+                <div class="section-header">
+                    <div class="section-title">5. Licensure Examination(s) Passed</div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table id="licensureTable" style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+                        <thead>
+                            <tr style="background: #E67E22; color: white;">
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">5.1 Title</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">5.2 Year Taken</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">5.3 Examination Venue</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">5.4 Rating</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">5.5 Remarks</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">5.6 Expiry Date</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="licensureBody">
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 150px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="number" class="field-input" style="width: 100%; min-width: 80px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 80px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 100px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="date" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">
+                                    <button type="button" class="action-btn" style="background: #e74c3c; padding: 5px 10px; font-size: 11px;" onclick="removeRow(this)">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="action-btn" style="background: #27ae60; color: white; padding: 8px 16px; font-size: 12px;" onclick="addLicensureRow()">
+                        <i class="bi bi-plus-circle"></i> Add Licensure Exam Row
+                    </button>
+                    <p style="font-size: 11px; color: #666; margin-top: 5px;">(For more information, please use separate sheet)</p>
+                </div>
+
+                <!-- 6. Competency Assessment(s) Passed -->
+                <div class="section-header">
+                    <div class="section-title">6. Competency Assessment(s) Passed</div>
+                </div>
+
+                <div style="overflow-x: auto;">
+                    <table id="competencyTable" style="width: 100%; border-collapse: collapse; margin-bottom: 10px;">
+                        <thead>
+                            <tr style="background: #E67E22; color: white;">
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">6.1 Title</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">6.2 Qualification Level</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">6.3 Industry Sector</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">6.4 Certificate Number</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">6.5 Date of Issuance</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">6.6 Expiration Date</th>
+                                <th style="border: 1px solid #ddd; padding: 8px; font-size: 12px;">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="competencyBody">
+                            <tr>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 150px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 100px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="date" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px;"><input type="date" class="field-input" style="width: 100%; min-width: 120px;"></td>
+                                <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">
+                                    <button type="button" class="action-btn" style="background: #e74c3c; padding: 5px 10px; font-size: 11px;" onclick="removeRow(this)">Remove</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <button type="button" class="action-btn" style="background: #27ae60; color: white; padding: 8px 16px; font-size: 12px;" onclick="addCompetencyRow()">
+                        <i class="bi bi-plus-circle"></i> Add Competency Assessment Row
+                    </button>
+                    <p style="font-size: 11px; color: #666; margin-top: 5px;">(For more information, please use separate sheet)</p>
+                </div>
+
+                <!-- Signature Section -->
+                <div class="signature-section">
+                    <div class="signature-box">
+                        <div class="signature-label">Applicant's Signature</div>
+                        <canvas id="signatureCanvas" style="border: 2px solid #333; width: 100%; height: 80px; cursor: crosshair; background: white;"></canvas>
+                        <button type="button" class="action-btn" style="background: #757575; color: white; padding: 5px 15px; font-size: 11px; margin-top: 5px;" onclick="clearSignature()">Clear Signature</button>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="action-buttons">
+                    <button type="button" class="action-btn save-btn" onclick="saveApplicationForm()">
+                        <i class="bi bi-file-earmark-pdf"></i> Save
+                    </button>
+                    <button type="button" class="action-btn print-btn" onclick="printApplicationForm()">
+                        <i class="bi bi-printer"></i> Print
+                    </button>
+                    <button type="button" class="action-btn submit-btn" onclick="submitApplicationForm()">
+                        <i class="bi bi-check-circle"></i> Submit
+                    </button>
+                    <button type="button" class="action-btn back-btn" onclick="goBack()">
+                        <i class="bi bi-arrow-left"></i> Back
+                    </button>
                 </div>
             </div>
         </div>
-    </div>
+    </main>
 
-    <script src="../../../assets/js/dark-mode.js"></script>
-    <script src="../../assets/js/script.js"></script>
+    <!-- HTML2PDF Library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
     <script>
-        // Initialize dark mode on page load
+        // Signature Canvas Setup
+        let canvas, ctx, isDrawing = false;
+        
         document.addEventListener('DOMContentLoaded', function() {
-            loadTheme();
-        });
-
-        function switchAssessmentTab(tab) {
-            // Hide all tabs
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.assessment-tab-btn').forEach(btn => btn.classList.remove('active'));
+            canvas = document.getElementById('signatureCanvas');
+            ctx = canvas.getContext('2d');
             
-            // Show selected tab
-            document.getElementById(tab + '-tab').classList.add('active');
-            event.target.classList.add('active');
-        }
-
-        // User profile dropdown
-        document.getElementById('userProfile').addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.getElementById('userDropdown').classList.toggle('active');
+            // Set canvas size
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 80;
+            
+            // Mouse events
+            canvas.addEventListener('mousedown', startDrawing);
+            canvas.addEventListener('mousemove', draw);
+            canvas.addEventListener('mouseup', stopDrawing);
+            canvas.addEventListener('mouseout', stopDrawing);
+            
+            // Touch events
+            canvas.addEventListener('touchstart', handleTouch);
+            canvas.addEventListener('touchmove', handleTouch);
+            canvas.addEventListener('touchend', stopDrawing);
+            
+            loadSavedData();
         });
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.user-profile')) {
-                document.getElementById('userDropdown').classList.remove('active');
-            }
-        });
-
-        // Sidebar toggle
-        document.getElementById('menuToggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('active');
-        });
-
-        document.getElementById('sidebarToggle').addEventListener('click', function() {
-            document.querySelector('.sidebar').classList.toggle('collapsed');
-            document.querySelector('.main-content').classList.toggle('expanded');
-        });
-
-        // Handle logout
-        function handleLogout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../../auth/login.html';
-            }
+        
+        function startDrawing(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            ctx.beginPath();
+            ctx.moveTo(e.clientX - rect.left, e.clientY - rect.top);
         }
-
-        // Assessment functions
-        function startApplication() {
-            alert('Application form functionality coming soon!');
+        
+        function draw(e) {
+            if (!isDrawing) return;
+            const rect = canvas.getBoundingClientRect();
+            ctx.lineTo(e.clientX - rect.left, e.clientY - rect.top);
+            ctx.strokeStyle = '#000';
+            ctx.lineWidth = 2;
+            ctx.stroke();
         }
-
-        function generateAdmissionSlip() {
-            alert('Admission slip generation coming soon!');
+        
+        function stopDrawing() {
+            isDrawing = false;
         }
-
-        function rescheduleAssessment() {
-            alert('Reschedule functionality coming soon!');
-        }
-
-        function downloadCertificates() {
-            alert('Download Certificates functionality coming soon!');
-        }
-<<<<<<< HEAD
-=======
-
-        function goBackToDashboard() {
-            window.location.href = '../dashboard.html';
-        }
-
-        // Form submission
-        document.getElementById('applicationForm').addEventListener('submit', function(e) {
+        
+        function handleTouch(e) {
             e.preventDefault();
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
-            data.signature = canvas.toDataURL();
-            const pictureImg = document.getElementById('picturePreview');
-            if (pictureImg.style.display !== 'none') {
-                data.picture = pictureImg.src;
-            }
-            data.submittedDate = new Date().toISOString();
-            data.status = 'submitted';
-            localStorage.setItem('applicationData', JSON.stringify(data));
-            alert('Application submitted successfully!');
-            window.location.href = '../assessment.html';
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent(e.type === 'touchstart' ? 'mousedown' : 'mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            canvas.dispatchEvent(mouseEvent);
+        }
+        
+        function clearSignature() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // Auto-advance for reference number inputs
+        const refInputs = document.querySelectorAll('.ref-input');
+        refInputs.forEach((input, index) => {
+            input.addEventListener('input', function() {
+                if (this.value.length === 1 && index < refInputs.length - 1) {
+                    refInputs[index + 1].focus();
+                }
+            });
+            
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && this.value === '' && index > 0) {
+                    refInputs[index - 1].focus();
+                }
+            });
         });
 
-        // Save as PDF function
-        function saveAsPDF() {
-            const formData = new FormData(document.getElementById('applicationForm'));
-            const data = Object.fromEntries(formData);
-            data.signature = canvas.toDataURL();
-            const pictureImg = document.getElementById('picturePreview');
-            if (pictureImg.style.display !== 'none') {
-                data.picture = pictureImg.src;
+        // Handle picture upload
+        function handlePictureUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert('File size must be less than 2MB');
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('picturePreview');
+                    const textBox = document.getElementById('pictureTextBox');
+                    
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                    textBox.style.display = 'none';
+                };
+                reader.readAsDataURL(file);
             }
-            data.savedDate = new Date().toISOString();
-            data.status = 'saved';
-            localStorage.setItem('applicationData', JSON.stringify(data));
-            alert('Application saved successfully!');
         }
->>>>>>> 20257f4b9b72fcb0a4e822e8e7c0a8c920866b48
+
+        // Dynamic Table Functions
+        function addWorkExperienceRow() {
+            const tbody = document.getElementById('workExperienceBody');
+            const row = tbody.rows[0].cloneNode(true);
+            row.querySelectorAll('input').forEach(input => input.value = '');
+            tbody.appendChild(row);
+        }
+
+        function addTrainingRow() {
+            const tbody = document.getElementById('trainingBody');
+            const row = tbody.rows[0].cloneNode(true);
+            row.querySelectorAll('input').forEach(input => input.value = '');
+            tbody.appendChild(row);
+        }
+
+        function addLicensureRow() {
+            const tbody = document.getElementById('licensureBody');
+            const row = tbody.rows[0].cloneNode(true);
+            row.querySelectorAll('input').forEach(input => input.value = '');
+            tbody.appendChild(row);
+        }
+
+        function addCompetencyRow() {
+            const tbody = document.getElementById('competencyBody');
+            const row = tbody.rows[0].cloneNode(true);
+            row.querySelectorAll('input').forEach(input => input.value = '');
+            tbody.appendChild(row);
+        }
+
+        function removeRow(button) {
+            const row = button.closest('tr');
+            const tbody = row.parentElement;
+            if (tbody.rows.length > 1) {
+                row.remove();
+            } else {
+                alert('At least one row must remain');
+            }
+        }
+
+        // Save application form as PDF
+        function saveApplicationForm() {
+            const element = document.querySelector('.application-form-container');
+            const applicantName = document.getElementById('lastName').value || 'Application_Form';
+            
+            const opt = {
+                margin: 5,
+                filename: `Application_Form_${applicantName.replace(/\s+/g, '_')}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, useCORS: true },
+                jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+            };
+
+            const actionButtons = document.querySelector('.action-buttons');
+            actionButtons.style.display = 'none';
+
+            html2pdf().set(opt).from(element).save().then(() => {
+                actionButtons.style.display = 'flex';
+            });
+        }
+
+        // Print application form
+        function printApplicationForm() {
+            const actionButtons = document.querySelector('.action-buttons');
+            actionButtons.style.display = 'none';
+
+            window.print();
+
+            setTimeout(() => {
+                actionButtons.style.display = 'flex';
+            }, 500);
+        }
+
+        // Submit application form
+        async function submitApplicationForm() {
+            // Validate required fields
+            const lastName = document.getElementById('lastName').value;
+            const firstName = document.getElementById('firstName').value;
+            const assessmentTitle = document.getElementById('assessmentTitle').value;
+
+            if (!lastName || !firstName || !assessmentTitle) {
+                alert('Please fill in all required fields: Surname, First Name, and Assessment Title');
+                return;
+            }
+
+            // Get user session
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            if (!userSession.accountId) {
+                alert('User session not found. Please login again.');
+                return;
+            }
+
+            // Get ULI segments
+            const uliSegment1 = document.getElementById('uli1').value;
+            const uliSegment2 = document.getElementById('uli2').value;
+            const uliSegment3 = document.getElementById('uli3').value;
+            const uliSegment4 = document.getElementById('uli4').value;
+
+            // Get client type checkboxes
+            const clientType = {
+                tvetGraduatingStudent: document.getElementById('tvetGraduating')?.checked || false,
+                tvetGraduate: document.getElementById('tvetGraduate')?.checked || false,
+                industryWorker: document.getElementById('industryWorker')?.checked || false,
+                k12: document.getElementById('k12')?.checked || false,
+                owf: document.getElementById('owf')?.checked || false
+            };
+
+            // Get picture if uploaded
+            const pictureInput = document.getElementById('pictureUpload');
+            let pictureBase64 = '';
+            if (pictureInput && pictureInput.files && pictureInput.files[0]) {
+                pictureBase64 = await fileToBase64(pictureInput.files[0]);
+            }
+
+            // Collect work experience rows
+            const workExperience = [];
+            document.querySelectorAll('#workExperienceTable tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('input');
+                if (cells.length >= 6) {
+                    workExperience.push({
+                        companyName: cells[0].value,
+                        position: cells[1].value,
+                        inclusiveDates: cells[2].value,
+                        monthlySalary: cells[3].value,
+                        statusOfAppointment: cells[4].value,
+                        yearsOfExperience: cells[5].value
+                    });
+                }
+            });
+
+            // Collect training/seminars rows
+            const trainingSeminars = [];
+            document.querySelectorAll('#trainingSeminarsTable tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('input');
+                if (cells.length >= 5) {
+                    trainingSeminars.push({
+                        title: cells[0].value,
+                        venue: cells[1].value,
+                        inclusiveDates: cells[2].value,
+                        numberOfHours: cells[3].value,
+                        conductedBy: cells[4].value
+                    });
+                }
+            });
+
+            // Collect licensure exams rows
+            const licensureExams = [];
+            document.querySelectorAll('#licensureExamsTable tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('input');
+                if (cells.length >= 6) {
+                    licensureExams.push({
+                        title: cells[0].value,
+                        yearTaken: cells[1].value,
+                        examinationVenue: cells[2].value,
+                        rating: cells[3].value,
+                        remarks: cells[4].value,
+                        expiryDate: cells[5].value
+                    });
+                }
+            });
+
+            // Collect competency assessments rows
+            const competencyAssessments = [];
+            document.querySelectorAll('#competencyAssessmentsTable tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('input');
+                if (cells.length >= 6) {
+                    competencyAssessments.push({
+                        title: cells[0].value,
+                        qualificationLevel: cells[1].value,
+                        industrySector: cells[2].value,
+                        certificateNumber: cells[3].value,
+                        dateOfIssuance: cells[4].value,
+                        expirationDate: cells[5].value
+                    });
+                }
+            });
+
+            // Collect all form data
+            const applicationData = {
+                applicationId: `APP${Date.now()}`,
+                userId: userSession.accountId,
+                referenceNumber: document.getElementById('referenceNumber')?.value || '',
+                uli: {
+                    segment1: uliSegment1,
+                    segment2: uliSegment2,
+                    segment3: uliSegment3,
+                    segment4: uliSegment4
+                },
+                schoolName: document.getElementById('schoolName').value,
+                assessmentTitle: assessmentTitle,
+                schoolAddress: document.getElementById('schoolAddress').value,
+                dateOfApplication: document.getElementById('applicationDate').value,
+                assessmentType: document.querySelector('input[name="assessmentType"]:checked')?.value,
+                clientType: clientType,
+                profile: {
+                    surname: lastName,
+                    firstName: firstName,
+                    secondName: document.getElementById('secondName').value,
+                    middleName: document.getElementById('middleName').value,
+                    middleInitial: document.getElementById('middleInitial').value,
+                    nameExtension: document.getElementById('extension').value,
+                    picture: pictureBase64,
+                    numberStreet: document.getElementById('numberStreet').value,
+                    barangay: document.getElementById('barangay').value,
+                    district: document.getElementById('district').value,
+                    city: document.getElementById('city').value,
+                    province: document.getElementById('province').value,
+                    region: document.getElementById('region').value,
+                    zip: document.getElementById('zip').value,
+                    mothersName: document.getElementById('motherName').value,
+                    fathersName: document.getElementById('fatherName').value,
+                    sex: document.querySelector('input[name="sex"]:checked')?.value,
+                    civilStatus: document.querySelector('input[name="civilStatus"]:checked')?.value,
+                    tel: document.getElementById('tel').value,
+                    mobile: document.getElementById('mobile').value,
+                    email: document.getElementById('email').value,
+                    fax: document.getElementById('fax').value,
+                    others: document.getElementById('othersContact').value,
+                    highestEducationalAttainment: document.querySelector('input[name="education"]:checked')?.value,
+                    employmentStatus: document.querySelector('input[name="employmentStatus"]:checked')?.value,
+                    birthDate: document.getElementById('birthdate').value,
+                    birthPlace: document.getElementById('birthplace').value,
+                    age: document.getElementById('age').value
+                },
+                workExperience: workExperience,
+                trainingSeminars: trainingSeminars,
+                licensureExams: licensureExams,
+                competencyAssessments: competencyAssessments,
+                signature: canvas.toDataURL(),
+                status: 'pending'
+            };
+
+            try {
+                // Submit to database
+                const response = await fetch('http://localhost:5500/api/applications', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(applicationData)
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Application submitted:', result);
+                    
+                    // Also save to localStorage as backup
+                    localStorage.setItem('applicationData', JSON.stringify(applicationData));
+                    
+                    // Show success message
+                    alert('Application Form submitted successfully!');
+                    goBack();
+                } else {
+                    throw new Error('Failed to submit application');
+                }
+            } catch (error) {
+                console.error('Error submitting application:', error);
+                alert('Failed to submit application. Please try again.');
+            }
+        }
+
+        // Helper function to convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Go back to assessment page
+        function goBack() {
+            window.location.href = '../assessment.html';
+        }
+
+        // Load saved data if available
+        function loadSavedData() {
+            const savedData = localStorage.getItem('applicationData');
+            if (savedData) {
+                try {
+                    const data = JSON.parse(savedData);
+                    
+                    // Load all fields
+                    if (data.schoolName) document.getElementById('schoolName').value = data.schoolName;
+                    if (data.assessmentTitle) document.getElementById('assessmentTitle').value = data.assessmentTitle;
+                    if (data.schoolAddress) document.getElementById('schoolAddress').value = data.schoolAddress;
+                    if (data.applicationDate) document.getElementById('applicationDate').value = data.applicationDate;
+                    
+                    if (data.lastName) document.getElementById('lastName').value = data.lastName;
+                    if (data.firstName) document.getElementById('firstName').value = data.firstName;
+                    if (data.secondName) document.getElementById('secondName').value = data.secondName;
+                    if (data.middleName) document.getElementById('middleName').value = data.middleName;
+                    if (data.middleInitial) document.getElementById('middleInitial').value = data.middleInitial;
+                    if (data.extension) document.getElementById('extension').value = data.extension;
+                    
+                    if (data.numberStreet) document.getElementById('numberStreet').value = data.numberStreet;
+                    if (data.barangay) document.getElementById('barangay').value = data.barangay;
+                    if (data.district) document.getElementById('district').value = data.district;
+                    if (data.city) document.getElementById('city').value = data.city;
+                    if (data.province) document.getElementById('province').value = data.province;
+                    if (data.region) document.getElementById('region').value = data.region;
+                    if (data.zip) document.getElementById('zip').value = data.zip;
+                    
+                    if (data.motherName) document.getElementById('motherName').value = data.motherName;
+                    if (data.fatherName) document.getElementById('fatherName').value = data.fatherName;
+                    
+                    if (data.tel) document.getElementById('tel').value = data.tel;
+                    if (data.mobile) document.getElementById('mobile').value = data.mobile;
+                    if (data.email) document.getElementById('email').value = data.email;
+                    if (data.fax) document.getElementById('fax').value = data.fax;
+                    if (data.othersContact) document.getElementById('othersContact').value = data.othersContact;
+                    
+                    if (data.birthdate) document.getElementById('birthdate').value = data.birthdate;
+                    if (data.birthplace) document.getElementById('birthplace').value = data.birthplace;
+                    if (data.age) document.getElementById('age').value = data.age;
+                    
+                    // Load signature
+                    if (data.signature) {
+                        const img = new Image();
+                        img.onload = function() {
+                            ctx.drawImage(img, 0, 0);
+                        };
+                        img.src = data.signature;
+                    }
+                } catch (e) {
+                    console.log('No saved data found');
+                }
+            }
+        }
     </script>
 </body>
 </html>

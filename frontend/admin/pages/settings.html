@@ -22,6 +22,311 @@
     
     <!-- Settings Page CSS -->
     <link rel="stylesheet" href="../assets/css/settings.css" />
+    
+    <!-- Modern Profile Styles - Compact Version -->
+    <style>
+        /* Profile Overview Card */
+        .profile-overview-card {
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 20px;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .profile-header-section {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 32px;
+            align-items: center;
+        }
+        
+        .profile-photo-container {
+            text-align: center;
+        }
+        
+        .profile-photo-circle {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #E67E22, #d35400);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .change-photo-btn {
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 12px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .change-photo-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .photo-hint {
+            margin-top: 6px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
+        }
+        
+        .profile-info-grid {
+            flex: 1;
+        }
+        
+        .profile-overview-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .info-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .info-row:last-child {
+            margin-bottom: 0;
+        }
+        
+        .info-item {
+            background: rgba(255,255,255,0.1);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
+        }
+        
+        .info-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .info-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .info-badge {
+            display: inline-block;
+            background: rgba(59, 130, 246, 0.3);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            border: 1px solid rgba(59, 130, 246, 0.4);
+        }
+        
+        /* Personal Information Card - Compact */
+        .personal-info-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+        }
+        
+        .card-header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e3a5f;
+            margin: 0;
+        }
+        
+        .btn-edit-info {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+        
+        .btn-edit-info:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        
+        .form-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        
+        .form-group-modern {
+            margin-bottom: 0;
+        }
+        
+        .form-group-modern.full-width {
+            grid-column: 1 / -1;
+        }
+        
+        .form-label-modern {
+            display: block;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 6px;
+        }
+        
+        .form-input-modern {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #1e293b;
+            background: #f8fafc;
+            transition: all 0.3s;
+        }
+        
+        .form-input-modern:focus {
+            outline: none;
+            border-color: #3b82f6;
+            background: white;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-input-modern:disabled {
+            background: #f1f5f9;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+        
+        .form-input-modern:not(:disabled) {
+            background: white;
+            border-color: #3b82f6;
+        }
+        
+        textarea.form-input-modern {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .form-actions-modern {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 2px solid #f0f0f0;
+        }
+        
+        .btn-save-modern {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+        
+        .btn-save-modern:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .btn-cancel-modern {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+        
+        .btn-cancel-modern:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .profile-header-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .info-row {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            
+            .form-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .profile-overview-card {
+                padding: 20px;
+            }
+            
+            .profile-photo-circle {
+                width: 100px;
+                height: 100px;
+                font-size: 2rem;
+            }
+            
+            .card-header-flex {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+        }
+    </style>
 </head>
 <body>
     <div class="admin-container">
@@ -159,60 +464,126 @@
 
                 <!-- Manage Profile Section -->
                 <div id="manage-profile" class="settings-section active">
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-header-content">
-                                <div>
-                                    <h2 class="card-title">My Profile</h2>
-                                    <p class="card-subtitle">Update your profile information</p>
+                    <!-- Profile Overview Card -->
+                    <div class="profile-overview-card">
+                        <div class="profile-header-section">
+                            <div class="profile-photo-container">
+                                <div class="profile-photo-circle" id="profilePhotoCircle">
+                                    <span id="profileInitials">A</span>
                                 </div>
-                                <button type="button" class="btn btn-edit" id="editProfileBtn" onclick="toggleEditMode()">
-                                    <i class="bi bi-pencil"></i> Edit Profile
+                                <button type="button" class="change-photo-btn" onclick="changeAvatar()">
+                                    <i class="bi bi-camera"></i> Change Photo
                                 </button>
+                                <p class="photo-hint">Allowed JPG, PNG. Max size of 2MB</p>
+                            </div>
+                            
+                            <div class="profile-info-grid">
+                                <h2 class="profile-overview-title">Profile Overview <span id="roleLabel" style="display: inline-block; background: rgba(230, 126, 34, 0.3); padding: 4px 12px; border-radius: 12px; font-size: 14px; border: 1px solid rgba(230, 126, 34, 0.5); margin-left: 12px;">Admin</span></h2>
+                                
+                                <div class="info-row">
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-person"></i> FULL NAME
+                                        </div>
+                                        <div class="info-value" id="displayFullName">Admin User</div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-hash"></i> ADMIN ID
+                                        </div>
+                                        <div class="info-value info-badge" id="displayAdminId">ADM-2026-001</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-row">
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-envelope"></i> EMAIL ADDRESS
+                                        </div>
+                                        <div class="info-value" id="displayEmail">admin@betci.edu.ph</div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-calendar"></i> DATE JOINED
+                                        </div>
+                                        <div class="info-value" id="displayDateJoined">01/01/2026</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-row">
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-telephone"></i> PHONE NUMBER
+                                        </div>
+                                        <div class="info-value" id="displayPhone">+63 9XX XXX XXXX</div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-geo-alt"></i> ADDRESS
+                                        </div>
+                                        <div class="info-value" id="displayAddress">Not provided</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <form id="profileForm" method="POST" action="/api/profile/update">
-                            <div class="profile-avatar-section">
-                                <div class="profile-avatar-large">A</div>
-                                <div class="profile-avatar-info">
-                                    <h3>Admin User</h3>
-                                    <p>Administrator</p>
-                                    <button type="button" class="btn btn-secondary" style="margin-top: 8px;" onclick="changeAvatar()">
-                                        <i class="bi bi-camera"></i> Change Photo
-                                    </button>
+                    </div>
+                    
+                    <!-- Personal Information Card -->
+                    <div class="personal-info-card">
+                        <div class="card-header-flex">
+                            <h3 class="section-title">Personal Information</h3>
+                            <button type="button" class="btn-edit-info" id="editInfoBtn" onclick="toggleEditMode()">
+                                <i class="bi bi-pencil-square"></i> Edit Information
+                            </button>
+                        </div>
+                        
+                        <form id="profileForm" method="POST">
+                            <div class="form-grid-2">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">ADMIN ID</label>
+                                    <input type="text" id="adminId" class="form-input-modern" value="ADM-2026-001" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">USERNAME</label>
+                                    <input type="text" id="username" class="form-input-modern" value="admin" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">FIRST NAME</label>
+                                    <input type="text" id="firstName" class="form-input-modern" value="Admin" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">LAST NAME</label>
+                                    <input type="text" id="lastName" class="form-input-modern" value="User" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">PHONE NUMBER</label>
+                                    <input type="tel" id="phone" class="form-input-modern" value="+63 9XX XXX XXXX" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern">EMAIL ADDRESS</label>
+                                    <input type="email" id="email" class="form-input-modern" value="admin@betci.edu.ph" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern full-width">
+                                    <label class="form-label-modern">ADDRESS</label>
+                                    <textarea id="address" class="form-input-modern" rows="2" disabled placeholder="Enter your address"></textarea>
                                 </div>
                             </div>
                             
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label" for="fullname">Full Name</label>
-                                    <input type="text" id="fullname" class="form-control" name="fullname" value="Admin User" autocomplete="name" disabled required>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="email">Email</label>
-                                    <input type="email" id="email" class="form-control" name="email" value="admin@betci.edu.ph" autocomplete="email" disabled required>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="form-group">
-                                    <label class="form-label" for="phone">Phone</label>
-                                    <input type="tel" id="phone" class="form-control" name="phone" value="+63 9XX XXX XXXX" autocomplete="tel" disabled>
-                                </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="department">Department</label>
-                                    <input type="text" id="department" class="form-control" name="department" value="Administration" autocomplete="organization" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="form-label" for="address">Address</label>
-                                <input type="text" id="address" class="form-control" name="address" placeholder="Enter your address" autocomplete="street-address" disabled>
-                            </div>
-                            <div class="form-actions" id="formActions" style="display: none;">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="bi bi-check"></i> Save Changes
+                            <div class="form-actions-modern" id="formActions" style="display: none;">
+                                <button type="submit" class="btn-save-modern">
+                                    <i class="bi bi-check-circle"></i> Save Changes
                                 </button>
-                                <button type="button" class="btn btn-secondary" onclick="cancelEdit()">
-                                    <i class="bi bi-x"></i> Cancel
+                                <button type="button" class="btn-cancel-modern" onclick="cancelEdit()">
+                                    <i class="bi bi-x-circle"></i> Cancel
                                 </button>
                             </div>
                         </form>
@@ -537,7 +908,7 @@
         function toggleEditMode() {
             isEditMode = !isEditMode;
             const form = document.getElementById('profileForm');
-            const editBtn = document.getElementById('editProfileBtn');
+            const editBtn = document.getElementById('editInfoBtn');
             const formActions = document.getElementById('formActions');
             
             if (!form || !editBtn || !formActions) {
@@ -545,24 +916,26 @@
                 return;
             }
             
-            const inputs = form.querySelectorAll('.form-control');
+            const inputs = form.querySelectorAll('.form-input-modern');
             
             if (isEditMode) {
                 // Store original values and enable inputs
                 inputs.forEach(input => {
-                    originalValues[input.name] = input.value;
-                    input.disabled = false;
+                    if (input.id !== 'adminId' && input.id !== 'username') {
+                        originalValues[input.id] = input.value;
+                        input.disabled = false;
+                    }
                 });
                 editBtn.innerHTML = '<i class="bi bi-x-circle"></i> Cancel Edit';
-                editBtn.classList.add('editing');
+                editBtn.style.background = '#ef4444';
                 formActions.style.display = 'flex';
             } else {
                 // Disable inputs
                 inputs.forEach(input => {
                     input.disabled = true;
                 });
-                editBtn.innerHTML = '<i class="bi bi-pencil"></i> Edit Profile';
-                editBtn.classList.remove('editing');
+                editBtn.innerHTML = '<i class="bi bi-pencil-square"></i> Edit Information';
+                editBtn.style.background = '#3b82f6';
                 formActions.style.display = 'none';
             }
         }
@@ -571,12 +944,12 @@
             const form = document.getElementById('profileForm');
             if (!form) return;
             
-            const inputs = form.querySelectorAll('.form-control');
+            const inputs = form.querySelectorAll('.form-input-modern');
             
             // Restore original values
             inputs.forEach(input => {
-                if (originalValues[input.name] !== undefined) {
-                    input.value = originalValues[input.name];
+                if (originalValues[input.id] !== undefined) {
+                    input.value = originalValues[input.id];
                 }
             });
             
@@ -588,8 +961,170 @@
 
         // Change avatar function
         function changeAvatar() {
-            showNotification('Avatar upload functionality coming soon', 'info');
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/jpeg,image/png,image/jpg';
+            
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // Validate file size (max 2MB)
+                if (file.size > 2 * 1024 * 1024) {
+                    showNotification('Image size must be less than 2MB', 'error');
+                    return;
+                }
+                
+                // Validate file type
+                if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+                    showNotification('Only JPG and PNG images are allowed', 'error');
+                    return;
+                }
+                
+                // Convert to base64
+                const reader = new FileReader();
+                reader.onload = async (event) => {
+                    const base64Image = event.target.result;
+                    
+                    try {
+                        // Get current user session
+                        const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession'));
+                        if (!userSession || !userSession.accountId) {
+                            showNotification('User session not found', 'error');
+                            return;
+                        }
+                        
+                        // Determine API endpoint based on user role
+                        const apiEndpoint = (userSession.role === 'admin' || userSession.role === 'instructor') 
+                            ? 'admin-accounts' 
+                            : 'trainee-accounts';
+                        
+                        // Update profile picture in database
+                        const response = await fetch(`http://localhost:5500/api/${apiEndpoint}/${userSession.accountId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                profilePicture: base64Image
+                            })
+                        });
+                        
+                        if (response.ok) {
+                            // Update session storage
+                            userSession.profilePicture = base64Image;
+                            localStorage.setItem('userSession', JSON.stringify(userSession));
+                            sessionStorage.setItem('userSession', JSON.stringify(userSession));
+                            
+                            // Update all avatar displays on the page
+                            updateAvatarDisplays(base64Image);
+                            
+                            showNotification('Profile picture updated successfully', 'success');
+                        } else {
+                            showNotification('Failed to update profile picture', 'error');
+                        }
+                    } catch (error) {
+                        console.error('Error uploading profile picture:', error);
+                        showNotification('Failed to upload profile picture', 'error');
+                    }
+                };
+                reader.readAsDataURL(file);
+            };
+            
+            input.click();
         }
+        
+        // Update all avatar displays on the page
+        function updateAvatarDisplays(imageUrl) {
+            // Update large profile photo circle
+            const profilePhotoCircle = document.getElementById('profilePhotoCircle');
+            if (profilePhotoCircle) {
+                profilePhotoCircle.style.backgroundImage = `url(${imageUrl})`;
+                profilePhotoCircle.style.backgroundSize = 'cover';
+                profilePhotoCircle.style.backgroundPosition = 'center';
+                const initials = profilePhotoCircle.querySelector('span');
+                if (initials) initials.style.display = 'none';
+            }
+            
+            // Update header avatars
+            document.querySelectorAll('.user-avatar, .dropdown-avatar').forEach(avatar => {
+                avatar.style.backgroundImage = `url(${imageUrl})`;
+                avatar.style.backgroundSize = 'cover';
+                avatar.style.backgroundPosition = 'center';
+                avatar.textContent = '';
+            });
+        }
+        
+        // Load user profile picture on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            if (userSession.profilePicture) {
+                updateAvatarDisplays(userSession.profilePicture);
+            }
+            
+            // Determine API endpoint based on user role
+            const apiEndpoint = (userSession.role === 'admin' || userSession.role === 'instructor') 
+                ? 'admin-accounts' 
+                : 'trainee-accounts';
+            
+            // Set role label based on user role
+            const roleLabel = document.getElementById('roleLabel');
+            if (roleLabel && userSession.role) {
+                if (userSession.role === 'admin' || userSession.role === 'instructor') {
+                    roleLabel.textContent = 'Admin';
+                } else if (userSession.role === 'trainee') {
+                    roleLabel.textContent = 'Trainee';
+                } else {
+                    roleLabel.textContent = userSession.role.charAt(0).toUpperCase() + userSession.role.slice(1);
+                }
+            }
+            
+            // Load user data from correct collection
+            if (userSession.accountId) {
+                fetch(`http://localhost:5500/api/${apiEndpoint}/${userSession.accountId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.firstName && data.lastName) {
+                            const fullName = `${data.firstName} ${data.lastName}`;
+                            document.getElementById('displayFullName').textContent = fullName;
+                            document.getElementById('firstName').value = data.firstName;
+                            document.getElementById('lastName').value = data.lastName;
+                            
+                            const initials = `${data.firstName.charAt(0)}${data.lastName.charAt(0)}`.toUpperCase();
+                            document.getElementById('profileInitials').textContent = initials;
+                        }
+                        
+                        if (data.email) {
+                            document.getElementById('displayEmail').textContent = data.email;
+                            document.getElementById('email').value = data.email;
+                        }
+                        
+                        if (data.accountId) {
+                            document.getElementById('displayAdminId').textContent = data.accountId;
+                            document.getElementById('adminId').value = data.accountId;
+                        }
+                        
+                        if (data.username) {
+                            document.getElementById('username').value = data.username;
+                        }
+                        
+                        if (data.phone) {
+                            document.getElementById('displayPhone').textContent = data.phone;
+                            document.getElementById('phone').value = data.phone;
+                        }
+                        
+                        if (data.address) {
+                            document.getElementById('displayAddress').textContent = data.address;
+                            document.getElementById('address').value = data.address;
+                        }
+                        
+                        if (data.profilePicture) {
+                            updateAvatarDisplays(data.profilePicture);
+                        }
+                    })
+                    .catch(error => console.error('Error loading profile:', error));
+            }
+        });
 
         // Notification function
         function showNotification(message, type) {

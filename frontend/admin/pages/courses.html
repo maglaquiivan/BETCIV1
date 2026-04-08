@@ -138,7 +138,13 @@
 
             <!-- Courses Content -->
             <div class="dashboard-content catalog-content">
-                <h1 class="catalog-title">Training Catalog</h1>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h1 class="catalog-title" style="margin: 0;">Training Catalog</h1>
+                    <button class="btn btn-primary" onclick="openAddCourseModal()" style="padding: 10px 20px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s;">
+                        <i class="bi bi-plus-circle"></i>
+                        <span>Add New Course</span>
+                    </button>
+                </div>
                 
                 <!-- Navigation Tabs -->
                 <div class="catalog-tabs">
@@ -347,6 +353,18 @@
             }
         });
 
+        // Open Add Course Modal
+        function openAddCourseModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Course';
+            document.getElementById('editCourseId').value = '';
+            document.getElementById('editCourseTitle').value = '';
+            document.getElementById('editCourseDescription').value = '';
+            document.getElementById('editCourseImage').value = '';
+            document.getElementById('imagePreview').innerHTML = '<i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i><p>Click to upload course image</p>';
+            currentImageData = null;
+            openModal('editCourseModal');
+        }
+
         // Edit course - LocalStorage version
         function editCourse(button) {
             const card = button.closest('.course-card');
@@ -369,6 +387,32 @@
             imagePreview.innerHTML = '<img src="' + imageUrl + '" alt="Preview">';
             
             openModal('editCourseModal');
+        }
+
+        // Delete course
+        async function deleteCourse(button) {
+            const card = button.closest('.course-card');
+            const courseId = card.dataset.courseId;
+            const title = card.querySelector('.course-title').textContent;
+            
+            if (!confirm(`Are you sure you want to delete "${title}"? This action cannot be undone.`)) {
+                return;
+            }
+            
+            try {
+                console.log('Deleting course:', courseId);
+                
+                await CourseAPI.deleteCourse(courseId);
+                
+                console.log('Course deleted successfully');
+                showNotification('Course deleted successfully!', 'success');
+                
+                // Reload courses
+                loadCoursesFromLocalStorage();
+            } catch (error) {
+                console.error('Error deleting course:', error);
+                alert('Failed to delete course: ' + error.message);
+            }
         }
 
         // Preview uploaded image file
@@ -411,19 +455,46 @@
                 image = currentImageData;
             }
             
+            // Validate required fields
+            if (!title || !description) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
             try {
-                console.log('Updating course:', { courseId, title, description });
-                
-                const updatedCourse = await CourseAPI.updateCourse(courseId, {
-                    title,
-                    description,
-                    image
-                });
-                
-                console.log('Course updated:', updatedCourse);
+                if (courseId) {
+                    // Update existing course
+                    console.log('Updating course:', { courseId, title, description });
+                    
+                    const updatedCourse = await CourseAPI.updateCourse(courseId, {
+                        title,
+                        description,
+                        image
+                    });
+                    
+                    console.log('Course updated:', updatedCourse);
+                    showNotification('Course updated successfully!', 'success');
+                } else {
+                    // Create new course
+                    const newCourseId = title.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+                    
+                    console.log('Creating new course:', { newCourseId, title, description });
+                    
+                    const newCourse = await CourseAPI.createCourse({
+                        courseId: newCourseId,
+                        title,
+                        description,
+                        image: image || '/assets/img/logo.png',
+                        category: 'Heavy Equipment',
+                        duration: '3 months',
+                        status: 'available'
+                    });
+                    
+                    console.log('Course created:', newCourse);
+                    showNotification('Course added successfully!', 'success');
+                }
                 
                 closeModal('editCourseModal');
-                showNotification('Course updated successfully!', 'success');
                 
                 // Reset image data
                 currentImageData = null;
@@ -431,8 +502,8 @@
                 // Reload courses to show updated data
                 loadCoursesFromLocalStorage();
             } catch (error) {
-                console.error('Error updating course:', error);
-                alert('Failed to update course: ' + error.message);
+                console.error('Error saving course:', error);
+                alert('Failed to save course: ' + error.message);
             }
         }
 
@@ -492,6 +563,9 @@
                     <div class="course-footer">
                         <button class="course-btn" onclick="editCourse(this)">
                             <i class="bi bi-pencil"></i> Edit
+                        </button>
+                        <button class="course-btn" onclick="deleteCourse(this)" style="background: #e74c3c; margin-left: 8px;">
+                            <i class="bi bi-trash"></i> Delete
                         </button>
                     </div>
                 </div>

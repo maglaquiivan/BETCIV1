@@ -791,6 +791,57 @@
                         </div>
                         <span class="user-name" id="userName">TRAINEE</span>
                         <i class="bi bi-chevron-down dropdown-arrow"></i>
+                        
+                        <!-- User Dropdown Menu -->
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar">
+                                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
+                                            <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
+                                            <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
+                                        </svg>
+                                    </svg>
+                                </div>
+                                <div class="dropdown-user-info">
+                                    <h4>Trainee User</h4>
+                                    <p>trainee@betci.edu.ph</p>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <a href="manage-profile.html">
+                                        <i class="bi bi-person"></i>
+                                        <span>My Profile</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="settings.html">
+                                        <i class="bi bi-gear"></i>
+                                        <span>Settings</span>
+                                    </a>
+                                </li>
+                                <li class="theme-toggle-item">
+                                    <div class="theme-toggle-wrapper">
+                                        <i class="bi bi-palette"></i>
+                                        <span>Dark Mode</span>
+                                        <label class="theme-switch">
+                                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
+                                            <span class="theme-slider"></span>
+                                        </label>
+                                    </div>
+                                </li>
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-footer">
+                                <button class="logout-btn" onclick="handleLogout()">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    <span>Log Out</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </header>
@@ -806,7 +857,7 @@
                     <button class="tab-btn active" onclick="switchTab('records')">
                         <i class="bi bi-file-earmark-text"></i> Training Records
                     </button>
-                    <button class="tab-btn" onclick="switchTab('attendance')">
+                    <button class="tab-btn" onclick="switchTab('attendance')" style="display: none;">
                         <i class="bi bi-calendar-check"></i> Attendance
                     </button>
                 </div>
@@ -820,7 +871,7 @@
 
                 <!-- Attendance Tab -->
                 <div id="attendanceTab" class="tab-content" style="display: none;">
-                    <div id="attendanceContent">
+                    <div id="attendanceContent" style="display: none;">
                         <!-- Attendance content will be loaded here -->
                     </div>
                 </div>
@@ -828,23 +879,11 @@
         </div>
     </div>
 
-    <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../assets/js/dashboard-fixed.js"></script>
+    <script src="../assets/js/common.js"></script>
     <script>
-        // Load dark mode theme
-        if (typeof loadTheme === 'function') {
-            loadTheme();
-        }
-        
         document.addEventListener('DOMContentLoaded', function() {
-            loadUserData();
             loadRecords();
         });
-
-        function loadUserData() {
-            const userName = localStorage.getItem('userName') || 'TRAINEE';
-            document.getElementById('userName').textContent = userName.toUpperCase();
-        }
 
         function switchTab(tab) {
             const recordsTab = document.getElementById('recordsTab');
@@ -1103,28 +1142,90 @@
             }
         }
 
-        function submitAttendance(event) {
+        async function submitAttendance(event) {
             event.preventDefault();
-            const attendance = {
-                id: Date.now(),
-                course: document.getElementById('courseSelect').value,
-                courseLabel: document.getElementById('courseSelect').options[document.getElementById('courseSelect').selectedIndex].text,
-                attendanceType: document.getElementById('attendanceType').value,
-                status: document.getElementById('statusSelect').value,
-                date: document.getElementById('attendanceDate').value,
-                timeIn: document.getElementById('timeIn').value,
-                notes: document.getElementById('notes').value || 'Regular attendance'
+            
+            const courseId = document.getElementById('courseSelect').value;
+            const courseLabel = document.getElementById('courseSelect').options[document.getElementById('courseSelect').selectedIndex].text;
+            const attendanceType = document.getElementById('attendanceType').value;
+            const status = document.getElementById('statusSelect').value;
+            const date = document.getElementById('attendanceDate').value;
+            const timeIn = document.getElementById('timeIn').value;
+            const notes = document.getElementById('notes').value || 'Regular attendance';
+            
+            // Get user session
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            const userId = userSession.accountId || userSession._id || 'GUEST';
+            const firstName = userSession.firstName || 'Guest';
+            const lastName = userSession.lastName || 'User';
+            
+            console.log('User session:', userSession);
+            console.log('Submitting attendance with:', { userId, firstName, lastName, courseId, status, date, timeIn });
+            
+            const attendanceData = {
+                userId: userId,
+                firstName: firstName,
+                lastName: lastName,
+                courseId: courseId,
+                date: new Date(date),
+                status: status,
+                timeIn: timeIn,
+                timeOut: '', // Can be added later if needed
+                remarks: `${attendanceType} - ${notes}`
             };
             
-            let records = JSON.parse(localStorage.getItem('attendanceSubmissions') || '[]');
-            records.unshift(attendance);
-            localStorage.setItem('attendanceSubmissions', JSON.stringify(records));
+            console.log('Attendance data to send:', attendanceData);
             
-            alert('Attendance submitted successfully!');
-            document.getElementById('attendanceForm').reset();
-            document.getElementById('imagePreview').innerHTML = '<i class="bi bi-image"></i> No image';
-            document.getElementById('imagePreview').classList.add('empty');
-            loadAttendanceTab();
+            try {
+                // Save to MongoDB via API
+                const response = await fetch('http://localhost:5500/api/attendance', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(attendanceData)
+                });
+                
+                console.log('Response status:', response.status);
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('Error response:', errorData);
+                    throw new Error(errorData.message || 'Failed to submit attendance');
+                }
+                
+                const result = await response.json();
+                console.log('Attendance saved to database:', result);
+                
+                // Also save to localStorage for offline viewing
+                const localAttendance = {
+                    id: result._id || Date.now(),
+                    course: courseId,
+                    courseLabel: courseLabel,
+                    firstName: firstName,
+                    lastName: lastName,
+                    fullName: `${firstName} ${lastName}`,
+                    attendanceType: attendanceType,
+                    status: status,
+                    date: date,
+                    timeIn: timeIn,
+                    notes: notes
+                };
+                
+                let records = JSON.parse(localStorage.getItem('attendanceSubmissions') || '[]');
+                records.unshift(localAttendance);
+                localStorage.setItem('attendanceSubmissions', JSON.stringify(records));
+                
+                alert('Attendance submitted successfully!');
+                document.getElementById('attendanceForm').reset();
+                document.getElementById('imagePreview').innerHTML = '<i class="bi bi-image"></i> No image';
+                document.getElementById('imagePreview').classList.add('empty');
+                loadAttendanceTab();
+                
+            } catch (error) {
+                console.error('Error submitting attendance:', error);
+                alert('Failed to submit attendance: ' + error.message);
+            }
         }
 
         function viewRecord(index) {
@@ -1144,6 +1245,24 @@
             const sidebar = document.querySelector('.sidebar');
             const mainContent = document.querySelector('.main-content');
             const menuToggle = document.getElementById('menuToggle');
+            
+            // Initialize user profile dropdown
+            const userProfile = document.getElementById('userProfile');
+            if (userProfile) {
+                userProfile.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userProfile.classList.toggle('active');
+                });
+            }
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.user-profile')) {
+                    if (userProfile) {
+                        userProfile.classList.remove('active');
+                    }
+                }
+            });
             
             // Load saved sidebar state only on desktop
             if (window.innerWidth > 768) {

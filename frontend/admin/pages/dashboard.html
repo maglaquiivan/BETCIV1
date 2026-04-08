@@ -228,6 +228,40 @@
                         <p>Loading trainees...</p>
                     </div>
                 </div>
+
+                <!-- Recent Enrollments Section -->
+                <div class="section-header" style="margin-top: 40px;">
+                    <h2>Recent Enrollments</h2>
+                    <a href="records.html" class="btn btn-secondary" style="text-decoration: none;">
+                        <i class="bi bi-eye"></i> View All
+                    </a>
+                </div>
+
+                <div class="enrollments-table-container">
+                    <table class="enrollments-table" id="enrollmentsTable">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Course</th>
+                                <th>Date</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="9" style="text-align: center; padding: 40px;">
+                                    <i class="bi bi-hourglass-split" style="font-size: 48px; color: #ccc;"></i>
+                                    <p style="margin-top: 10px; color: #999;">Loading enrollments...</p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
         </div>
     </div>
 
@@ -422,6 +456,78 @@
                 console.error('Error:', error);
                 document.getElementById('traineesGrid').innerHTML = '<div style="grid-column: 1/-1; color: red; padding: 20px;">Error: ' + error.message + '</div>';
             }
+        }
+        
+        // Load recent enrollments from Enrollments collection
+        async function loadRecentEnrollments() {
+            try {
+                const response = await fetch(API_BASE_URL + '/enrollments');
+                const enrollments = await response.json();
+                
+                // Sort by most recent first
+                enrollments.sort((a, b) => new Date(b.enrollmentDate || b.createdAt) - new Date(a.enrollmentDate || a.createdAt));
+                
+                const tbody = document.querySelector('#enrollmentsTable tbody');
+                tbody.innerHTML = '';
+                
+                if (enrollments.length === 0) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="9" style="text-align: center; padding: 40px;">
+                                <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                                <p style="margin-top: 10px; color: #999;">No enrollments yet</p>
+                            </td>
+                        </tr>
+                    `;
+                    return;
+                }
+                
+                // Show only the 10 most recent enrollments
+                enrollments.slice(0, 10).forEach((enrollment, index) => {
+                    const enrolleeData = enrollment.enrolleeData || {};
+                    const firstName = enrolleeData.firstName || 'N/A';
+                    const lastName = enrolleeData.lastName || 'N/A';
+                    const email = enrolleeData.email || 'N/A';
+                    const phone = enrolleeData.phone || 'N/A';
+                    const enrollmentDate = new Date(enrollment.enrollmentDate || enrollment.createdAt).toLocaleDateString();
+                    const statusClass = enrollment.status.toLowerCase().replace(' ', '-');
+                    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td><strong>${index + 1}</strong></td>
+                        <td>${firstName}</td>
+                        <td>${lastName}</td>
+                        <td>${email}</td>
+                        <td>${phone}</td>
+                        <td>${enrollment.courseName}</td>
+                        <td>${enrollmentDate}</td>
+                        <td><span class="badge badge-${statusClass}">${enrollment.status}</span></td>
+                        <td>
+                            <button class="btn-action view" onclick="viewEnrollmentDetails('${enrollment._id}')" title="View Details">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                        </td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (error) {
+                console.error('Error loading enrollments:', error);
+                const tbody = document.querySelector('#enrollmentsTable tbody');
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 40px; color: #e74c3c;">
+                            <i class="bi bi-exclamation-triangle" style="font-size: 48px;"></i>
+                            <p style="margin-top: 10px;">Failed to load enrollments</p>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+        
+        // View enrollment details
+        function viewEnrollmentDetails(recordId) {
+            // Redirect to records page with the specific record
+            window.location.href = `records.html?recordId=${recordId}`;
         }
         
         async function loadCoursesNow() {
@@ -707,17 +813,20 @@
                 setTimeout(() => {
                     loadTraineesNow();
                     loadCoursesNow();
+                    loadRecentEnrollments();
                 }, 100);
             });
         } else {
             loadTraineesNow();
             loadCoursesNow();
+            loadRecentEnrollments();
         }
         
         // Auto-refresh dashboard every 10 seconds to show newly added items
         setInterval(() => {
             loadTraineesNow();
             loadCoursesNow();
+            loadRecentEnrollments();
         }, 10000);
     </script>
     <script>
