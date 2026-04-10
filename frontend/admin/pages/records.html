@@ -107,22 +107,22 @@
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile">
-                        <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
-                        <span class="user-name">Admin</span>
+                        <div class="user-avatar" id="headerAvatar">A</div>
+                        <span class="user-name" id="headerUserName">Admin</span>
                         <i class="bi bi-chevron-down dropdown-arrow"></i>
                         
                         <div class="user-dropdown">
                             <div class="dropdown-header">
-                                <div class="dropdown-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                                <div class="dropdown-avatar" id="dropdownAvatar">A</div>
                                 <div class="dropdown-user-info">
-                                    <h4>Admin User</h4>
-                                    <p>admin@betci.edu.ph</p>
+                                    <h4 id="dropdownFullName">Admin User</h4>
+                                    <p id="dropdownEmail">admin@betci.edu.ph</p>
                                 </div>
                             </div>
                             <div class="dropdown-divider"></div>
                             <ul class="dropdown-menu">
-                                <li><a href="#"><i class="bi bi-person"></i>My Profile</a></li>
-                                <li><a href="#"><i class="bi bi-gear"></i>Settings</a></li>
+                                <li><a href="settings.html"><i class="bi bi-person"></i>My Profile</a></li>
+                                <li><a href="settings.html"><i class="bi bi-gear"></i>Settings</a></li>
                             </ul>
                             <div class="dropdown-divider"></div>
                             <div class="dropdown-footer">
@@ -189,6 +189,7 @@
                                         <th>First Name</th>
                                         <th>Email</th>
                                         <th>Course</th>
+                                        <th>Courses</th>
                                         <th>Enrollment Date</th>
                                         <th>Status</th>
                                         <th>Progress</th>
@@ -197,7 +198,7 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td colspan="9" style="text-align: center; padding: 40px;">
+                                        <td colspan="10" style="text-align: center; padding: 40px;">
                                             <i class="bi bi-hourglass-split" style="font-size: 48px; color: #ccc;"></i>
                                             <p style="margin-top: 10px; color: #999;">Loading enrollment records...</p>
                                         </td>
@@ -313,9 +314,9 @@
 
     <!-- Scripts -->
     <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script src="../assets/js/admin-dashboard.js?v=6"></script>
     <script>
-        const API_BASE_URL = 'http://localhost:5500/api';
+        // API_BASE_URL is already defined in admin-dashboard.js
         let allEnrollmentRecords = [];
 
         // Load enrollment records on page load
@@ -323,20 +324,272 @@
             loadEnrollmentRecords();
         });
 
+        // View trainee forms (Application and Admission)
+        async function viewTraineeForms(userId) {
+            try {
+                // Fetch application and admission forms for this trainee
+                const [applicationsResponse, admissionsResponse] = await Promise.all([
+                    fetch(`${API_BASE_URL}/applications`),
+                    fetch(`${API_BASE_URL}/admissions`)
+                ]);
+
+                if (!applicationsResponse.ok || !admissionsResponse.ok) {
+                    throw new Error('Failed to fetch forms');
+                }
+
+                const applications = await applicationsResponse.json();
+                const admissions = await admissionsResponse.json();
+
+                // Filter forms for this specific trainee
+                const traineeApplications = applications.filter(app => app.traineeId === userId || app.userId === userId);
+                const traineeAdmissions = admissions.filter(adm => adm.traineeId === userId || adm.userId === userId);
+
+                // Open modal with forms
+                openFormsModal(userId, traineeApplications, traineeAdmissions);
+
+            } catch (error) {
+                console.error('Error loading trainee forms:', error);
+                showNotification('Failed to load trainee forms', 'error');
+            }
+        }
+
+        // Open forms overview modal
+        function openFormsModal(userId, applications, admissions) {
+            const modal = document.getElementById('formsOverviewModal');
+            const modalBody = modal.querySelector('.modal-body');
+
+            let content = '<div class="forms-overview">';
+
+            // Application Forms Section
+            content += '<h4 style="margin-bottom: 16px; color: var(--primary-color); display: flex; align-items: center; gap: 8px;"><i class="bi bi-file-earmark-text"></i> Application Forms</h4>';
+            
+            if (applications.length > 0) {
+                content += '<div class="forms-list" style="margin-bottom: 24px;">';
+                applications.forEach((app, index) => {
+                    const submittedDate = app.submittedAt ? new Date(app.submittedAt).toLocaleDateString() : 'N/A';
+                    const status = app.status || 'Pending';
+                    const statusClass = status.toLowerCase();
+                    
+                    content += `
+                        <div class="form-card" style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #E67E22;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                <div>
+                                    <strong style="font-size: 14px;">Application #${index + 1}</strong>
+                                    <p style="margin: 4px 0; font-size: 13px; color: #666;">Course: ${app.courseName || 'N/A'}</p>
+                                    <p style="margin: 4px 0; font-size: 13px; color: #666;">Submitted: ${submittedDate}</p>
+                                </div>
+                                <span class="badge badge-${statusClass}" style="font-size: 11px;">${status}</span>
+                            </div>
+                            <button class="btn btn-sm btn-secondary" onclick="viewApplicationDetails('${app._id || app.applicationId}')" style="margin-top: 8px;">
+                                <i class="bi bi-eye"></i> View Details
+                            </button>
+                        </div>
+                    `;
+                });
+                content += '</div>';
+            } else {
+                content += '<p style="color: #999; font-style: italic; margin-bottom: 24px;">No application forms submitted yet.</p>';
+            }
+
+            // Admission Forms Section
+            content += '<h4 style="margin-bottom: 16px; color: var(--primary-color); display: flex; align-items: center; gap: 8px;"><i class="bi bi-file-check"></i> Admission Slips</h4>';
+            
+            if (admissions.length > 0) {
+                content += '<div class="forms-list">';
+                admissions.forEach((adm, index) => {
+                    const submittedDate = adm.submittedAt ? new Date(adm.submittedAt).toLocaleDateString() : 'N/A';
+                    const status = adm.status || 'Pending';
+                    const statusClass = status.toLowerCase();
+                    
+                    content += `
+                        <div class="form-card" style="background: #f9f9f9; padding: 16px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #3498DB;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 8px;">
+                                <div>
+                                    <strong style="font-size: 14px;">Admission Slip #${index + 1}</strong>
+                                    <p style="margin: 4px 0; font-size: 13px; color: #666;">Course: ${adm.courseName || 'N/A'}</p>
+                                    <p style="margin: 4px 0; font-size: 13px; color: #666;">Submitted: ${submittedDate}</p>
+                                </div>
+                                <span class="badge badge-${statusClass}" style="font-size: 11px;">${status}</span>
+                            </div>
+                            <button class="btn btn-sm btn-secondary" onclick="viewAdmissionDetails('${adm._id || adm.admissionId}')" style="margin-top: 8px;">
+                                <i class="bi bi-eye"></i> View Details
+                            </button>
+                        </div>
+                    `;
+                });
+                content += '</div>';
+            } else {
+                content += '<p style="color: #999; font-style: italic;">No admission slips submitted yet.</p>';
+            }
+
+            content += '</div>';
+
+            modalBody.innerHTML = content;
+            modal.classList.add('active');
+        }
+
+        // View application details
+        async function viewApplicationDetails(applicationId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/applications`);
+                const applications = await response.json();
+                const application = applications.find(app => app._id === applicationId || app.applicationId === applicationId);
+
+                if (!application) {
+                    showNotification('Application not found', 'error');
+                    return;
+                }
+
+                // Close forms modal and open application details modal
+                document.getElementById('formsOverviewModal').classList.remove('active');
+                
+                const modal = document.getElementById('recordViewModal');
+                const modalBody = modal.querySelector('.modal-body');
+                
+                modalBody.innerHTML = `
+                    <div class="record-details">
+                        <h4 style="margin-bottom: 16px; color: var(--primary-color);">Application Form Details</h4>
+                        <div class="detail-row">
+                            <label class="detail-label">Application ID:</label>
+                            <span class="detail-value">${application.applicationId || application._id}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Course:</label>
+                            <span class="detail-value">${application.courseName || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Full Name:</label>
+                            <span class="detail-value">${application.firstName || ''} ${application.lastName || ''}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Email:</label>
+                            <span class="detail-value">${application.email || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Phone:</label>
+                            <span class="detail-value">${application.phone || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Address:</label>
+                            <span class="detail-value">${application.address || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Date of Birth:</label>
+                            <span class="detail-value">${application.dateOfBirth ? new Date(application.dateOfBirth).toLocaleDateString() : 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Education:</label>
+                            <span class="detail-value">${application.education || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Status:</label>
+                            <span class="detail-value">${application.status || 'Pending'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Submitted:</label>
+                            <span class="detail-value">${application.submittedAt ? new Date(application.submittedAt).toLocaleString() : 'N/A'}</span>
+                        </div>
+                    </div>
+                `;
+                
+                modal.classList.add('active');
+
+            } catch (error) {
+                console.error('Error loading application details:', error);
+                showNotification('Failed to load application details', 'error');
+            }
+        }
+
+        // View admission details
+        async function viewAdmissionDetails(admissionId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admissions`);
+                const admissions = await response.json();
+                const admission = admissions.find(adm => adm._id === admissionId || adm.admissionId === admissionId);
+
+                if (!admission) {
+                    showNotification('Admission slip not found', 'error');
+                    return;
+                }
+
+                // Close forms modal and open admission details modal
+                document.getElementById('formsOverviewModal').classList.remove('active');
+                
+                const modal = document.getElementById('recordViewModal');
+                const modalBody = modal.querySelector('.modal-body');
+                
+                modalBody.innerHTML = `
+                    <div class="record-details">
+                        <h4 style="margin-bottom: 16px; color: var(--primary-color);">Admission Slip Details</h4>
+                        <div class="detail-row">
+                            <label class="detail-label">Admission ID:</label>
+                            <span class="detail-value">${admission.admissionId || admission._id}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Course:</label>
+                            <span class="detail-value">${admission.courseName || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Full Name:</label>
+                            <span class="detail-value">${admission.firstName || ''} ${admission.lastName || ''}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Email:</label>
+                            <span class="detail-value">${admission.email || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Phone:</label>
+                            <span class="detail-value">${admission.phone || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Address:</label>
+                            <span class="detail-value">${admission.address || 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Assessment Date:</label>
+                            <span class="detail-value">${admission.assessmentDate ? new Date(admission.assessmentDate).toLocaleDateString() : 'N/A'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Status:</label>
+                            <span class="detail-value">${admission.status || 'Pending'}</span>
+                        </div>
+                        <div class="detail-row">
+                            <label class="detail-label">Submitted:</label>
+                            <span class="detail-value">${admission.submittedAt ? new Date(admission.submittedAt).toLocaleString() : 'N/A'}</span>
+                        </div>
+                    </div>
+                `;
+                
+                modal.classList.add('active');
+
+            } catch (error) {
+                console.error('Error loading admission details:', error);
+                showNotification('Failed to load admission details', 'error');
+            }
+        }
+
+        // Close forms overview modal
+        function closeFormsModal() {
+            const modal = document.getElementById('formsOverviewModal');
+            modal.classList.remove('active');
+        }
+
         // Load enrollment records with user details
         async function loadEnrollmentRecords() {
             try {
-                const [recordsResponse, accountsResponse] = await Promise.all([
+                const [recordsResponse, accountsResponse, enrollmentsResponse] = await Promise.all([
                     fetch(`${API_BASE_URL}/records`),
-                    fetch(`${API_BASE_URL}/accounts`)
+                    fetch(`${API_BASE_URL}/accounts`),
+                    fetch(`${API_BASE_URL}/enrollments`)
                 ]);
 
-                if (!recordsResponse.ok || !accountsResponse.ok) {
+                if (!recordsResponse.ok || !accountsResponse.ok || !enrollmentsResponse.ok) {
                     throw new Error('Failed to fetch data');
                 }
 
                 const records = await recordsResponse.json();
                 const accounts = await accountsResponse.json();
+                const enrollments = await enrollmentsResponse.json();
 
                 // Create a map of accounts by accountId for quick lookup
                 const accountsMap = {};
@@ -344,14 +597,26 @@
                     accountsMap[account.accountId] = account;
                 });
 
-                // Combine records with user details
+                // Group enrollments by trainee to show all courses
+                const traineeEnrollments = {};
+                enrollments.forEach(enrollment => {
+                    const traineeId = enrollment.traineeId || enrollment.accountId || enrollment.userId;
+                    if (!traineeEnrollments[traineeId]) {
+                        traineeEnrollments[traineeId] = [];
+                    }
+                    traineeEnrollments[traineeId].push(enrollment.courseName || 'Unknown Course');
+                });
+
+                // Combine records with user details and all enrolled courses
                 allEnrollmentRecords = records.map(record => {
                     const user = accountsMap[record.userId] || {};
+                    const allCourses = traineeEnrollments[record.userId] || [];
                     return {
                         ...record,
                         firstName: user.firstName || 'N/A',
                         lastName: user.lastName || 'N/A',
-                        email: user.email || 'N/A'
+                        email: user.email || 'N/A',
+                        allCourses: allCourses
                     };
                 });
 
@@ -363,7 +628,7 @@
                 if (tbody) {
                     tbody.innerHTML = `
                         <tr>
-                            <td colspan="9" style="text-align: center; padding: 40px; color: #e74c3c;">
+                            <td colspan="10" style="text-align: center; padding: 40px; color: #e74c3c;">
                                 <i class="bi bi-exclamation-triangle" style="font-size: 48px;"></i>
                                 <p style="margin-top: 10px;">Failed to load enrollment records</p>
                             </td>
@@ -381,7 +646,7 @@
             if (records.length === 0) {
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 40px;">
+                        <td colspan="10" style="text-align: center; padding: 40px;">
                             <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
                             <p style="margin-top: 10px; color: #999;">No enrollment records found</p>
                         </td>
@@ -407,6 +672,16 @@
                 const lastName = record.enrolleeData?.lastName || record.lastName || 'N/A';
                 const email = record.enrolleeData?.email || record.email || 'N/A';
 
+                // Display all courses as badges
+                const allCourses = record.allCourses || [];
+                const coursesDisplay = allCourses.length > 0 
+                    ? `<div style="max-width: 250px; display: flex; flex-wrap: wrap; gap: 4px;">
+                         ${allCourses.map(course => 
+                             `<span style="display: inline-block; background: #e3f2fd; color: #1976d2; padding: 4px 10px; border-radius: 12px; font-size: 11px; white-space: nowrap;">${course}</span>`
+                         ).join('')}
+                       </div>`
+                    : '<span style="color: #999; font-style: italic;">No courses</span>';
+
                 return `
                     <tr data-course-id="${record.courseId}" data-record-id="${recordId}">
                         <td><strong>${index + 1}</strong></td>
@@ -414,6 +689,7 @@
                         <td>${firstName}</td>
                         <td>${email}</td>
                         <td>${record.courseName}</td>
+                        <td>${coursesDisplay}</td>
                         <td>${enrollmentDate}</td>
                         <td><span class="badge badge-${statusClass}">${record.status}</span></td>
                         <td>
@@ -426,6 +702,9 @@
                             <div class="action-buttons">
                                 <button class="btn btn-sm btn-secondary" onclick="viewEnrollmentRecord('${recordId}')" title="View Details">
                                     <i class="bi bi-eye"></i>
+                                </button>
+                                <button class="btn btn-sm btn-primary" onclick="viewTraineeForms('${record.userId}')" title="View Forms">
+                                    <i class="bi bi-file-earmark-text"></i> Overview
                                 </button>
                             </div>
                         </td>
@@ -768,6 +1047,24 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="closeRecordModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forms Overview Modal -->
+    <div class="modal" id="formsOverviewModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Trainee Forms Overview</h3>
+                <button class="modal-close" onclick="closeFormsModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Forms overview will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeFormsModal()">Close</button>
             </div>
         </div>
     </div>

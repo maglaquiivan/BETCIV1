@@ -412,13 +412,13 @@
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile">
-                        <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                        <div class="user-avatar">A</div>
                         <span class="user-name">Admin</span>
                         <i class="bi bi-chevron-down dropdown-arrow"></i>
                         
                         <div class="user-dropdown">
                             <div class="dropdown-header">
-                                <div class="dropdown-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                                <div class="dropdown-avatar">A</div>
                                 <div class="dropdown-user-info">
                                     <h4>Admin User</h4>
                                     <p>admin@betci.edu.ph</p>
@@ -543,38 +543,38 @@
                         <form id="profileForm" method="POST">
                             <div class="form-grid-2">
                                 <div class="form-group-modern">
-                                    <label class="form-label-modern">ADMIN ID</label>
-                                    <input type="text" id="adminId" class="form-input-modern" value="ADM-2026-001" disabled>
+                                    <label class="form-label-modern" for="adminId">ADMIN ID</label>
+                                    <input type="text" id="adminId" name="adminId" class="form-input-modern" value="ADM-2026-001" autocomplete="off" disabled>
                                 </div>
                                 
                                 <div class="form-group-modern">
-                                    <label class="form-label-modern">USERNAME</label>
-                                    <input type="text" id="username" class="form-input-modern" value="admin" disabled>
+                                    <label class="form-label-modern" for="username">USERNAME</label>
+                                    <input type="text" id="username" name="username" class="form-input-modern" value="admin" autocomplete="username" disabled>
                                 </div>
                                 
                                 <div class="form-group-modern">
-                                    <label class="form-label-modern">FIRST NAME</label>
-                                    <input type="text" id="firstName" class="form-input-modern" value="Admin" disabled>
+                                    <label class="form-label-modern" for="firstName">FIRST NAME</label>
+                                    <input type="text" id="firstName" name="firstName" class="form-input-modern" value="Admin" autocomplete="given-name" disabled>
                                 </div>
                                 
                                 <div class="form-group-modern">
-                                    <label class="form-label-modern">LAST NAME</label>
-                                    <input type="text" id="lastName" class="form-input-modern" value="User" disabled>
+                                    <label class="form-label-modern" for="lastName">LAST NAME</label>
+                                    <input type="text" id="lastName" name="lastName" class="form-input-modern" value="User" autocomplete="family-name" disabled>
                                 </div>
                                 
                                 <div class="form-group-modern">
-                                    <label class="form-label-modern">PHONE NUMBER</label>
-                                    <input type="tel" id="phone" class="form-input-modern" value="+63 9XX XXX XXXX" disabled>
+                                    <label class="form-label-modern" for="phone">PHONE NUMBER</label>
+                                    <input type="tel" id="phone" name="phone" class="form-input-modern" value="+63 9XX XXX XXXX" autocomplete="tel" disabled>
                                 </div>
                                 
                                 <div class="form-group-modern">
-                                    <label class="form-label-modern">EMAIL ADDRESS</label>
-                                    <input type="email" id="email" class="form-input-modern" value="admin@betci.edu.ph" disabled>
+                                    <label class="form-label-modern" for="email">EMAIL ADDRESS</label>
+                                    <input type="email" id="email" name="email" class="form-input-modern" value="admin@betci.edu.ph" autocomplete="email" disabled>
                                 </div>
                                 
                                 <div class="form-group-modern full-width">
-                                    <label class="form-label-modern">ADDRESS</label>
-                                    <textarea id="address" class="form-input-modern" rows="2" disabled placeholder="Enter your address"></textarea>
+                                    <label class="form-label-modern" for="address">ADDRESS</label>
+                                    <textarea id="address" name="address" class="form-input-modern" rows="2" autocomplete="street-address" disabled placeholder="Enter your address"></textarea>
                                 </div>
                             </div>
                             
@@ -660,7 +660,7 @@
 
     <!-- Scripts -->
     <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script src="../../assets/js/admin-dashboard.js?v=6"></script>
     <script>
         // Sidebar toggle for mobile
         document.addEventListener('DOMContentLoaded', function() {
@@ -783,23 +783,96 @@
 
             const passwordForm = document.getElementById('passwordForm');
             if (passwordForm) {
-                passwordForm.addEventListener('submit', function(e) {
+                passwordForm.addEventListener('submit', async function(e) {
                     e.preventDefault();
+                    
+                    const currentPassword = document.getElementById('currentPassword').value;
                     const newPassword = document.getElementById('newPassword').value;
                     const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+                    
+                    // Validation
+                    if (!currentPassword || !newPassword || !confirmPassword) {
+                        showNotification('Please fill in all password fields', 'error');
+                        return;
+                    }
                     
                     if (newPassword !== confirmPassword) {
                         showNotification('Passwords do not match!', 'error');
                         return;
                     }
                     
-                    if (newPassword.length < 8) {
-                        showNotification('Password must be at least 8 characters!', 'error');
+                    if (newPassword.length < 6) {
+                        showNotification('Password must be at least 6 characters!', 'error');
                         return;
                     }
                     
-                    showNotification('Password updated successfully!', 'success');
-                    this.reset();
+                    if (newPassword === currentPassword) {
+                        showNotification('New password must be different from current password', 'error');
+                        return;
+                    }
+                    
+                    // Get user session
+                    const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+                    
+                    if (!userSession.accountId) {
+                        showNotification('Session expired. Please login again.', 'error');
+                        setTimeout(() => {
+                            window.location.href = '../../auth/login.html';
+                        }, 2000);
+                        return;
+                    }
+                    
+                    // Determine user type
+                    const userType = userSession.role === 'admin' || userSession.role === 'instructor' ? 'admin' : 'trainee';
+                    
+                    try {
+                        // Show loading state
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Updating...';
+                        
+                        // Call API to change password
+                        const response = await fetch('http://localhost:5500/api/change-password', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                accountId: userSession.accountId,
+                                currentPassword: currentPassword,
+                                newPassword: newPassword,
+                                userType: userType
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        // Restore button state
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                        
+                        if (result.success) {
+                            showNotification('Password changed successfully! Please login again.', 'success');
+                            // Clear session and redirect to login after 2 seconds
+                            setTimeout(() => {
+                                localStorage.removeItem('userSession');
+                                sessionStorage.removeItem('userSession');
+                                window.location.href = '../../auth/login.html';
+                            }, 2000);
+                        } else {
+                            showNotification(result.message || 'Failed to change password', 'error');
+                        }
+                        
+                    } catch (error) {
+                        console.error('Error changing password:', error);
+                        showNotification('An error occurred while changing password', 'error');
+                        
+                        // Restore button state
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="bi bi-lock"></i> Update Password';
+                    }
                 });
             }
 
@@ -959,6 +1032,30 @@
             }
         }
 
+        // Suppress 431 errors from browser extensions (MetaMask, etc.)
+        const originalFetch = window.fetch;
+        window.fetch = function(...args) {
+            return originalFetch.apply(this, args).catch(error => {
+                // Suppress 431 errors silently
+                if (error.message && error.message.includes('431')) {
+                    console.log('Suppressed 431 error from browser extension');
+                    return Promise.reject(error);
+                }
+                return Promise.reject(error);
+            });
+        };
+
+        // Suppress console errors for 431 and connection reset
+        const originalError = console.error;
+        console.error = function(...args) {
+            const errorString = args.join(' ');
+            if (errorString.includes('431') || errorString.includes('ERR_CONNECTION_RESET') || errorString.includes('Failed to load resource')) {
+                // Silently ignore these errors
+                return;
+            }
+            originalError.apply(console, args);
+        };
+
         // Change avatar function
         function changeAvatar() {
             const input = document.createElement('input');
@@ -1011,12 +1108,8 @@
                         });
                         
                         if (response.ok) {
-                            // Update session storage
-                            userSession.profilePicture = base64Image;
-                            localStorage.setItem('userSession', JSON.stringify(userSession));
-                            sessionStorage.setItem('userSession', JSON.stringify(userSession));
-                            
-                            // Update all avatar displays on the page
+                            // DO NOT store base64 in session - it causes 431 errors
+                            // Just update the display directly
                             updateAvatarDisplays(base64Image);
                             
                             showNotification('Profile picture updated successfully', 'success');
@@ -1036,36 +1129,83 @@
         
         // Update all avatar displays on the page
         function updateAvatarDisplays(imageUrl) {
+            // Cache the profile picture in sessionStorage for other pages
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            if (userSession.accountId) {
+                const cachedPictureKey = `adminProfilePic_${userSession.accountId}`;
+                sessionStorage.setItem(cachedPictureKey, imageUrl);
+            }
+            
+            // For base64 images, use img tags instead of background-image to avoid URL issues
+            const safeImageUrl = imageUrl.startsWith('data:') ? `"${imageUrl}"` : imageUrl;
+            
             // Update large profile photo circle
             const profilePhotoCircle = document.getElementById('profilePhotoCircle');
             if (profilePhotoCircle) {
-                profilePhotoCircle.style.backgroundImage = `url(${imageUrl})`;
-                profilePhotoCircle.style.backgroundSize = 'cover';
-                profilePhotoCircle.style.backgroundPosition = 'center';
-                const initials = profilePhotoCircle.querySelector('span');
-                if (initials) initials.style.display = 'none';
+                if (imageUrl.startsWith('data:')) {
+                    profilePhotoCircle.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
+                } else {
+                    profilePhotoCircle.style.backgroundImage = `url(${safeImageUrl})`;
+                    profilePhotoCircle.style.backgroundSize = 'cover';
+                    profilePhotoCircle.style.backgroundPosition = 'center';
+                    const initials = profilePhotoCircle.querySelector('span');
+                    if (initials) initials.style.display = 'none';
+                }
             }
             
-            // Update header avatars
+            // Update header avatars - remove inline background styles first
             document.querySelectorAll('.user-avatar, .dropdown-avatar').forEach(avatar => {
-                avatar.style.backgroundImage = `url(${imageUrl})`;
-                avatar.style.backgroundSize = 'cover';
-                avatar.style.backgroundPosition = 'center';
-                avatar.textContent = '';
+                // Remove any inline background styles that might interfere
+                avatar.style.background = 'none';
+                avatar.style.backgroundImage = 'none';
+                
+                if (imageUrl.startsWith('data:')) {
+                    avatar.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
+                } else {
+                    avatar.style.backgroundImage = `url(${safeImageUrl})`;
+                    avatar.style.backgroundSize = 'cover';
+                    avatar.style.backgroundPosition = 'center';
+                    avatar.textContent = '';
+                }
             });
+            
+            // Dispatch custom event to notify other pages/components
+            window.dispatchEvent(new CustomEvent('profilePictureUpdated', { 
+                detail: { imageUrl: imageUrl } 
+            }));
         }
         
         // Load user profile picture on page load
         document.addEventListener('DOMContentLoaded', function() {
             const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            
+            // Clean up old profilePicture from session if it exists (prevents 431 errors)
             if (userSession.profilePicture) {
-                updateAvatarDisplays(userSession.profilePicture);
+                delete userSession.profilePicture;
+                if (localStorage.getItem('userSession')) {
+                    localStorage.setItem('userSession', JSON.stringify(userSession));
+                }
+                if (sessionStorage.getItem('userSession')) {
+                    sessionStorage.setItem('userSession', JSON.stringify(userSession));
+                }
             }
             
             // Determine API endpoint based on user role
             const apiEndpoint = (userSession.role === 'admin' || userSession.role === 'instructor') 
                 ? 'admin-accounts' 
                 : 'trainee-accounts';
+            
+            // Load profile picture from API
+            if (userSession.accountId) {
+                fetch(`http://localhost:5500/api/${apiEndpoint}/${userSession.accountId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.profilePicture) {
+                            updateAvatarDisplays(data.profilePicture);
+                        }
+                    })
+                    .catch(error => console.error('Error loading profile picture:', error));
+            }
             
             // Set role label based on user role
             const roleLabel = document.getElementById('roleLabel');
@@ -1086,36 +1226,50 @@
                     .then(data => {
                         if (data.firstName && data.lastName) {
                             const fullName = `${data.firstName} ${data.lastName}`;
-                            document.getElementById('displayFullName').textContent = fullName;
-                            document.getElementById('firstName').value = data.firstName;
-                            document.getElementById('lastName').value = data.lastName;
+                            const displayFullName = document.getElementById('displayFullName');
+                            const firstNameInput = document.getElementById('firstName');
+                            const lastNameInput = document.getElementById('lastName');
+                            const profileInitials = document.getElementById('profileInitials');
+                            
+                            if (displayFullName) displayFullName.textContent = fullName;
+                            if (firstNameInput) firstNameInput.value = data.firstName;
+                            if (lastNameInput) lastNameInput.value = data.lastName;
                             
                             const initials = `${data.firstName.charAt(0)}${data.lastName.charAt(0)}`.toUpperCase();
-                            document.getElementById('profileInitials').textContent = initials;
+                            if (profileInitials) profileInitials.textContent = initials;
                         }
                         
                         if (data.email) {
-                            document.getElementById('displayEmail').textContent = data.email;
-                            document.getElementById('email').value = data.email;
+                            const displayEmail = document.getElementById('displayEmail');
+                            const emailInput = document.getElementById('email');
+                            if (displayEmail) displayEmail.textContent = data.email;
+                            if (emailInput) emailInput.value = data.email;
                         }
                         
                         if (data.accountId) {
-                            document.getElementById('displayAdminId').textContent = data.accountId;
-                            document.getElementById('adminId').value = data.accountId;
+                            const displayAdminId = document.getElementById('displayAdminId');
+                            const adminIdInput = document.getElementById('adminId');
+                            if (displayAdminId) displayAdminId.textContent = data.accountId;
+                            if (adminIdInput) adminIdInput.value = data.accountId;
                         }
                         
                         if (data.username) {
-                            document.getElementById('username').value = data.username;
+                            const usernameInput = document.getElementById('username');
+                            if (usernameInput) usernameInput.value = data.username;
                         }
                         
                         if (data.phone) {
-                            document.getElementById('displayPhone').textContent = data.phone;
-                            document.getElementById('phone').value = data.phone;
+                            const displayPhone = document.getElementById('displayPhone');
+                            const phoneInput = document.getElementById('phone');
+                            if (displayPhone) displayPhone.textContent = data.phone;
+                            if (phoneInput) phoneInput.value = data.phone;
                         }
                         
                         if (data.address) {
-                            document.getElementById('displayAddress').textContent = data.address;
-                            document.getElementById('address').value = data.address;
+                            const displayAddress = document.getElementById('displayAddress');
+                            const addressInput = document.getElementById('address');
+                            if (displayAddress) displayAddress.textContent = data.address;
+                            if (addressInput) addressInput.value = data.address;
                         }
                         
                         if (data.profilePicture) {

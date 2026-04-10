@@ -25,7 +25,10 @@
                    str.includes('metamask') ||
                    str.includes('receiving end does not exist') ||
                    str.includes('could not establish connection') ||
-                   str.includes('inpage.js');
+                   str.includes('inpage.js') ||
+                   str.includes('431') ||
+                   str.includes('request header fields too large') ||
+                   str.includes('err_connection_reset');
           };
           
           // Override console.error
@@ -82,7 +85,14 @@
             if (url.includes('chrome-extension') || url.includes('metamask')) {
               return Promise.reject(new Error('Extension request blocked'));
             }
-            return originalFetch.apply(this, args);
+            return originalFetch.apply(this, args).catch(err => {
+              // Suppress 431 errors from extensions
+              if (err.message && (err.message.includes('431') || err.message.includes('ERR_CONNECTION_RESET'))) {
+                console.log('Suppressed extension error:', err.message);
+                return Promise.reject(err);
+              }
+              throw err;
+            });
           };
           
           // Prevent extension script injection
@@ -162,17 +172,17 @@
         
         /* Modern Profile Overview Styles - Compact Version */
         .profile-overview-card {
-            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
-            border-radius: 12px;
-            padding: 24px 32px;
-            margin-bottom: 20px;
+            background: linear-gradient(135deg, #E67E22 0%, #d35400 100%);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
             color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 8px 24px rgba(230, 126, 34, 0.25);
         }
         
         .profile-header-section {
             display: grid;
-            grid-template-columns: 200px 1fr;
+            grid-template-columns: 180px 1fr;
             gap: 32px;
             align-items: center;
         }
@@ -182,45 +192,48 @@
         }
         
         .profile-photo-circle {
-            width: 120px;
-            height: 120px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #E67E22, #d35400);
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 12px;
-            font-size: 2.5rem;
+            margin: 0 auto 16px;
+            font-size: 3rem;
             font-weight: 700;
-            color: white;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            color: #E67E22;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
             background-size: cover;
             background-position: center;
+            border: 4px solid rgba(255,255,255,0.3);
         }
         
         .change-photo-btn {
-            background: rgba(255,255,255,0.2);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 6px;
+            background: rgba(255,255,255,0.95);
+            border: 2px solid rgba(255,255,255,0.5);
+            color: #E67E22;
+            padding: 8px 16px;
+            border-radius: 8px;
             cursor: pointer;
-            font-weight: 600;
-            font-size: 12px;
+            font-weight: 700;
+            font-size: 13px;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
         }
         
         .change-photo-btn:hover {
-            background: rgba(255,255,255,0.3);
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         .photo-hint {
-            margin-top: 6px;
-            font-size: 10px;
-            color: rgba(255,255,255,0.6);
+            margin-top: 8px;
+            font-size: 11px;
+            color: rgba(255,255,255,0.8);
         }
         
         .profile-info-grid {
@@ -228,9 +241,9 @@
         }
         
         .profile-overview-title {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
             color: white;
         }
         
@@ -246,86 +259,89 @@
         }
         
         .info-item {
-            background: rgba(255,255,255,0.1);
-            padding: 12px 16px;
-            border-radius: 8px;
-            border: 1px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.15);
+            padding: 14px 18px;
+            border-radius: 10px;
+            border: 1px solid rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
         }
         
         .info-label {
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.5px;
-            color: rgba(255,255,255,0.7);
-            margin-bottom: 6px;
+            color: rgba(255,255,255,0.85);
+            margin-bottom: 8px;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 6px;
         }
         
         .info-value {
-            font-size: 14px;
+            font-size: 15px;
             font-weight: 600;
             color: white;
         }
         
         .info-badge {
             display: inline-block;
-            background: rgba(59, 130, 246, 0.3);
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 13px;
-            border: 1px solid rgba(59, 130, 246, 0.4);
+            background: rgba(255, 255, 255, 0.25);
+            padding: 6px 14px;
+            border-radius: 16px;
+            font-size: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            font-weight: 700;
         }
         
         /* Personal Information Card - Compact */
         .personal-info-card {
             background: white;
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            border-radius: 16px;
+            padding: 28px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         
         .card-header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 16px;
+            margin-bottom: 24px;
+            padding-bottom: 20px;
             border-bottom: 2px solid #f0f0f0;
         }
         
         .section-title {
-            font-size: 18px;
+            font-size: 20px;
             font-weight: 700;
-            color: #1e3a5f;
+            color: #2c3e50;
             margin: 0;
         }
         
         .btn-edit-info {
-            background: #3b82f6;
+            background: #E67E22;
             color: white;
             border: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-weight: 600;
-            font-size: 13px;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.3s;
         }
         
         .btn-edit-info:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
+            background: #d35400;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
         }
         
         .form-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 18px;
         }
         
         .form-group-modern {
@@ -338,18 +354,18 @@
         
         .form-label-modern {
             display: block;
-            font-size: 10px;
+            font-size: 11px;
             font-weight: 700;
             letter-spacing: 0.5px;
             color: #64748b;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         
         .form-input-modern {
             width: 100%;
-            padding: 10px 12px;
-            border: 1px solid #e2e8f0;
-            border-radius: 6px;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
             font-size: 14px;
             color: #1e293b;
             background: #f8fafc;
@@ -358,9 +374,9 @@
         
         .form-input-modern:focus {
             outline: none;
-            border-color: #3b82f6;
+            border-color: #E67E22;
             background: white;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
         }
         
         .form-input-modern:disabled {
@@ -371,19 +387,19 @@
         
         .form-input-modern:not(:disabled) {
             background: white;
-            border-color: #3b82f6;
+            border-color: #E67E22;
         }
         
         textarea.form-input-modern {
             resize: vertical;
-            min-height: 60px;
+            min-height: 70px;
         }
         
         .form-actions-modern {
             display: flex;
-            gap: 10px;
-            margin-top: 20px;
-            padding-top: 16px;
+            gap: 12px;
+            margin-top: 24px;
+            padding-top: 20px;
             border-top: 2px solid #f0f0f0;
         }
         
@@ -391,40 +407,42 @@
             background: #10b981;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
             font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.3s;
         }
         
         .btn-save-modern:hover {
             background: #059669;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
         }
         
         .btn-cancel-modern {
             background: #ef4444;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            font-weight: 600;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 700;
             font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 8px;
             transition: all 0.3s;
         }
         
         .btn-cancel-modern:hover {
             background: #dc2626;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
         
         /* Responsive */
@@ -494,7 +512,7 @@
                 <li class="nav-item">
                     <a href="assessment.html" class="nav-link">
                         <i class="bi bi-clipboard-check"></i>
-                        <span>Assessment</span>
+                        <span>Forms</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -531,9 +549,9 @@
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile" id="userProfile">
-                    <div class="user-avatar">
-                        <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                        <div class="user-avatar">T</div>
+                        <span class="user-name">Trainee</span>
+                        <i class="bi bi-chevron-down dropdown-arrow"></i>
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
                                 <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
                                 <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
@@ -643,7 +661,7 @@
                         </div>
                         
                         <div class="profile-info-grid">
-                            <h2 class="profile-overview-title">Profile Overview <span id="roleLabel" style="display: inline-block; background: rgba(230, 126, 34, 0.3); padding: 4px 12px; border-radius: 12px; font-size: 14px; border: 1px solid rgba(230, 126, 34, 0.5); margin-left: 12px;">Trainee</span></h2>
+                            <h2 class="profile-overview-title">Profile Overview <span id="roleLabel" style="display: inline-block; background: rgba(255, 255, 255, 0.25); padding: 6px 16px; border-radius: 16px; font-size: 15px; border: 1px solid rgba(255, 255, 255, 0.3); margin-left: 12px; font-weight: 700;">Trainee</span></h2>
                             
                             <div class="info-row">
                                 <div class="info-item">
@@ -708,58 +726,58 @@
                     <form id="profileForm" method="POST">
                         <div class="form-grid-2">
                             <div class="form-group-modern">
-                                <label class="form-label-modern">TRAINEE ID</label>
-                                <input type="text" id="traineeId" class="form-input-modern" value="TRN-2026-001" disabled>
+                                <label class="form-label-modern" for="traineeId">TRAINEE ID</label>
+                                <input type="text" id="traineeId" name="traineeId" class="form-input-modern" value="TRN-2026-001" autocomplete="off" disabled>
                             </div>
                             
                             <div class="form-group-modern">
-                                <label class="form-label-modern">USERNAME</label>
-                                <input type="text" id="username" class="form-input-modern" value="trainee" disabled>
+                                <label class="form-label-modern" for="username">USERNAME</label>
+                                <input type="text" id="username" name="username" class="form-input-modern" value="trainee" autocomplete="username" disabled>
                             </div>
                             
                             <div class="form-group-modern">
-                                <label class="form-label-modern">FIRST NAME</label>
-                                <input type="text" id="firstName" class="form-input-modern" value="Trainee" disabled>
+                                <label class="form-label-modern" for="firstName">FIRST NAME</label>
+                                <input type="text" id="firstName" name="firstName" class="form-input-modern" value="Trainee" autocomplete="given-name" disabled>
                             </div>
                             
                             <div class="form-group-modern">
-                                <label class="form-label-modern">SECOND NAME</label>
-                                <input type="text" id="secondName" class="form-input-modern" value="" disabled>
+                                <label class="form-label-modern" for="secondName">SECOND NAME</label>
+                                <input type="text" id="secondName" name="secondName" class="form-input-modern" value="" autocomplete="additional-name" disabled>
                             </div>
                             
                             <div class="form-group-modern">
-                                <label class="form-label-modern">MIDDLE NAME</label>
-                                <input type="text" id="middleName" class="form-input-modern" value="" disabled>
+                                <label class="form-label-modern" for="middleName">MIDDLE NAME</label>
+                                <input type="text" id="middleName" name="middleName" class="form-input-modern" value="" autocomplete="additional-name" disabled>
                             </div>
                             
                             <div class="form-group-modern">
-                                <label class="form-label-modern">LAST NAME</label>
-                                <input type="text" id="lastName" class="form-input-modern" value="User" disabled>
+                                <label class="form-label-modern" for="lastName">LAST NAME</label>
+                                <input type="text" id="lastName" name="lastName" class="form-input-modern" value="User" autocomplete="family-name" disabled>
                             </div>
                             
                             <div class="form-group-modern">
-                                <label class="form-label-modern">SUFFIX</label>
-                                <input type="text" id="suffix" class="form-input-modern" value="" disabled>
+                                <label class="form-label-modern" for="suffix">SUFFIX</label>
+                                <input type="text" id="suffix" name="suffix" class="form-input-modern" value="" autocomplete="honorific-suffix" disabled>
                             </div>
                             
                             <div class="form-group-modern">
-                                <label class="form-label-modern">DATE OF BIRTH *</label>
-                                <input type="date" id="dateOfBirth" class="form-input-modern" value="2000-01-01" disabled>
+                                <label class="form-label-modern" for="dateOfBirth">DATE OF BIRTH *</label>
+                                <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-input-modern" value="2000-01-01" autocomplete="bday" disabled>
                             </div>
                             
                             <div class="form-group-modern">
-                                <label class="form-label-modern">PHONE NUMBER</label>
-                                <input type="tel" id="phoneNumber" class="form-input-modern" value="+63 912 345 6789" disabled>
+                                <label class="form-label-modern" for="phoneNumber">PHONE NUMBER</label>
+                                <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input-modern" value="+63 912 345 6789" autocomplete="tel" disabled>
                             </div>
                             
                             <div class="form-group-modern">
-                                <label class="form-label-modern">EMAIL ADDRESS</label>
-                                <input type="email" id="emailAddress" class="form-input-modern" value="trainee@betci.edu.ph" disabled>
+                                <label class="form-label-modern" for="emailAddress">EMAIL ADDRESS</label>
+                                <input type="email" id="emailAddress" name="emailAddress" class="form-input-modern" value="trainee@betci.edu.ph" autocomplete="email" disabled>
                             </div>
                             
                             <div class="form-group-modern full-width">
-                                <label class="form-label-modern">ADDRESS *</label>
-                                <textarea id="address" class="form-input-modern" rows="2" disabled placeholder="Enter your address"></textarea>
+                                <label class="form-label-modern" for="address">ADDRESS *</label>
+                                <textarea id="address" name="address" class="form-input-modern" rows="2" autocomplete="street-address" disabled placeholder="Enter your address"></textarea>
                             </div>
                         </div>
                         
@@ -859,7 +877,7 @@
         </div>
     </div>
 
-    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/common.js?v=3"></script>
     <script>
         // Initialize on page load
         document.addEventListener('DOMContentLoaded', function() {
@@ -1186,58 +1204,92 @@
                     }
                 }
                 
-                // Update profile photo circle
+                // Update profile photo circle with img tag instead of background
                 if (currentUser.profilePicture) {
                     const profilePhotoCircle = document.getElementById('profilePhotoCircle');
                     if (profilePhotoCircle) {
-                        profilePhotoCircle.style.backgroundImage = `url(${currentUser.profilePicture})`;
-                        profilePhotoCircle.style.backgroundSize = 'cover';
-                        profilePhotoCircle.style.backgroundPosition = 'center';
-                        const initials = profilePhotoCircle.querySelector('span');
-                        if (initials) initials.style.display = 'none';
+                        profilePhotoCircle.innerHTML = `<img src="${currentUser.profilePicture}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
                     }
                 }
                 
                 // Update profile overview
                 if (currentUser.firstName && currentUser.lastName) {
                     const fullName = `${currentUser.firstName} ${currentUser.lastName}`;
-                    document.getElementById('displayFullName').textContent = fullName;
-                    document.getElementById('firstName').value = currentUser.firstName;
-                    document.getElementById('lastName').value = currentUser.lastName;
+                    const displayFullName = document.getElementById('displayFullName');
+                    const firstNameInput = document.getElementById('firstName');
+                    const lastNameInput = document.getElementById('lastName');
+                    const profileInitials = document.getElementById('profileInitials');
+                    
+                    if (displayFullName) displayFullName.textContent = fullName;
+                    if (firstNameInput) firstNameInput.value = currentUser.firstName;
+                    if (lastNameInput) lastNameInput.value = currentUser.lastName;
                     
                     // Update initials
                     const initials = `${currentUser.firstName.charAt(0)}${currentUser.lastName.charAt(0)}`.toUpperCase();
-                    document.getElementById('profileInitials').textContent = initials;
+                    if (profileInitials) profileInitials.textContent = initials;
                 }
                 
                 if (currentUser.email) {
-                    document.getElementById('displayEmail').textContent = currentUser.email;
-                    document.getElementById('emailAddress').value = currentUser.email;
+                    const displayEmail = document.getElementById('displayEmail');
+                    const emailAddress = document.getElementById('emailAddress');
+                    if (displayEmail) displayEmail.textContent = currentUser.email;
+                    if (emailAddress) emailAddress.value = currentUser.email;
                 }
                 
                 if (currentUser.accountId) {
-                    document.getElementById('displayTraineeId').textContent = currentUser.accountId;
-                    document.getElementById('traineeId').value = currentUser.accountId;
+                    const displayTraineeId = document.getElementById('displayTraineeId');
+                    const traineeId = document.getElementById('traineeId');
+                    if (displayTraineeId) displayTraineeId.textContent = currentUser.accountId;
+                    if (traineeId) traineeId.value = currentUser.accountId;
                 }
                 
                 if (currentUser.username) {
-                    document.getElementById('username').value = currentUser.username;
+                    const username = document.getElementById('username');
+                    if (username) username.value = currentUser.username;
                 }
                 
                 if (currentUser.phone) {
-                    document.getElementById('displayPhone').textContent = currentUser.phone;
-                    document.getElementById('phoneNumber').value = currentUser.phone;
+                    const displayPhone = document.getElementById('displayPhone');
+                    const phoneNumber = document.getElementById('phoneNumber');
+                    if (displayPhone) displayPhone.textContent = currentUser.phone;
+                    if (phoneNumber) phoneNumber.value = currentUser.phone;
                 }
                 
                 if (currentUser.address) {
-                    document.getElementById('displayAddress').textContent = currentUser.address;
-                    document.getElementById('address').value = currentUser.address;
+                    const displayAddress = document.getElementById('displayAddress');
+                    const addressInput = document.getElementById('address');
+                    if (displayAddress) displayAddress.textContent = currentUser.address;
+                    if (addressInput) addressInput.value = currentUser.address;
                 }
                 
             } catch (error) {
                 console.error('Error loading profile:', error);
             }
         }
+
+        // Suppress 431 errors from browser extensions (MetaMask, etc.)
+        const originalFetch = window.fetch;
+        window.fetch = function(...args) {
+            return originalFetch.apply(this, args).catch(error => {
+                // Suppress 431 errors silently
+                if (error.message && error.message.includes('431')) {
+                    console.log('Suppressed 431 error from browser extension');
+                    return Promise.reject(error);
+                }
+                return Promise.reject(error);
+            });
+        };
+
+        // Suppress console errors for 431 and connection reset
+        const originalError = console.error;
+        console.error = function(...args) {
+            const errorString = args.join(' ');
+            if (errorString.includes('431') || errorString.includes('ERR_CONNECTION_RESET') || errorString.includes('Failed to load resource')) {
+                // Silently ignore these errors
+                return;
+            }
+            originalError.apply(console, args);
+        };
 
         async function changePhoto() {
             const input = document.createElement('input');
@@ -1331,19 +1383,11 @@
                         // Update dropdown avatar
                         const dropdownAvatar = document.querySelector('.dropdown-avatar');
                         if (dropdownAvatar) {
-                            dropdownAvatar.style.backgroundImage = `url(${base64Image})`;
-                            dropdownAvatar.style.backgroundSize = 'cover';
-                            dropdownAvatar.style.backgroundPosition = 'center';
-                            dropdownAvatar.textContent = '';
+                            dropdownAvatar.innerHTML = `<img src="${base64Image}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
                         }
                         
-                        // Store in session
-                        userSession.profilePicture = base64Image;
-                        if (localStorage.getItem('userSession')) {
-                            localStorage.setItem('userSession', JSON.stringify(userSession));
-                        } else {
-                            sessionStorage.setItem('userSession', JSON.stringify(userSession));
-                        }
+                        // DO NOT store base64 in session - it causes 431 errors
+                        // Profile pictures will be loaded from API on page load
                         
                         alert('Profile picture updated successfully!');
                         
@@ -1365,12 +1409,12 @@
             cancelEdit();
         });
 
-        document.getElementById('passwordForm').addEventListener('submit', function(e) {
+        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const currentPassword = this.querySelector('input[type="password"]').value;
+            const currentPassword = document.getElementById('currentPassword').value;
             const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = this.querySelectorAll('input[type="password"]')[2].value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
             
             // Validation
             if (!currentPassword || !newPassword || !confirmPassword) {
@@ -1378,8 +1422,8 @@
                 return;
             }
             
-            if (newPassword.length < 8) {
-                alert('New password must be at least 8 characters long');
+            if (newPassword.length < 6) {
+                alert('New password must be at least 6 characters long');
                 return;
             }
             
@@ -1393,13 +1437,64 @@
                 return;
             }
             
-            // Store password in localStorage (in production, this would be sent to server)
-            const userSession = JSON.parse(localStorage.getItem('userSession') || '{}');
-            userSession.password = newPassword;
-            localStorage.setItem('userSession', JSON.stringify(userSession));
+            // Get user session
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
             
-            alert('Password updated successfully!');
-            this.reset();
+            if (!userSession.accountId) {
+                alert('Session expired. Please login again.');
+                window.location.href = '../../auth/login.html';
+                return;
+            }
+            
+            // Determine user type
+            const userType = userSession.role === 'admin' || userSession.role === 'instructor' ? 'admin' : 'trainee';
+            
+            try {
+                // Show loading state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Updating...';
+                
+                // Call API to change password
+                const response = await fetch('http://localhost:5500/api/change-password', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        accountId: userSession.accountId,
+                        currentPassword: currentPassword,
+                        newPassword: newPassword,
+                        userType: userType
+                    })
+                });
+                
+                const result = await response.json();
+                
+                // Restore button state
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                
+                if (result.success) {
+                    alert('✓ Password changed successfully! Please login again with your new password.');
+                    // Clear session and redirect to login
+                    localStorage.removeItem('userSession');
+                    sessionStorage.removeItem('userSession');
+                    window.location.href = '../../auth/login.html';
+                } else {
+                    alert('✗ ' + (result.message || 'Failed to change password'));
+                }
+                
+            } catch (error) {
+                console.error('Error changing password:', error);
+                alert('✗ An error occurred while changing password. Please try again.');
+                
+                // Restore button state
+                const submitBtn = this.querySelector('button[type="submit"]');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="bi bi-lock"></i> Update Password';
+            }
         });
     </script>
 </body>

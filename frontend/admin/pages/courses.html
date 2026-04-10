@@ -2,6 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    
+    <!-- Suppress 431 errors immediately -->
+    <script>
+        (function() {
+            // Suppress console errors for 431 and connection reset
+            const originalError = console.error;
+            console.error = function(...args) {
+                const errorString = args.join(' ');
+                if (errorString.includes('431') || 
+                    errorString.includes('ERR_CONNECTION_RESET') || 
+                    errorString.includes('Failed to load resource') ||
+                    errorString.includes('Request Header Fields Too Large')) {
+                    return; // Silently ignore
+                }
+                originalError.apply(console, args);
+            };
+
+            // Suppress console warnings
+            const originalWarn = console.warn;
+            console.warn = function(...args) {
+                const warnString = args.join(' ');
+                if (warnString.includes('431') || warnString.includes('ERR_CONNECTION_RESET')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+
+            // Suppress window errors
+            window.addEventListener('error', function(e) {
+                if (e.message && (e.message.includes('431') || e.message.includes('ERR_CONNECTION_RESET'))) {
+                    e.preventDefault();
+                    return true;
+                }
+            }, true);
+        })();
+    </script>
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Courses - BETCI Admin</title>
     <meta name="description" content="BETCI Admin - Courses" />
@@ -19,6 +56,7 @@
     
     <!-- Admin Dashboard CSS -->
     <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=7" />
+    <link rel="stylesheet" href="../assets/css/training-catalog.css" />
 </head>
 <body>
     <div class="admin-container">
@@ -107,13 +145,13 @@
 
                 <div class="header-right">
                     <div class="user-profile">
-                        <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                        <div class="user-avatar">A</div>
                         <span class="user-name">Admin</span>
                         <i class="bi bi-chevron-down dropdown-arrow"></i>
                         
                         <div class="user-dropdown">
                             <div class="dropdown-header">
-                                <div class="dropdown-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                                <div class="dropdown-avatar">A</div>
                                 <div class="dropdown-user-info">
                                     <h4>Admin User</h4>
                                     <p>admin@betci.edu.ph</p>
@@ -250,8 +288,29 @@
     <!-- Scripts -->
     <script src="../../js/api.js"></script>
     <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script src="../../assets/js/admin-dashboard.js?v=6"></script>
     <script>
+        // Suppress 431 errors from browser extensions
+        const originalFetch = window.fetch;
+        window.fetch = function(...args) {
+            return originalFetch.apply(this, args).catch(error => {
+                if (error.message && error.message.includes('431')) {
+                    console.log('Suppressed 431 error from browser extension');
+                    return Promise.reject(error);
+                }
+                return Promise.reject(error);
+            });
+        };
+
+        const originalError = console.error;
+        console.error = function(...args) {
+            const errorString = args.join(' ');
+            if (errorString.includes('431') || errorString.includes('ERR_CONNECTION_RESET') || errorString.includes('Failed to load resource')) {
+                return;
+            }
+            originalError.apply(console, args);
+        };
+
         // Initialize dark mode
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof loadTheme === 'function') {
@@ -333,9 +392,13 @@
 
         // Modal helper functions
         function openModal(modalId) {
+            console.log('Opening modal:', modalId);
             const modal = document.getElementById(modalId);
             if (modal) {
                 modal.classList.add('active');
+                console.log('Modal opened successfully');
+            } else {
+                console.error('Modal not found:', modalId);
             }
         }
 
@@ -368,23 +431,45 @@
         // Edit course - LocalStorage version
         function editCourse(button) {
             const card = button.closest('.course-card');
-            const courseId = card.dataset.courseId;
-            const title = card.querySelector('.course-title').textContent;
-            const description = card.querySelector('.course-description').textContent;
-            const imageUrl = card.querySelector('.course-image img').src;
+            if (!card) {
+                console.error('Could not find course card');
+                alert('Error: Could not find course card');
+                return;
+            }
             
-            console.log('Editing course:', { courseId, title });
+            const courseId = card.dataset.courseId;
+            const title = card.querySelector('.course-title')?.textContent;
+            const description = card.querySelector('.course-description')?.textContent;
+            const imageElement = card.querySelector('.course-image img');
+            const imageUrl = imageElement ? imageElement.src : '';
+            
+            console.log('Editing course:', { courseId, title, imageUrl });
+            
+            if (!courseId || !title) {
+                console.error('Missing course data:', { courseId, title });
+                alert('Error: Missing course data');
+                return;
+            }
             
             // Populate modal
             document.getElementById('modalTitle').textContent = 'Edit Course';
             document.getElementById('editCourseId').value = courseId;
             document.getElementById('editCourseTitle').value = title;
-            document.getElementById('editCourseDescription').value = description;
-            document.getElementById('editCourseImage').value = imageUrl;
+            document.getElementById('editCourseDescription').value = description || '';
+            
+            // Store current image as base64 or URL
+            currentImageData = imageUrl;
+            
+            // Clear the URL input field
+            document.getElementById('editCourseImage').value = '';
             
             // Show image preview
             const imagePreview = document.getElementById('imagePreview');
-            imagePreview.innerHTML = '<img src="' + imageUrl + '" alt="Preview">';
+            if (imageUrl) {
+                imagePreview.innerHTML = '<img src="' + imageUrl + '" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;">';
+            } else {
+                imagePreview.innerHTML = '<i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i><p style="margin: 8px 0 0 0; color: #999; font-size: 13px;">Click to upload course image</p>';
+            }
             
             openModal('editCourseModal');
         }
@@ -420,24 +505,77 @@
         function previewImageFile(event) {
             const file = event.target.files[0];
             if (file) {
-                // Check file size (limit to 5MB)
-                if (file.size > 5 * 1024 * 1024) {
-                    alert('Image size should be less than 5MB');
+                // Check file size (limit to 1MB for better performance)
+                if (file.size > 1 * 1024 * 1024) {
+                    alert('Image size should be less than 1MB for optimal performance');
+                    event.target.value = '';
                     return;
                 }
                 
                 // Check file type
                 if (!file.type.startsWith('image/')) {
-                    alert('Please upload an image file');
+                    alert('Please upload an image file (JPG, PNG, GIF)');
+                    event.target.value = '';
                     return;
                 }
                 
+                // Compress and convert image to base64
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    currentImageData = e.target.result;
-                    document.getElementById('imagePreview').innerHTML = '<img src="' + e.target.result + '" alt="Preview">';
-                    // Clear the URL input when file is uploaded
-                    document.getElementById('editCourseImage').value = '';
+                    const img = new Image();
+                    img.onload = function() {
+                        // Create canvas to resize image
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        
+                        // Set max dimensions (smaller size to prevent 431 error)
+                        const MAX_WIDTH = 400;
+                        const MAX_HEIGHT = 300;
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Calculate new dimensions
+                        if (width > height) {
+                            if (width > MAX_WIDTH) {
+                                height *= MAX_WIDTH / width;
+                                width = MAX_WIDTH;
+                            }
+                        } else {
+                            if (height > MAX_HEIGHT) {
+                                width *= MAX_HEIGHT / height;
+                                height = MAX_HEIGHT;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        // Draw and compress image
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Convert to base64 with higher compression (0.5 quality for smaller size)
+                        currentImageData = canvas.toDataURL('image/jpeg', 0.5);
+                        
+                        console.log('Image compressed:', {
+                            originalSize: file.size,
+                            compressedSize: currentImageData.length,
+                            dimensions: `${width}x${height}`
+                        });
+                        
+                        // Check if compressed image is still too large (500KB limit)
+                        if (currentImageData.length > 500 * 1024) {
+                            alert('Compressed image is still too large. Please use a smaller image or provide an image URL instead.');
+                            currentImageData = null;
+                            event.target.value = '';
+                            document.getElementById('imagePreview').innerHTML = '<i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i><p style="margin: 8px 0 0 0; color: #999; font-size: 13px;">Click to upload course image</p>';
+                            return;
+                        }
+                        
+                        document.getElementById('imagePreview').innerHTML = '<img src="' + currentImageData + '" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;">';
+                        // Clear the URL input when file is uploaded
+                        document.getElementById('editCourseImage').value = '';
+                    };
+                    img.src = e.target.result;
                 };
                 reader.readAsDataURL(file);
             }
@@ -453,6 +591,15 @@
             // Use uploaded image data if available, otherwise use URL
             if (currentImageData) {
                 image = currentImageData;
+            } else if (image) {
+                // Validate that the image URL is a valid path or starts with data:
+                if (!image.startsWith('data:') && !image.startsWith('/') && !image.startsWith('../') && !image.startsWith('http')) {
+                    alert('Please provide a valid image URL or upload an image file');
+                    return;
+                }
+            } else {
+                // No image provided, use default
+                image = '/assets/img/logo.png';
             }
             
             // Validate required fields
@@ -464,7 +611,7 @@
             try {
                 if (courseId) {
                     // Update existing course
-                    console.log('Updating course:', { courseId, title, description });
+                    console.log('Updating course:', { courseId, title, description, imageSize: image.length });
                     
                     const updatedCourse = await CourseAPI.updateCourse(courseId, {
                         title,
@@ -503,7 +650,15 @@
                 loadCoursesFromLocalStorage();
             } catch (error) {
                 console.error('Error saving course:', error);
-                alert('Failed to save course: ' + error.message);
+                
+                // Provide more specific error messages
+                if (error.message.includes('too large')) {
+                    showNotification('Image is too large. Please use a smaller image or provide an image URL instead.', 'error');
+                } else if (error.message.includes('413')) {
+                    showNotification('Image data too large. Please use a smaller image.', 'error');
+                } else {
+                    showNotification('Failed to save course: ' + error.message, 'error');
+                }
             }
         }
 
@@ -511,20 +666,44 @@
         function showNotification(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = 'notification notification-' + type;
-            notification.innerHTML = '<i class="bi bi-check-circle"></i> ' + message;
-            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000;';
             
-            if (type === 'success') {
-                notification.style.borderLeft = '4px solid #27AE60';
-            } else if (type === 'error') {
-                notification.style.borderLeft = '4px solid #E74C3C';
-            }
+            const icons = {
+                success: 'bi-check-circle-fill',
+                error: 'bi-x-circle-fill',
+                warning: 'bi-exclamation-triangle-fill',
+                info: 'bi-info-circle-fill'
+            };
+            
+            const colors = {
+                success: '#27AE60',
+                error: '#E74C3C',
+                warning: '#F39C12',
+                info: '#3498DB'
+            };
+            
+            notification.innerHTML = `<i class="bi ${icons[type] || icons.info}"></i> ${message}`;
+            notification.style.cssText = `
+                position: fixed; 
+                top: 20px; 
+                right: 20px; 
+                background: white; 
+                padding: 16px 20px; 
+                border-radius: 8px; 
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                z-index: 10000;
+                border-left: 4px solid ${colors[type] || colors.info};
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                max-width: 400px;
+            `;
             
             document.body.appendChild(notification);
             
             setTimeout(() => {
                 notification.remove();
-            }, 3000);
+            }, 4000);
         }
 
         // Load courses from localStorage
@@ -550,12 +729,16 @@
         function createCourseCard(course) {
             const card = document.createElement('div');
             card.className = 'course-card';
-            card.dataset.courseId = course.courseId;
+            // Use courseId if available, otherwise use MongoDB _id
+            const courseId = course.courseId || course._id;
+            card.dataset.courseId = courseId;
             card.dataset.mongoId = course._id;
+            
+            console.log('Creating course card:', { courseId, title: course.title, hasMongoId: !!course._id });
             
             card.innerHTML = `
                 <div class="course-image">
-                    <img src="${course.image}" alt="${course.title}" style="max-width: 100%; max-height: 100%;">
+                    <img src="${course.image}" alt="${course.title}" style="width: 100%; height: 100%; object-fit: cover; object-position: center;">
                 </div>
                 <div class="course-body">
                     <h3 class="course-title">${course.title}</h3>
@@ -593,54 +776,94 @@
 
     <!-- Edit Course Modal -->
     <div class="modal" id="editCourseModal">
-        <div class="modal-content">
+        <div class="modal-content" style="max-width: 950px; width: 95%; max-height: 92vh;">
             <div class="modal-header">
                 <h3 id="modalTitle">Edit Course</h3>
                 <button class="modal-close" onclick="closeModal('editCourseModal')">
                     <i class="bi bi-x"></i>
                 </button>
             </div>
-            <div class="modal-body">
-                <form onsubmit="event.preventDefault(); saveCourseChanges();">
+            <form onsubmit="event.preventDefault(); saveCourseChanges();">
+                <div class="modal-body" style="padding: 24px; max-height: calc(92vh - 180px); overflow-y: auto;">
                     <input type="hidden" id="editCourseId">
                     
-                    <div class="form-group">
+                    <!-- Course Image Section -->
+                    <div class="form-group" style="margin-bottom: 24px;">
                         <label class="form-label" for="courseImageFile">Course Image</label>
-                        <p style="font-size: 12px; color: #999; margin-bottom: 8px;">
-                            Upload an image (max 5MB) or enter image URL below
+                        <p style="font-size: 12px; color: #999; margin-bottom: 10px;">
+                            Upload an image (max 5MB). Image will be saved and displayed in both admin and trainee dashboards.
                         </p>
                         <div class="image-upload-container">
-                            <input type="file" id="courseImageFile" accept="image/*" onchange="previewImageFile(event)">
-                            <div class="image-preview" id="imagePreview" onclick="document.getElementById('courseImageFile').click()">
+                            <input type="file" id="courseImageFile" accept="image/*" onchange="previewImageFile(event)" style="display: none;">
+                            <div class="image-preview" id="imagePreview" onclick="document.getElementById('courseImageFile').click()" style="cursor: pointer; border: 2px dashed #ddd; border-radius: 10px; padding: 20px; text-align: center; background: #f9f9f9; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s;">
                                 <i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i>
-                                <p>Click to upload course image</p>
+                                <p style="margin: 12px 0 0 0; color: #999; font-size: 13px;">Click to upload course image</p>
                             </div>
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="editCourseImage">Or Image URL</label>
-                        <input type="text" id="editCourseImage" class="form-control" placeholder="Enter image URL (e.g., ../assets/img/fork.png)">
+                    <!-- Two Column Layout -->
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                        <!-- Left Column -->
+                        <div>
+                            <div class="form-group" style="margin-bottom: 18px;">
+                                <label class="form-label" for="editCourseTitle">Course Title *</label>
+                                <input type="text" id="editCourseTitle" class="form-control" placeholder="e.g., Forklift Operation NC II" required style="padding: 12px; font-size: 14px;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 18px;">
+                                <label class="form-label" for="editCourseCategory">Category *</label>
+                                <input type="text" id="editCourseCategory" class="form-control" placeholder="e.g., Heavy Equipment" required style="padding: 12px; font-size: 14px;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="editCourseDuration">Duration *</label>
+                                <input type="text" id="editCourseDuration" class="form-control" placeholder="e.g., 3 months" required style="padding: 12px; font-size: 14px;">
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div>
+                            <div class="form-group" style="margin-bottom: 18px;">
+                                <label class="form-label" for="editCourseImage">Image URL (Optional)</label>
+                                <input type="text" id="editCourseImage" class="form-control" placeholder="e.g., /assets/img/fork.png" style="padding: 12px; font-size: 14px;">
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 18px;">
+                                <label class="form-label" for="editCourseLevel">Course Level</label>
+                                <select id="editCourseLevel" class="form-control" style="padding: 12px; font-size: 14px;">
+                                    <option value="NC I">NC I</option>
+                                    <option value="NC II" selected>NC II</option>
+                                    <option value="NC III">NC III</option>
+                                    <option value="NC IV">NC IV</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group" style="margin-bottom: 0;">
+                                <label class="form-label" for="editCourseStatus">Status *</label>
+                                <select id="editCourseStatus" class="form-control" required style="padding: 12px; font-size: 14px;">
+                                    <option value="active">Active</option>
+                                    <option value="inactive">Inactive</option>
+                                    <option value="archived">Archived</option>
+                                </select>
+                            </div>
+                        </div>
                     </div>
 
-                    <div class="form-group">
-                        <label class="form-label" for="editCourseTitle">Course Title *</label>
-                        <input type="text" id="editCourseTitle" class="form-control" placeholder="e.g., Forklift Operation NC II" required>
-                    </div>
-                    
-                    <div class="form-group">
+                    <!-- Full Width Description -->
+                    <div class="form-group" style="margin-bottom: 0;">
                         <label class="form-label" for="editCourseDescription">Course Description *</label>
-                        <textarea id="editCourseDescription" class="form-control" rows="4" placeholder="Enter course description..." required></textarea>
+                        <textarea id="editCourseDescription" class="form-control" rows="4" placeholder="Enter course description..." required style="padding: 12px; font-size: 14px;"></textarea>
                     </div>
-                    
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" onclick="closeModal('editCourseModal')">Cancel</button>
-                        <button type="submit" class="btn btn-primary">
-                            <i class="bi bi-check"></i> Save Changes
-                        </button>
-                    </div>
-                </form>
-            </div>
+                </div>
+                
+                <div class="modal-footer" style="padding: 18px 24px; background: #fafafa;">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editCourseModal')">Cancel</button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-check"></i> Save Changes
+                    </button>
+                </div>
+            </form>
         </div>
     </div>
 

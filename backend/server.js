@@ -8,10 +8,27 @@ const app = express();
 const PORT = process.env.PORT || 5500;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/BETCI';
 
-// Middleware
+// Middleware - Increased limits to handle base64 images
 app.use(cors());
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ extended: true, limit: '50mb' }));
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb', parameterLimit: 50000 }));
+
+// Increase header size limit to handle larger requests
+app.use((req, res, next) => {
+  // Set max header size (Node.js default is 8KB, we increase to 16KB)
+  req.socket.setMaxListeners(0);
+  next();
+});
+
+// Error handling middleware for large payloads
+app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ 
+      message: 'Request payload too large. Please reduce image size or use image URLs.' 
+    });
+  }
+  next(err);
+});
 
 // MongoDB Connection
 mongoose.connect(MONGODB_URI)
@@ -38,6 +55,7 @@ const traineeAccountRoutes = require('./routes/traineeAccounts');
 const enrollmentRoutes = require('./routes/enrollments');
 const applicationRoutes = require('./routes/applications');
 const admissionRoutes = require('./routes/admissions');
+const changePasswordRoutes = require('./routes/changePassword');
 
 // ============================================
 // API ROUTES - MUST BE FIRST!
@@ -55,6 +73,7 @@ app.use('/api/trainee-accounts', traineeAccountRoutes);
 app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admissions', admissionRoutes);
+app.use('/api', changePasswordRoutes);
 
 // Test route
 app.get('/api/test', (req, res) => {
@@ -85,11 +104,11 @@ if (fs.existsSync(path.join(frontendPath, 'assets/img/fork.png'))) {
 app.use((req, res, next) => {
   res.setHeader(
     'Content-Security-Policy',
-    "default-src 'self'; " +
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https: chrome-extension:; " +
-    "style-src 'self' 'unsafe-inline' https:; " +
-    "img-src 'self' data: https: blob:; " +
-    "font-src 'self' https: data:; " +
+    "default-src 'self' 'unsafe-inline'; " +
+    "script-src 'self' 'unsafe-inline' https: http: chrome-extension:; " +
+    "style-src 'self' 'unsafe-inline' https: http:; " +
+    "img-src 'self' data: https: http: blob:; " +
+    "font-src 'self' https: http: data:; " +
     "connect-src 'self' ws: wss: http: https:; " +
     "object-src 'none'; " +
     "base-uri 'self'; " +

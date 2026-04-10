@@ -102,7 +102,7 @@
                     <li class="nav-item">
                         <a href="assessment.html" class="nav-link">
                             <i class="bi bi-clipboard-check"></i>
-                            <span>Assessment</span>
+                            <span>Forms</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -139,9 +139,9 @@
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile" id="userProfile">
-                        <div class="user-avatar">
-                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                        <div class="user-avatar">T</div>
+                        <span class="user-name">Trainee</span>
+                        <i class="bi bi-chevron-down dropdown-arrow"></i>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
                                     <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
                                     <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
@@ -265,23 +265,23 @@
                     </div>
                 </div>
 
-                <!-- Assessment Forms Section -->
+                <!-- Forms Section -->
                 <div style="margin-top: 48px;">
                     <h2 style="font-size: 14px; font-weight: 600; color: #E67E22; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 16px 0;">
-                        <i class="bi bi-clipboard-check" style="margin-right: 8px;"></i>ASSESSMENT FORMS
+                        <i class="bi bi-clipboard-check" style="margin-right: 8px;"></i>FORMS
                     </h2>
                     
-                    <!-- Assessment Tabs -->
+                    <!-- Form Tabs -->
                     <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
-                        <button class="assessment-tab-btn active" onclick="openAssessmentForm('registration')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                        <button class="form-tab-btn active" onclick="openForm('registration')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
                             <i class="bi bi-person-plus-fill"></i>
                             <span>Registration Form</span>
                         </button>
-                        <button class="assessment-tab-btn" onclick="openAssessmentForm('application')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                        <button class="form-tab-btn" onclick="openForm('application')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
                             <i class="bi bi-file-earmark-text-fill"></i>
                             <span>Application Form</span>
                         </button>
-                        <button class="assessment-tab-btn" onclick="openAssessmentForm('admission')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
+                        <button class="form-tab-btn" onclick="openForm('admission')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
                             <i class="bi bi-ticket-perforated-fill"></i>
                             <span>Admission Slip</span>
                         </button>
@@ -292,7 +292,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/common.js?v=3"></script>
     <script src="../assets/js/dashboard-fixed.js"></script>
     <script>
         // Ensure dark mode function is available
@@ -309,14 +309,13 @@
         // Load theme on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadTheme();
-            initUserProfile();
             loadAllCourses();
         });
 
         let allCourses = [];
 
-        // Open assessment form in popup
-        function openAssessmentForm(formType) {
+        // Open form in popup
+        function openForm(formType) {
             let url = '';
             let title = '';
             
@@ -389,8 +388,16 @@
                              onerror="this.style.display='none'">
                     </div>
                     <div style="padding: 20px;">
-                        <h3 style="font-size: 16px; font-weight: 600; color: #333; margin: 0 0 10px 0;">${course.title}</h3>
-                        <p style="font-size: 13px; color: #666; line-height: 1.5; margin: 0 0 16px 0; min-height: 60px;">${course.description}</p>
+                        <h3 style="font-size: 16px; font-weight: 600; color: #333; margin: 0 0 6px 0;">${course.title}</h3>
+                        <p style="font-size: 13px; color: #999; margin: 0 0 12px 0;">${course.level || 'NC II'}</p>
+                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; margin-bottom: 16px;">
+                            <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
+                                <i class="bi bi-people" style="color: #E67E22;"></i> ${course.enrolledCount || 0} Trainees
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
+                                <i class="bi bi-clock" style="color: #E67E22;"></i> ${course.duration || '4 weeks'}
+                            </span>
+                        </div>
                         <div style="display: flex; gap: 10px;">
                             <button onclick="viewCourse('${course.courseId}')" 
                                     style="flex: 1; padding: 10px; background: #E67E22; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;">
@@ -421,7 +428,7 @@
             // Show toast notification
             showEnrollmentToast();
             
-            // Redirect to assessment page after 3 seconds
+            // Redirect to forms page after 3 seconds
             setTimeout(() => {
                 window.location.href = 'assessment.html';
             }, 3000);
@@ -455,7 +462,7 @@
                 </div>
                 <div style="flex: 1;">
                     <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Enrollment Successful!</div>
-                    <div style="font-size: 13px; opacity: 0.9;">Redirecting to assessment forms...</div>
+                    <div style="font-size: 13px; opacity: 0.9;">Redirecting to forms...</div>
                 </div>
                 <div style="width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
             `;
@@ -597,28 +604,6 @@
                     </div>
                 `;
             }).join('');
-        }
-
-        // Initialize user profile dropdown
-        function initUserProfile() {
-            const userProfile = document.getElementById('userProfile');
-            const userDropdown = document.getElementById('userDropdown');
-            
-            if (userProfile) {
-                userProfile.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    userProfile.classList.toggle('active');
-                });
-            }
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.user-profile')) {
-                    if (userProfile) {
-                        userProfile.classList.remove('active');
-                    }
-                }
-            });
         }
 
         // Navigation functions

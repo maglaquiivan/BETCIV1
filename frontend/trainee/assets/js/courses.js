@@ -30,11 +30,52 @@ async function loadCoursesAndEnrollments() {
         const coursesResponse = await fetch(`${API_BASE_URL}/courses`);
         allCourses = await coursesResponse.json();
         
-        // Fetch user enrollments if logged in
-        if (currentUser && currentUser.userId) {
-            const enrollmentsResponse = await fetch(`${API_BASE_URL}/enrollments/user/${currentUser.userId}`);
-            userEnrollments = await enrollmentsResponse.json();
+        console.log('Loaded courses from database:', allCourses);
+        console.log('Course images:', allCourses.map(c => ({ title: c.title, image: c.image })));
+        
+        // Fetch user enrollments and records if logged in
+        if (currentUser && (currentUser.userId || currentUser.accountId || currentUser._id)) {
+            const userId = currentUser.userId || currentUser.accountId || currentUser._id;
+            
+            try {
+                // Fetch enrollments
+                const enrollmentsResponse = await fetch(`${API_BASE_URL}/enrollments/user/${userId}`);
+                if (enrollmentsResponse.ok) {
+                    userEnrollments = await enrollmentsResponse.json();
+                }
+            } catch (e) {
+                console.log('No enrollments found or error fetching enrollments:', e);
+            }
+            
+            try {
+                // Also fetch training records to check enrollment status
+                const recordsResponse = await fetch(`${API_BASE_URL}/records/user/${userId}`);
+                if (recordsResponse.ok) {
+                    const userRecords = await recordsResponse.json();
+                    console.log('User training records:', userRecords);
+                    
+                    // Add records to enrollments list if not already there
+                    userRecords.forEach(record => {
+                        const existingEnrollment = userEnrollments.find(e => e.courseId === record.courseId);
+                        if (!existingEnrollment) {
+                            // Convert record to enrollment format
+                            userEnrollments.push({
+                                courseId: record.courseId,
+                                userId: record.userId,
+                                status: record.status === 'Completed' ? 'completed' : 'active',
+                                progress: record.progress || 0,
+                                enrollmentDate: record.startDate,
+                                completionDate: record.completionDate
+                            });
+                        }
+                    });
+                }
+            } catch (e) {
+                console.log('No records found or error fetching records:', e);
+            }
         }
+        
+        console.log('Final user enrollments:', userEnrollments);
         
         // Display courses
         displayCourses(currentFilter);
@@ -100,52 +141,72 @@ function displayCourses(filter) {
 function createCourseCard(course, enrollment) {
     const card = document.createElement('div');
     card.className = 'course-card';
-    card.style.cssText = 'background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer;';
+    card.style.cssText = 'background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); transition: all 0.3s ease; cursor: pointer; border: 2px solid transparent;';
     
-    // Get course image path
-    const imagePath = course.image || course.imageUrl || '../assets/img/logo.png';
+    // Get course image - use the image field directly from database
+    let imagePath = course.image || '../../assets/img/logo.png';
     
-    // Determine enrollment status
+    // Handle different image path formats
+    if (imagePath.startsWith('data:image/')) {
+        // Base64 image - use as is
+        // Do nothing, imagePath is already correct
+    } else if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        // Full URL - use as is
+        // Do nothing, imagePath is already correct
+    } else if (imagePath.startsWith('/assets/')) {
+        // Absolute path from root - convert to relative for trainee pages
+        imagePath = '../..' + imagePath;
+    } else if (imagePath.startsWith('../assets/')) {
+        // Relative path from admin - convert to trainee path
+        imagePath = '../../assets/' + imagePath.substring(10);
+    } else if (imagePath.startsWith('../../assets/')) {
+        // Already correct for trainee pages
+        // Do nothing
+    } else {
+        // Unknown format - use default
+        imagePath = '../../assets/img/logo.png';
+    }
+    
+    // Determine enrollment status and button
     let enrollButton = '';
     if (enrollment) {
-        if (enrollment.status === 'completed') {
-            enrollButton = `
-                <button style="flex: 1; padding: 12px; background: #28a745; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: not-allowed; opacity: 0.7;" disabled>
-                    <i class="bi bi-check-circle"></i> Completed
-                </button>
-            `;
-        } else {
-            enrollButton = `
-                <button onclick="continueLearning('${course._id}', event)" style="flex: 1; padding: 12px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
-                    <i class="bi bi-play-circle"></i> Continue
-                </button>
-            `;
-        }
-    } else {
+        // Already enrolled - show "Enrolled" button (disabled)
         enrollButton = `
-            <button onclick="enrollInCourse('${course._id}', event)" style="flex: 1; padding: 12px; background: #e74c3c; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
-                <i class="bi bi-plus-circle"></i> Enroll
+            <button style="flex: 1; padding: 14px; background: #10b981; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: not-allowed; opacity: 0.9; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;" disabled>
+                <i class="bi bi-check-circle-fill"></i> Enrolled
+            </button>
+        `;
+    } else {
+        // Not enrolled - show "Enroll" button
+        enrollButton = `
+            <button onclick="enrollInCourse('${course._id}', event)" style="flex: 1; padding: 14px; background: #E67E22; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="bi bi-plus-circle-fill"></i> Enroll
             </button>
         `;
     }
     
     card.innerHTML = `
-        <div style="width: 100%; height: 200px; overflow: hidden; background: #f5f5f5; display: flex; align-items: center; justify-content: center;">
+        <div style="width: 100%; height: 220px; overflow: hidden; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); display: flex; align-items: center; justify-content: center; position: relative;">
             <img src="${imagePath}" alt="${course.title || course.courseName}" 
                  style="width: 100%; height: 100%; object-fit: cover; object-position: center;" 
-                 onerror="this.src='../assets/img/logo.png'">
+                 onerror="this.onerror=null; this.src='../../assets/img/logo.png';">
+            ${enrollment ? `
+                <div style="position: absolute; top: 12px; right: 12px; background: rgba(16, 185, 129, 0.95); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700; backdrop-filter: blur(10px);">
+                    <i class="bi bi-check-circle-fill"></i> Enrolled
+                </div>
+            ` : ''}
         </div>
-        <div style="padding: 20px;">
-            <h3 style="font-size: 18px; font-weight: 600; color: #333; margin: 0 0 12px 0; cursor: pointer;" 
+        <div style="padding: 24px;">
+            <h3 style="font-size: 19px; font-weight: 700; color: #2c3e50; margin: 0 0 12px 0; cursor: pointer; line-height: 1.3;" 
                 onclick="showCourseDetails('${course._id}')">
                 ${course.title || course.courseName}
             </h3>
-            <p style="font-size: 14px; color: #666; margin: 0 0 16px 0; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">
+            <p style="font-size: 14px; color: #64748b; margin: 0 0 20px 0; line-height: 1.6; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; min-height: 42px;">
                 ${course.description || 'No description available'}
             </p>
-            <div style="display: flex; gap: 10px; margin-top: 16px;">
-                <button onclick="showCourseDetails('${course._id}')" style="flex: 1; padding: 12px; background: white; color: #E67E22; border: 2px solid #E67E22; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s;">
-                    <i class="bi bi-eye"></i> View
+            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                <button onclick="showCourseDetails('${course._id}')" style="flex: 1; padding: 14px; background: white; color: #E67E22; border: 2px solid #E67E22; border-radius: 8px; font-weight: 700; cursor: pointer; transition: all 0.3s; font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="bi bi-eye-fill"></i> View
                 </button>
                 ${enrollButton}
             </div>
@@ -154,218 +215,61 @@ function createCourseCard(course, enrollment) {
     
     // Add hover effect
     card.addEventListener('mouseenter', function() {
-        this.style.transform = 'translateY(-4px)';
-        this.style.boxShadow = '0 8px 24px rgba(230, 126, 34, 0.2)';
+        this.style.transform = 'translateY(-8px)';
+        this.style.boxShadow = '0 12px 32px rgba(230, 126, 34, 0.25)';
+        this.style.borderColor = '#E67E22';
     });
     
     card.addEventListener('mouseleave', function() {
         this.style.transform = 'translateY(0)';
-        this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+        this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.08)';
+        this.style.borderColor = 'transparent';
     });
     
     return card;
 }
 
-// Enroll in course - Show enrollment form
-// When a trainee enrolls, this function:
-// 1. Shows an enrollment form to collect additional information
-// 2. Creates an enrollment record in the Enrollments collection
-// 3. Creates a record in the Records collection (visible in admin dashboard)
-// 4. Automatically creates/updates a trainee record in the Trainees collection
+// Enroll in course - Redirect to Assessment Center
+// When a trainee clicks enroll, they will be redirected to:
+// Assessment Center page where they can fill out the Application Form
 function enrollInCourse(courseId, event) {
     if (event) event.stopPropagation();
     
-    if (!currentUser || !currentUser.userId) {
+    if (!currentUser || !(currentUser.userId || currentUser.accountId || currentUser._id)) {
         alert('Please log in to enroll in courses');
+        window.location.href = '../../auth/login.html';
         return;
     }
     
     const course = allCourses.find(c => c._id === courseId);
     if (!course) return;
     
-    // Show enrollment form modal
-    showEnrollmentForm(course);
+    // Store course information in sessionStorage for the application form
+    sessionStorage.setItem('enrollmentCourse', JSON.stringify({
+        courseId: course._id,
+        courseName: course.title || course.courseName,
+        courseDescription: course.description
+    }));
+    
+    // Redirect to Assessment Center (which will show Application Form tab)
+    window.location.href = 'assessment.html';
 }
 
+// Note: The enrollment form modal functions below are deprecated
+// Enrollment now redirects to application-form.html and admission-slip.html
+// Keeping these functions commented for reference
+
+/*
 // Show enrollment form modal
 function showEnrollmentForm(course) {
-    const modal = document.createElement('div');
-    modal.className = 'course-modal enrollment-form-modal';
-    modal.id = 'enrollmentFormModal';
-    
-    modal.innerHTML = `
-        <div class="modal-overlay" onclick="closeModal('enrollmentFormModal')"></div>
-        <div class="modal-content enrollment-form-wide">
-            <button class="modal-close" onclick="closeModal('enrollmentFormModal')">
-                <i class="bi bi-x"></i>
-            </button>
-            <div class="modal-header">
-                <h2>Enrollment Form</h2>
-                <p style="color: #666; font-size: 14px; margin-top: 8px;">Complete this form to enroll in ${course.title || course.courseName}</p>
-            </div>
-            <div class="modal-body">
-                <form id="enrollmentForm" onsubmit="submitEnrollmentForm(event, '${course._id}', '${course.title || course.courseName}')">
-                    <div class="form-grid-two-columns">
-                        <div class="form-group">
-                            <label for="enrollFirstName">First Name <span style="color: red;">*</span></label>
-                            <input type="text" id="enrollFirstName" class="form-control" required 
-                                   value="${currentUser.firstName || ''}" placeholder="Enter your first name">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="enrollLastName">Last Name <span style="color: red;">*</span></label>
-                            <input type="text" id="enrollLastName" class="form-control" required 
-                                   value="${currentUser.lastName || ''}" placeholder="Enter your last name">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="enrollEmail">Email Address <span style="color: red;">*</span></label>
-                            <input type="email" id="enrollEmail" class="form-control" required 
-                                   value="${currentUser.email || ''}" placeholder="your.email@example.com">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="enrollPhone">Phone Number <span style="color: red;">*</span></label>
-                            <input type="tel" id="enrollPhone" class="form-control" required 
-                                   value="${currentUser.phone || ''}" placeholder="+63 XXX XXX XXXX">
-                        </div>
-                        
-                        <div class="form-group form-group-full">
-                            <label for="enrollAddress">Address <span style="color: red;">*</span></label>
-                            <textarea id="enrollAddress" class="form-control" required rows="2" 
-                                      placeholder="Enter your complete address">${currentUser.address || ''}</textarea>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="enrollDateOfBirth">Date of Birth <span style="color: red;">*</span></label>
-                            <input type="date" id="enrollDateOfBirth" class="form-control" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="enrollGender">Gender <span style="color: red;">*</span></label>
-                            <select id="enrollGender" class="form-control" required>
-                                <option value="">Select Gender</option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="enrollEducation">Highest Educational Attainment</label>
-                            <select id="enrollEducation" class="form-control">
-                                <option value="">Select Education Level</option>
-                                <option value="Elementary">Elementary</option>
-                                <option value="High School">High School</option>
-                                <option value="Senior High School">Senior High School</option>
-                                <option value="College">College</option>
-                                <option value="Vocational">Vocational</option>
-                            </select>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="enrollEmergencyContact">Emergency Contact Name</label>
-                            <input type="text" id="enrollEmergencyContact" class="form-control" 
-                                   placeholder="Full name of emergency contact">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label for="enrollEmergencyPhone">Emergency Contact Phone</label>
-                            <input type="tel" id="enrollEmergencyPhone" class="form-control" 
-                                   placeholder="+63 XXX XXX XXXX">
-                        </div>
-                    </div>
-                    
-                    <div class="modal-actions" style="margin-top: 24px;">
-                        <button type="submit" class="btn-primary" style="flex: 1;">
-                            <i class="bi bi-check-circle"></i> Submit Enrollment
-                        </button>
-                        <button type="button" class="btn-secondary" onclick="closeModal('enrollmentFormModal')" style="flex: 1;">
-                            Cancel
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    `;
-    
-    document.body.appendChild(modal);
-    setTimeout(() => modal.classList.add('active'), 10);
+    // ... old modal code ...
 }
 
 // Submit enrollment form
 async function submitEnrollmentForm(event, courseId, courseName) {
-    event.preventDefault();
-    
-    const formData = {
-        firstName: document.getElementById('enrollFirstName').value,
-        lastName: document.getElementById('enrollLastName').value,
-        email: document.getElementById('enrollEmail').value,
-        phone: document.getElementById('enrollPhone').value,
-        address: document.getElementById('enrollAddress').value,
-        dateOfBirth: document.getElementById('enrollDateOfBirth').value,
-        gender: document.getElementById('enrollGender').value,
-        education: document.getElementById('enrollEducation').value,
-        emergencyContact: {
-            name: document.getElementById('enrollEmergencyContact').value,
-            phone: document.getElementById('enrollEmergencyPhone').value
-        }
-    };
-    
-    try {
-        // 1. Create enrollment record WITH enrollee data
-        const enrollmentResponse = await fetch(`${API_BASE_URL}/enrollments`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                userId: currentUser.userId,
-                courseId: courseId,
-                courseName: courseName,
-                enrolleeData: formData  // Send complete form data to Enrollments collection
-            })
-        });
-        
-        if (!enrollmentResponse.ok) {
-            const error = await enrollmentResponse.json();
-            throw new Error(error.message || 'Failed to create enrollment');
-        }
-        
-        const newEnrollment = await enrollmentResponse.json();
-        userEnrollments.push(newEnrollment);
-        
-        // 2. Create record for admin dashboard (enrollee record)
-        const recordResponse = await fetch(`${API_BASE_URL}/records`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                userId: currentUser.userId,
-                courseId: courseId,
-                courseName: courseName,
-                status: 'In Progress',
-                progress: 0,
-                startDate: new Date(),
-                enrolleeData: formData
-            })
-        });
-        
-        if (!recordResponse.ok) {
-            console.warn('Failed to create record, but enrollment succeeded');
-        }
-        
-        // Close modal
-        closeModal('enrollmentFormModal');
-        
-        // Show success message
-        showSuccess(`Successfully enrolled in ${courseName}!`);
-        
-        // Refresh display
-        displayCourses(currentFilter);
-        
-    } catch (error) {
-        console.error('Enrollment error:', error);
-        showError(error.message || 'Failed to enroll in course');
-    }
+    // ... old submission code ...
 }
+*/
 
 // Continue learning (navigate to course content)
 function continueLearning(courseId, event) {
@@ -404,7 +308,29 @@ function showCourseDetails(courseId) {
         `;
     }
     
-    const imagePath = course.image || course.imageUrl || '/assets/img/logo.png';
+    // Get course image - use the image field directly from database
+    let imagePath = course.image || '../../assets/img/logo.png';
+    
+    // Handle different image path formats
+    if (imagePath.startsWith('data:image/')) {
+        // Base64 image - use as is
+        // Do nothing, imagePath is already correct
+    } else if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+        // Full URL - use as is
+        // Do nothing, imagePath is already correct
+    } else if (imagePath.startsWith('/assets/')) {
+        // Absolute path from root - convert to relative for trainee pages
+        imagePath = '../..' + imagePath;
+    } else if (imagePath.startsWith('../assets/')) {
+        // Relative path from admin - convert to trainee path
+        imagePath = '../../assets/' + imagePath.substring(10);
+    } else if (imagePath.startsWith('../../assets/')) {
+        // Already correct for trainee pages
+        // Do nothing
+    } else {
+        // Unknown format - use default
+        imagePath = '../../assets/img/logo.png';
+    }
     
     modal.innerHTML = `
         <div class="modal-overlay" onclick="closeModal('courseModal')"></div>
@@ -413,7 +339,7 @@ function showCourseDetails(courseId) {
                 <i class="bi bi-x"></i>
             </button>
             <div class="modal-header">
-                <img src="${imagePath}" alt="${course.title || course.courseName}" class="course-detail-image" onerror="this.src='/assets/img/logo.png'">
+                <img src="${imagePath}" alt="${course.title || course.courseName}" class="course-detail-image" onerror="this.onerror=null; this.src='../../assets/img/logo.png';">
                 <h2>${course.title || course.courseName}</h2>
             </div>
             <div class="modal-body">
@@ -444,11 +370,8 @@ function showCourseDetails(courseId) {
                 
                 <div class="modal-actions">
                     ${enrollment ? 
-                        (enrollment.status === 'completed' ? 
-                            '<button class="btn-primary" disabled><i class="bi bi-check-circle"></i> Completed</button>' :
-                            `<button class="btn-primary" onclick="continueLearning('${courseId}', event)"><i class="bi bi-play-circle"></i> Continue Learning</button>`
-                        ) :
-                        `<button class="btn-primary" onclick="enrollInCourse('${courseId}', event); closeModal('courseModal')"><i class="bi bi-plus-circle"></i> Enroll Now</button>`
+                        '<button class="btn-primary" disabled style="opacity: 0.9; cursor: not-allowed;"><i class="bi bi-check-circle-fill"></i> Enrolled</button>' :
+                        `<button class="btn-primary" onclick="enrollInCourse('${courseId}', event); closeModal('courseModal')"><i class="bi bi-plus-circle-fill"></i> Enroll Now</button>`
                     }
                     <button class="btn-secondary" onclick="closeModal('courseModal')">Close</button>
                 </div>

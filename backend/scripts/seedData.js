@@ -5,6 +5,8 @@ const Trainee = require('../models/Trainee');
 const Appointment = require('../models/Appointment');
 const Competency = require('../models/Competency');
 const Account = require('../models/Account');
+const AdminAccount = require('../models/AdminAccount');
+const TraineeAccount = require('../models/TraineeAccount');
 const Record = require('../models/Record');
 const Attendance = require('../models/Attendance');
 require('dotenv').config();
@@ -16,7 +18,7 @@ const defaultCourses = [
     courseId: 'forklift-operation',
     title: 'Forklift Operation NC II',
     description: 'Master forklift operation, safety protocols, and material handling techniques for industrial and warehouse environments.',
-    image: '../assets/img/fork.png',
+    image: '../../assets/img/fork.png',
     category: 'Heavy Equipment',
     duration: '3 months',
     status: 'active',
@@ -26,7 +28,7 @@ const defaultCourses = [
     courseId: 'bulldozer-operation',
     title: 'Bulldozer Operation NC II',
     description: 'Learn bulldozer operation, earthmoving techniques, and site preparation for construction and mining projects.',
-    image: '../assets/img/bulldozer.png',
+    image: '../../assets/img/bulldozer.png',
     category: 'Heavy Equipment',
     duration: '3 months',
     status: 'active',
@@ -36,7 +38,7 @@ const defaultCourses = [
     courseId: 'dump-truck-operation',
     title: 'Dump Truck Operation NC II',
     description: 'Professional training for rigid on-highway dump truck operation, hauling, and transportation safety.',
-    image: '../assets/img/dump truck.png',
+    image: '../../assets/img/dump truck.png',
     category: 'Heavy Equipment',
     duration: '2 months',
     status: 'available',
@@ -46,7 +48,7 @@ const defaultCourses = [
     courseId: 'hydraulic-excavator',
     title: 'Hydraulic Excavator NC II',
     description: 'Advanced excavator operation, digging techniques, and hydraulic system maintenance for construction sites.',
-    image: '../assets/img/hydraulic excavator.png',
+    image: '../../assets/img/hydraulic excavator.png',
     category: 'Heavy Equipment',
     duration: '4 months',
     status: 'completed',
@@ -56,7 +58,7 @@ const defaultCourses = [
     courseId: 'wheel-loader',
     title: 'Wheel Loader NC II',
     description: 'Comprehensive wheel loader training, material handling, and loading techniques for various applications.',
-    image: '../assets/img/logo.png',
+    image: '../../assets/img/logo.png',
     category: 'Heavy Equipment',
     duration: '3 months',
     status: 'available',
@@ -66,7 +68,7 @@ const defaultCourses = [
     courseId: 'backhoe-loader',
     title: 'Backhoe Loader NC II',
     description: 'Master backhoe loader operation, digging, trenching, and utility work for construction projects.',
-    image: '../assets/img/logo.png',
+    image: '../../assets/img/logo.png',
     category: 'Heavy Equipment',
     duration: '3 months',
     status: 'available',
@@ -107,6 +109,8 @@ async function seedDatabase() {
     await Appointment.deleteMany({});
     await Competency.deleteMany({});
     await Account.deleteMany({});
+    await AdminAccount.deleteMany({});
+    await TraineeAccount.deleteMany({});
     await Record.deleteMany({});
     await Attendance.deleteMany({});
     console.log('Cleared existing data');
@@ -131,9 +135,43 @@ async function seedDatabase() {
     await Competency.insertMany(defaultCompetencies);
     console.log('✓ Competencies seeded successfully (3 competencies)');
 
-    // Insert accounts
+    // Insert accounts (legacy)
     await Account.insertMany(defaultAccounts);
     console.log('✓ Accounts seeded successfully (3 accounts)');
+
+    // Insert admin accounts (new collection)
+    const adminAccounts = defaultAccounts.filter(acc => acc.role === 'admin' || acc.role === 'instructor' || acc.role === 'staff');
+    if (adminAccounts.length > 0) {
+      await AdminAccount.insertMany(adminAccounts.map(acc => ({
+        accountId: acc.accountId,
+        username: acc.username,
+        email: acc.email,
+        password: acc.password,
+        firstName: acc.firstName,
+        lastName: acc.lastName,
+        role: acc.role,
+        status: acc.status,
+        lastLogin: acc.lastLogin
+      })));
+      console.log(`✓ Admin accounts seeded successfully (${adminAccounts.length} accounts)`);
+    }
+
+    // Insert trainee accounts (new collection) - using default trainee data
+    const traineeAccount = {
+      accountId: 'ACC1774597634318',
+      username: 'trainee',
+      email: 'trainee@betci.com',
+      password: 'trainee123',
+      firstName: 'John',
+      lastName: 'Doe',
+      role: 'trainee',
+      status: 'active',
+      phone: '+63 912 345 6789',
+      address: '123 Main St, Manila',
+      dateOfBirth: new Date('1995-05-15')
+    };
+    await TraineeAccount.create(traineeAccount);
+    console.log('✓ Trainee accounts seeded successfully (1 account)');
 
     // Insert records
     await Record.insertMany(defaultRecords);
@@ -152,13 +190,15 @@ async function seedDatabase() {
     console.log('- trainees (5)');
     console.log('- appointments (4)');
     console.log('- competencies (3)');
-    console.log('- accounts (3)');
+    console.log('- accounts (3 - legacy)');
+    console.log('- adminaccounts (3 - new)');
+    console.log('- traineeaccounts (1 - new)');
     console.log('- records (3)');
     console.log('- attendances (4)');
     console.log('\nDefault login credentials:');
-    console.log('- Admin: admin@betci.com / admin123');
-    console.log('- Trainee: trainee@betci.com / trainee123');
-    console.log('- Instructor: instructor@betci.com / instructor123');
+    console.log('- Admin: admin@betci.com / admin123 (ACC001)');
+    console.log('- Trainee: trainee@betci.com / trainee123 (ACC1774597634318)');
+    console.log('- Instructor: instructor@betci.com / instructor123 (ACC002)');
     console.log('========================================\n');
     
     process.exit(0);

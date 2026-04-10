@@ -103,6 +103,115 @@
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
         }
 
+        .trainee-card {
+            background: var(--bg-white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border-color);
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .trainee-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(230, 126, 34, 0.25);
+            border-color: #E67E22;
+        }
+
+        .trainee-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #E67E22, #d35400);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 15px;
+            border: 3px solid #fff;
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+        }
+
+        .trainee-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .trainee-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .trainee-email {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+
+        .trainee-info {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .trainee-info-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 12px;
+            padding: 8px;
+            background: var(--bg-light);
+            border-radius: 6px;
+        }
+
+        .trainee-info-label {
+            color: #999;
+            font-weight: 600;
+        }
+
+        .trainee-info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .trainee-status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .trainee-status.active {
+            background: rgba(39, 174, 96, 0.1);
+            color: var(--success);
+        }
+
+        .trainee-status.inactive {
+            background: rgba(149, 165, 166, 0.1);
+            color: #95a5a6;
+        }
+
+        .trainee-status.suspended {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+
         .record-header {
             display: flex;
             justify-content: space-between;
@@ -547,6 +656,7 @@
 
         /* Dark Mode Support */
         body.dark-mode .record-card,
+        body.dark-mode .trainee-card,
         body.dark-mode .attendance-form-container,
         body.dark-mode .attendance-card {
             background: #1e1e1e;
@@ -554,17 +664,25 @@
         }
 
         body.dark-mode .record-title,
+        body.dark-mode .trainee-name,
         body.dark-mode .card-course,
         body.dark-mode .form-title {
             color: #ffffff;
         }
 
         body.dark-mode .detail-item,
+        body.dark-mode .trainee-info-item,
         body.dark-mode .card-detail,
         body.dark-mode .image-preview,
         body.dark-mode .upload-area {
             background: #2a2a2a;
             border-color: #3a3a3a;
+        }
+
+        body.dark-mode .trainee-email,
+        body.dark-mode .trainee-info-value,
+        body.dark-mode .detail-value {
+            color: #e0e0e0;
         }
 
         body.dark-mode .form-input,
@@ -743,7 +861,7 @@
                     <li class="nav-item">
                         <a href="assessment.html" class="nav-link">
                             <i class="bi bi-clipboard-check"></i>
-                            <span>Assessment</span>
+                            <span>Forms</span>
                         </a>
                     </li>
                     <li class="nav-item active">
@@ -780,9 +898,9 @@
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile" id="userProfile">
-                        <div class="user-avatar">
-                            <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <circle cx="20" cy="20" r="20" fill="#E67E22"/>
+                        <div class="user-avatar">T</div>
+                        <span class="user-name">Trainee</span>
+                        <i class="bi bi-chevron-down dropdown-arrow"></i>
                                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
                                     <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
                                     <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
@@ -857,6 +975,9 @@
                     <button class="tab-btn active" onclick="switchTab('records')">
                         <i class="bi bi-file-earmark-text"></i> Training Records
                     </button>
+                    <button class="tab-btn" onclick="switchTab('trainees')">
+                        <i class="bi bi-people-fill"></i> Trainees
+                    </button>
                     <button class="tab-btn" onclick="switchTab('attendance')" style="display: none;">
                         <i class="bi bi-calendar-check"></i> Attendance
                     </button>
@@ -866,6 +987,13 @@
                 <div id="recordsTab" class="tab-content">
                     <div class="records-grid" id="recordsList">
                         <!-- Records will be loaded here -->
+                    </div>
+                </div>
+
+                <!-- Trainees Tab -->
+                <div id="traineesTab" class="tab-content" style="display: none;">
+                    <div class="records-grid" id="traineesList">
+                        <!-- Trainees will be loaded here -->
                     </div>
                 </div>
 
@@ -879,7 +1007,7 @@
         </div>
     </div>
 
-    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/common.js?v=3"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadRecords();
@@ -887,88 +1015,239 @@
 
         function switchTab(tab) {
             const recordsTab = document.getElementById('recordsTab');
+            const traineesTab = document.getElementById('traineesTab');
             const attendanceTab = document.getElementById('attendanceTab');
             
-            // Add hiding class to current visible tab
+            // Hide all tabs
+            recordsTab.style.display = 'none';
+            traineesTab.style.display = 'none';
+            attendanceTab.style.display = 'none';
+            
+            // Show selected tab
             if (tab === 'records') {
-                attendanceTab.classList.add('hiding');
-                setTimeout(() => {
-                    attendanceTab.style.display = 'none';
-                    attendanceTab.classList.remove('hiding');
-                    recordsTab.style.display = 'block';
-                    recordsTab.classList.remove('hiding');
-                }, 300);
-            } else {
-                recordsTab.classList.add('hiding');
-                setTimeout(() => {
-                    recordsTab.style.display = 'none';
-                    recordsTab.classList.remove('hiding');
-                    attendanceTab.style.display = 'block';
-                    attendanceTab.classList.remove('hiding');
-                    loadAttendanceTab();
-                }, 300);
+                recordsTab.style.display = 'block';
+            } else if (tab === 'trainees') {
+                traineesTab.style.display = 'block';
+                loadTrainees();
+            } else if (tab === 'attendance') {
+                attendanceTab.style.display = 'block';
+                loadAttendanceTab();
             }
             
             // Update active button
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            if (tab === 'records') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
-            } else {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
-            }
+            event.target.classList.add('active');
         }
 
-        function loadRecords() {
-            const records = JSON.parse(localStorage.getItem('trainingRecords') || '[]');
+        async function loadRecords() {
             const recordsList = document.getElementById('recordsList');
+            
+            // Get user session
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            const userId = userSession.accountId || userSession._id;
 
-            if (records.length === 0) {
+            if (!userId) {
                 recordsList.innerHTML = `
                     <div class="empty-state">
-                        <i class="bi bi-inbox"></i>
-                        <p>No training records yet</p>
+                        <i class="bi bi-exclamation-circle"></i>
+                        <p>Please log in to view your training records</p>
                     </div>
                 `;
                 return;
             }
 
-            recordsList.innerHTML = records.map((record, index) => `
-                <div class="record-card">
-                    <div class="record-header">
-                        <div>
-                            <div class="record-title">${record.courseName}</div>
-                            <div class="record-date">${new Date(record.date).toLocaleDateString()}</div>
-                        </div>
-                        <span class="status-badge status-${record.status.toLowerCase()}">${record.status}</span>
-                    </div>
-                    <div class="record-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Duration</div>
-                            <div class="detail-value">${record.duration || 'N/A'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Score</div>
-                            <div class="detail-value">${record.score || 'N/A'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Instructor</div>
-                            <div class="detail-value">${record.instructor || 'N/A'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Certificate</div>
-                            <div class="detail-value">${record.certificateId || 'Pending'}</div>
-                        </div>
-                    </div>
-                    <div class="record-actions">
-                        <button class="btn-action btn-view" onclick="viewRecord(${index})">
-                            <i class="bi bi-eye"></i> View
-                        </button>
-                        <button class="btn-action btn-download" onclick="downloadRecord(${index})">
-                            <i class="bi bi-download"></i> Download
-                        </button>
-                    </div>
+            // Show loading state
+            recordsList.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-hourglass-split"></i>
+                    <p>Loading training records...</p>
                 </div>
-            `).join('');
+            `;
+
+            try {
+                const response = await fetch(`http://localhost:5500/api/records/user/${userId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch records');
+                }
+
+                const records = await response.json();
+                console.log('Fetched training records:', records);
+
+                if (records.length === 0) {
+                    recordsList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>No training records yet</p>
+                            <small>Enroll in a course to start your training journey!</small>
+                        </div>
+                    `;
+                    return;
+                }
+
+                recordsList.innerHTML = records.map((record) => {
+                    const startDate = new Date(record.startDate).toLocaleDateString();
+                    const completionDate = record.completionDate ? new Date(record.completionDate).toLocaleDateString() : 'In Progress';
+                    const statusClass = record.status.toLowerCase().replace(' ', '-');
+                    
+                    return `
+                        <div class="record-card">
+                            <div class="record-header">
+                                <div>
+                                    <div class="record-title">${record.courseName}</div>
+                                    <div class="record-date">Started: ${startDate}</div>
+                                </div>
+                                <span class="status-badge status-${statusClass}">${record.status}</span>
+                            </div>
+                            <div class="record-details">
+                                <div class="detail-item">
+                                    <div class="detail-label">Progress</div>
+                                    <div class="detail-value">${record.progress}%</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Completion Date</div>
+                                    <div class="detail-value">${completionDate}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Grade</div>
+                                    <div class="detail-value">${record.grade || 'Pending'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Certificate</div>
+                                    <div class="detail-value">${record.certificate || 'Pending'}</div>
+                                </div>
+                            </div>
+                            ${record.enrolleeData ? `
+                            <div class="record-details" style="margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--border-color);">
+                                <div class="detail-item">
+                                    <div class="detail-label">Email</div>
+                                    <div class="detail-value">${record.enrolleeData.email || 'N/A'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Phone</div>
+                                    <div class="detail-value">${record.enrolleeData.phone || 'N/A'}</div>
+                                </div>
+                                <div class="detail-item">
+                                    <div class="detail-label">Address</div>
+                                    <div class="detail-value">${record.enrolleeData.address || 'N/A'}</div>
+                                </div>
+                            </div>
+                            ` : ''}
+                            <div class="record-actions">
+                                <button class="btn-action btn-view" onclick="viewRecord('${record._id}')">
+                                    <i class="bi bi-eye"></i> View
+                                </button>
+                                ${record.certificate ? `
+                                <button class="btn-action btn-download" onclick="downloadCertificate('${record._id}')">
+                                    <i class="bi bi-download"></i> Download
+                                </button>
+                                ` : `
+                                <button class="btn-action btn-download" disabled style="opacity: 0.5; cursor: not-allowed;">
+                                    <i class="bi bi-download"></i> Download
+                                </button>
+                                `}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading training records:', error);
+                recordsList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <p>Failed to load training records</p>
+                        <small>Please try again later</small>
+                    </div>
+                `;
+            }
+        }
+
+        async function loadTrainees() {
+            const traineesList = document.getElementById('traineesList');
+            
+            // Show loading state
+            traineesList.innerHTML = `
+                <div class="empty-state">
+                    <i class="bi bi-hourglass-split"></i>
+                    <p>Loading trainees...</p>
+                </div>
+            `;
+
+            try {
+                const response = await fetch('http://localhost:5500/api/trainee-accounts');
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch trainees');
+                }
+
+                const trainees = await response.json();
+                console.log('Fetched trainees:', trainees);
+
+                if (trainees.length === 0) {
+                    traineesList.innerHTML = `
+                        <div class="empty-state">
+                            <i class="bi bi-inbox"></i>
+                            <p>No trainees found</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                traineesList.innerHTML = trainees.map((trainee) => {
+                    // Get initials for avatar
+                    const initials = `${trainee.firstName?.charAt(0) || ''}${trainee.lastName?.charAt(0) || ''}`.toUpperCase();
+                    const joinDate = trainee.createdAt ? new Date(trainee.createdAt).toLocaleDateString() : 'N/A';
+                    const lastLogin = trainee.lastLogin ? new Date(trainee.lastLogin).toLocaleDateString() : 'Never';
+                    
+                    return `
+                        <div class="trainee-card">
+                            <div class="trainee-avatar">
+                                ${trainee.profilePicture ? 
+                                    `<img src="${trainee.profilePicture}" alt="${trainee.firstName} ${trainee.lastName}">` : 
+                                    initials
+                                }
+                            </div>
+                            <div class="trainee-name">${trainee.firstName} ${trainee.lastName}</div>
+                            <div class="trainee-email">${trainee.email}</div>
+                            <span class="trainee-status ${trainee.status || 'active'}">${trainee.status || 'Active'}</span>
+                            
+                            <div class="trainee-info">
+                                <div class="trainee-info-item">
+                                    <span class="trainee-info-label"><i class="bi bi-person-badge"></i> Account ID</span>
+                                    <span class="trainee-info-value">${trainee.accountId}</span>
+                                </div>
+                                <div class="trainee-info-item">
+                                    <span class="trainee-info-label"><i class="bi bi-telephone"></i> Phone</span>
+                                    <span class="trainee-info-value">${trainee.phone || 'N/A'}</span>
+                                </div>
+                                <div class="trainee-info-item">
+                                    <span class="trainee-info-label"><i class="bi bi-geo-alt"></i> Address</span>
+                                    <span class="trainee-info-value">${trainee.address || 'N/A'}</span>
+                                </div>
+                                <div class="trainee-info-item">
+                                    <span class="trainee-info-label"><i class="bi bi-calendar-plus"></i> Joined</span>
+                                    <span class="trainee-info-value">${joinDate}</span>
+                                </div>
+                                <div class="trainee-info-item">
+                                    <span class="trainee-info-label"><i class="bi bi-clock-history"></i> Last Login</span>
+                                    <span class="trainee-info-value">${lastLogin}</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error('Error loading trainees:', error);
+                traineesList.innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-exclamation-triangle"></i>
+                        <p>Failed to load trainees</p>
+                        <small>Please try again later</small>
+                    </div>
+                `;
+            }
         }
 
         function loadAttendanceTab() {
@@ -1228,16 +1507,52 @@
             }
         }
 
-        function viewRecord(index) {
-            const records = JSON.parse(localStorage.getItem('trainingRecords') || '[]');
-            const record = records[index];
-            alert(`${record.courseName}\n\nStatus: ${record.status}\nScore: ${record.score || 'N/A'}`);
+        async function viewRecord(recordId) {
+            try {
+                const response = await fetch(`http://localhost:5500/api/records/${recordId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch record details');
+                }
+
+                const record = await response.json();
+                
+                const enrolleeInfo = record.enrolleeData ? `
+                    \n\nEnrollee Information:
+                    Name: ${record.enrolleeData.firstName || ''} ${record.enrolleeData.lastName || ''}
+                    Email: ${record.enrolleeData.email || 'N/A'}
+                    Phone: ${record.enrolleeData.phone || 'N/A'}
+                    Address: ${record.enrolleeData.address || 'N/A'}
+                ` : '';
+
+                alert(`${record.courseName}\n\nStatus: ${record.status}\nProgress: ${record.progress}%\nGrade: ${record.grade || 'Pending'}\nStarted: ${new Date(record.startDate).toLocaleDateString()}${enrolleeInfo}`);
+            } catch (error) {
+                console.error('Error viewing record:', error);
+                alert('Failed to load record details. Please try again.');
+            }
         }
 
-        function downloadRecord(index) {
-            const records = JSON.parse(localStorage.getItem('trainingRecords') || '[]');
-            const record = records[index];
-            alert(`Downloading certificate for ${record.courseName}...`);
+        async function downloadCertificate(recordId) {
+            try {
+                const response = await fetch(`http://localhost:5500/api/records/${recordId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch record');
+                }
+
+                const record = await response.json();
+                
+                if (!record.certificate) {
+                    alert('Certificate is not yet available for this course.');
+                    return;
+                }
+
+                alert(`Downloading certificate for ${record.courseName}...\n\nCertificate: ${record.certificate}`);
+                // TODO: Implement actual certificate download functionality
+            } catch (error) {
+                console.error('Error downloading certificate:', error);
+                alert('Failed to download certificate. Please try again.');
+            }
         }
 
         // Sidebar toggle for mobile
@@ -1245,24 +1560,6 @@
             const sidebar = document.querySelector('.sidebar');
             const mainContent = document.querySelector('.main-content');
             const menuToggle = document.getElementById('menuToggle');
-            
-            // Initialize user profile dropdown
-            const userProfile = document.getElementById('userProfile');
-            if (userProfile) {
-                userProfile.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    userProfile.classList.toggle('active');
-                });
-            }
-
-            // Close dropdown when clicking outside
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.user-profile')) {
-                    if (userProfile) {
-                        userProfile.classList.remove('active');
-                    }
-                }
-            });
             
             // Load saved sidebar state only on desktop
             if (window.innerWidth > 768) {

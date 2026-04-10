@@ -65,6 +65,73 @@
   <!-- Main CSS File -->
   <link href="/assets/css/main.css" rel="stylesheet">
 
+  <!-- Custom Course Card Styles -->
+  <style>
+    .course-level {
+      font-size: 13px;
+      color: #999;
+      margin: 8px 0;
+      font-weight: 500;
+    }
+    
+    .course-description {
+      font-size: 14px;
+      color: #666;
+      line-height: 1.6;
+      margin: 12px 0;
+      min-height: 60px;
+      display: -webkit-box;
+      -webkit-line-clamp: 3;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .course-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 16px 0;
+      padding: 12px 0;
+      border-top: 1px solid #f0f0f0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .course-trainees,
+    .course-duration {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      color: #666;
+      font-weight: 500;
+    }
+    
+    .course-trainees i,
+    .course-duration i {
+      color: #E67E22;
+      font-size: 16px;
+    }
+    
+    body.dark-mode .course-level {
+      color: #b0b0b0;
+    }
+    
+    body.dark-mode .course-description {
+      color: #b0b0b0;
+    }
+    
+    body.dark-mode .course-meta {
+      border-top-color: #3a3a3a;
+      border-bottom-color: #3a3a3a;
+    }
+    
+    body.dark-mode .course-trainees,
+    body.dark-mode .course-duration {
+      color: #b0b0b0;
+    }
+  </style>
+
 </head>
 <body class="index-page">
 
@@ -604,7 +671,12 @@
           
           // Handle image URL
           let imageUrl = course.image || '/assets/img/logo.png';
-          if (imageUrl.startsWith('http')) {
+          
+          // Check if it's a data URL (Base64 image)
+          if (imageUrl.startsWith('data:')) {
+            // Keep data URLs as-is
+            imageUrl = imageUrl;
+          } else if (imageUrl.startsWith('http')) {
             try {
               const url = new URL(imageUrl);
               imageUrl = url.pathname;
@@ -612,6 +684,7 @@
               imageUrl = course.image;
             }
           } else if (!imageUrl.startsWith('/')) {
+            // Only add leading slash for relative paths, not data URLs
             imageUrl = '/' + imageUrl.replace(/^(\.\.\/)+/, '').replace(/^\.\//, '');
           }
           
@@ -623,7 +696,12 @@
                   <img src="${imageUrl}" alt="${course.title}" class="img-fluid course-image">
                 </div>
                 <h3 class="course-title">${course.title}</h3>
-                <p class="course-description">${course.description}</p>
+                <p class="course-level">${course.level || 'NC II'}</p>
+                <p class="course-description">${course.description || 'Professional training program for heavy equipment operation.'}</p>
+                <div class="course-meta">
+                  <span class="course-trainees"><i class="bi bi-people"></i> ${course.enrolledCount || 0} Trainees</span>
+                  <span class="course-duration"><i class="bi bi-clock"></i> ${course.duration || '4 weeks'}</span>
+                </div>
                 <a href="../auth/login.html?tab=register&course=${courseSlug}" class="btn-enroll">Enroll Now</a>
               </div>
             </div>

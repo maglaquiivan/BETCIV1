@@ -3,6 +3,7 @@
    ============================================ */
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Admin dashboard JS loaded');
     initializeSidebar();
     initializeProfileDropdown();
     initializeMenuItems();
@@ -11,7 +12,20 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeHamburgerMenu();
     initializeDarkMode();
     initializeQuickActions();
-    loadAdminProfilePicture();
+    
+    // Load profile picture with a slight delay to ensure DOM is ready
+    setTimeout(() => {
+        console.log('Loading admin profile picture...');
+        loadAdminProfilePicture();
+    }, 100);
+    
+    // Listen for profile picture updates from settings page
+    window.addEventListener('profilePictureUpdated', function(e) {
+        console.log('Profile picture updated event received');
+        if (e.detail && e.detail.imageUrl) {
+            updateAllAvatarsWithImage(e.detail.imageUrl);
+        }
+    });
 });
 
 /* ============================================
@@ -171,32 +185,42 @@ function updateBreadcrumb(sectionId) {
 
 function initializeProfileDropdown() {
     const profileBtn = document.querySelector('.user-profile');
-    const profileMenu = document.querySelector('.user-dropdown');
     
-    if (profileBtn && profileMenu) {
-        profileBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            profileMenu.classList.toggle('active');
-        });
-        
-        // Close menu when clicking outside
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.user-profile')) {
-                profileMenu.classList.remove('active');
+    if (!profileBtn) {
+        console.warn('User profile dropdown element not found');
+        return;
+    }
+    
+    profileBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        this.classList.toggle('active');
+    });
+    
+    // Close menu when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.user-profile')) {
+            const allProfiles = document.querySelectorAll('.user-profile');
+            allProfiles.forEach(profile => {
+                profile.classList.remove('active');
+            });
+        }
+    });
+    
+    // Handle menu items
+    const menuItems = document.querySelectorAll('.user-dropdown a');
+    menuItems.forEach(item => {
+        item.addEventListener('click', function(e) {
+            const href = this.getAttribute('href');
+            if (href === 'settings.html') {
+                const allProfiles = document.querySelectorAll('.user-profile');
+                allProfiles.forEach(profile => {
+                    profile.classList.remove('active');
+                });
             }
         });
-        
-        // Handle menu items
-        const menuItems = profileMenu.querySelectorAll('a');
-        menuItems.forEach(item => {
-            item.addEventListener('click', function(e) {
-                const href = this.getAttribute('href');
-                if (href === 'settings.html') {
-                    profileMenu.classList.remove('active');
-                }
-            });
-        });
-    }
+    });
+    
+    console.log('Admin profile dropdown initialized successfully');
 }
 
 function handleLogout() {
@@ -571,11 +595,17 @@ const API_BASE_URL = 'http://localhost:5500/api';
 // Load dashboard data on page load
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOMContentLoaded - Starting to load dashboard data');
-    setTimeout(() => {
-        loadDashboardStats();
-        loadTrainees();
-        loadCourses();
-    }, 500);
+    
+    // Only load dashboard-specific data if we're on the dashboard page
+    const isDashboardPage = document.getElementById('traineesGrid') || document.getElementById('coursesGrid');
+    
+    if (isDashboardPage) {
+        setTimeout(() => {
+            loadDashboardStats();
+            loadTrainees();
+            loadCourses();
+        }, 500);
+    }
 });
 
 // Load dashboard statistics
@@ -888,21 +918,31 @@ function loadAdminProfilePicture() {
     try {
         const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
         
+        // Clean up old profilePicture from session if it exists (prevents 431 errors)
         if (userSession.profilePicture) {
-            updateAllAvatars(userSession.profilePicture);
+            delete userSession.profilePicture;
+            if (localStorage.getItem('userSession')) {
+                localStorage.setItem('userSession', JSON.stringify(userSession));
+            }
+            if (sessionStorage.getItem('userSession')) {
+                sessionStorage.setItem('userSession', JSON.stringify(userSession));
+            }
         }
         
-        // Also update user name if available
+        // Update user name from session first (faster)
         if (userSession.firstName && userSession.lastName) {
             const userName = `${userSession.firstName} ${userSession.lastName}`;
+            const firstName = userSession.firstName.toUpperCase();
+            
+            // Update header user name (first name only)
             document.querySelectorAll('.user-name').forEach(el => {
-                el.textContent = userName;
+                el.textContent = firstName;
             });
             
-            // Update dropdown header name
+            // Update dropdown header name (full name)
             const dropdownUserInfo = document.querySelector('.dropdown-user-info h4');
             if (dropdownUserInfo) {
-                dropdownUserInfo.textContent = userName;
+                dropdownUserInfo.textContent = userName.toUpperCase();
             }
             
             // Update profile avatar info name
@@ -920,6 +960,70 @@ function loadAdminProfilePicture() {
             }
         }
         
+        // Check for cached profile picture first
+        if (userSession.accountId || userSession.userId) {
+            const userId = userSession.accountId || userSession.userId;
+            const cachedPictureKey = `adminProfilePic_${userId}`;
+            const cachedPicture = sessionStorage.getItem(cachedPictureKey);
+            
+            // If we have a cached picture, use it immediately
+            if (cachedPicture && cachedPicture.startsWith('data:')) {
+                console.log('Using cached admin profile picture');
+                updateAllAvatarsWithImage(cachedPicture);
+            }
+            
+            // Always fetch from API to ensure we have the latest
+            fetch(`http://localhost:5500/api/admin-accounts/${userId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error('Failed to fetch admin profile');
+                    return response.json();
+                })
+                .then(admin => {
+                    console.log('Admin profile loaded from API:', admin);
+                    
+                    // Update name from API (more accurate)
+                    if (admin.firstName && admin.lastName) {
+                        const userName = `${admin.firstName} ${admin.lastName}`;
+                        const firstName = admin.firstName.toUpperCase();
+                        
+                        document.querySelectorAll('.user-name').forEach(el => {
+                            el.textContent = firstName;
+                        });
+                        
+                        const dropdownUserInfo = document.querySelector('.dropdown-user-info h4');
+                        if (dropdownUserInfo) {
+                            dropdownUserInfo.textContent = userName.toUpperCase();
+                        }
+                        
+                        const profileAvatarInfo = document.querySelector('.profile-avatar-info h3');
+                        if (profileAvatarInfo) {
+                            profileAvatarInfo.textContent = userName;
+                        }
+                    }
+                    
+                    // Update email from API
+                    if (admin.email) {
+                        const dropdownEmail = document.querySelector('.dropdown-user-info p');
+                        if (dropdownEmail) {
+                            dropdownEmail.textContent = admin.email;
+                        }
+                    }
+                    
+                    // Update profile picture if exists
+                    if (admin.profilePicture && admin.profilePicture.startsWith('data:')) {
+                        console.log('Updating admin profile picture from API');
+                        // Cache in sessionStorage for faster loading on page changes
+                        sessionStorage.setItem(cachedPictureKey, admin.profilePicture);
+                        
+                        // Update all avatar elements
+                        updateAllAvatarsWithImage(admin.profilePicture);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching admin profile:', error);
+                });
+        }
+        
     } catch (error) {
         console.error('Error loading admin profile picture:', error);
     }
@@ -927,9 +1031,12 @@ function loadAdminProfilePicture() {
 
 // Update all avatar elements with profile picture
 function updateAllAvatars(imageUrl) {
+    // Skip if no image URL provided
+    if (!imageUrl) return;
+    
     // Update header avatars
     document.querySelectorAll('.user-avatar, .dropdown-avatar').forEach(avatar => {
-        avatar.style.backgroundImage = `url(${imageUrl})`;
+        avatar.style.backgroundImage = `url("${imageUrl}")`;
         avatar.style.backgroundSize = 'cover';
         avatar.style.backgroundPosition = 'center';
         avatar.textContent = '';
@@ -938,9 +1045,54 @@ function updateAllAvatars(imageUrl) {
     // Update large profile avatar if exists
     const profileAvatarLarge = document.querySelector('.profile-avatar-large');
     if (profileAvatarLarge) {
-        profileAvatarLarge.style.backgroundImage = `url(${imageUrl})`;
+        profileAvatarLarge.style.backgroundImage = `url("${imageUrl}")`;
         profileAvatarLarge.style.backgroundSize = 'cover';
         profileAvatarLarge.style.backgroundPosition = 'center';
         profileAvatarLarge.textContent = '';
     }
+}
+
+// Update all avatars with image (for profile picture changes)
+function updateAllAvatarsWithImage(imageUrl) {
+    if (!imageUrl) {
+        console.log('updateAllAvatarsWithImage: No image URL provided');
+        return;
+    }
+    
+    console.log('updateAllAvatarsWithImage: Updating avatars with image:', imageUrl.substring(0, 50) + '...');
+    
+    // Remove any inline background styles that might interfere
+    document.querySelectorAll('.user-avatar, .dropdown-avatar').forEach(avatar => {
+        avatar.style.background = 'none';
+        avatar.style.backgroundImage = 'none';
+        
+        if (imageUrl.startsWith('data:')) {
+            console.log('updateAllAvatarsWithImage: Using img tag for base64 image');
+            avatar.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
+        } else {
+            console.log('updateAllAvatarsWithImage: Using background-image for URL');
+            avatar.style.backgroundImage = `url("${imageUrl}")`;
+            avatar.style.backgroundSize = 'cover';
+            avatar.style.backgroundPosition = 'center';
+            avatar.textContent = '';
+        }
+    });
+    
+    // Update large profile avatar if exists
+    const profileAvatarLarge = document.querySelector('.profile-avatar-large');
+    if (profileAvatarLarge) {
+        profileAvatarLarge.style.background = 'none';
+        profileAvatarLarge.style.backgroundImage = 'none';
+        
+        if (imageUrl.startsWith('data:')) {
+            profileAvatarLarge.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
+        } else {
+            profileAvatarLarge.style.backgroundImage = `url("${imageUrl}")`;
+            profileAvatarLarge.style.backgroundSize = 'cover';
+            profileAvatarLarge.style.backgroundPosition = 'center';
+            profileAvatarLarge.textContent = '';
+        }
+    }
+    
+    console.log('updateAllAvatarsWithImage: Avatar update complete');
 }

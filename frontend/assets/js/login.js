@@ -113,8 +113,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         const user = await response.json();
 
-        // Store user session
-        localStorage.setItem('userSession', JSON.stringify(user));
+        // Store user session (exclude large fields like profilePicture to avoid header size issues)
+        const sessionData = {
+          userId: user.userId,
+          accountId: user.accountId,
+          username: user.username,
+          email: user.email,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          role: user.role,
+          phone: user.phone,
+          address: user.address,
+          userType: user.userType,
+          profileComplete: user.profileComplete || false
+          // profilePicture excluded - will be loaded separately when needed
+        };
+        localStorage.setItem('userSession', JSON.stringify(sessionData));
 
         // Auto-redirect based on user role from database
         // Admin and Instructor go to admin dashboard
@@ -124,7 +138,12 @@ document.addEventListener('DOMContentLoaded', function() {
           showModal('success', 'Login Successful!', `Welcome back ${roleTitle}! Redirecting to dashboard...`, '../admin/pages/dashboard.html');
         } else {
           // Trainee, staff, or any other role
-          showModal('success', 'Login Successful!', 'Welcome back! Redirecting to your dashboard...', '../trainee/pages/dashboard.html');
+          // Check if profile is complete
+          if (!user.profileComplete) {
+            showModal('success', 'Welcome!', 'Please complete your profile before proceeding...', '../trainee/pages/manage-profile.html?firstLogin=true');
+          } else {
+            showModal('success', 'Login Successful!', 'Welcome back! Redirecting to your dashboard...', '../trainee/pages/dashboard.html');
+          }
         }
 
       } catch (error) {
@@ -230,21 +249,24 @@ document.addEventListener('DOMContentLoaded', function() {
           console.error('Error creating trainee record:', traineeError);
         }
         
-        showModal('success', 'Registration Successful!', 'Your account has been created. Please login with your credentials.');
+        // Auto-login the newly registered user
+        const sessionData = {
+          userId: user.accountId || traineeId,
+          accountId: user.accountId || traineeId,
+          username: username,
+          email: email,
+          firstName: firstName,
+          lastName: lastName,
+          role: 'trainee',
+          phone: '',
+          address: address,
+          userType: 'trainee',
+          profileComplete: false // Mark profile as incomplete
+        };
+        localStorage.setItem('userSession', JSON.stringify(sessionData));
         
-        // Switch to login tab after delay
-        setTimeout(() => {
-          tabButtons.forEach(btn => btn.classList.remove('active'));
-          tabContents.forEach(content => content.classList.remove('active'));
-          
-          const loginBtn = document.querySelector('[data-tab="login"]');
-          const loginTab = document.getElementById('login-tab');
-          
-          if (loginBtn && loginTab) {
-            loginBtn.classList.add('active');
-            loginTab.classList.add('active');
-          }
-        }, 2000);
+        // Redirect directly to manage-profile page to complete profile
+        showModal('success', 'Registration Successful!', 'Redirecting to complete your profile...', '../trainee/pages/manage-profile.html?firstLogin=true');
 
       } catch (error) {
         console.error('Registration error:', error);

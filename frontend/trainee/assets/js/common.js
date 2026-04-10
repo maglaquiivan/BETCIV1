@@ -7,6 +7,12 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeUserDropdown();
     initializeDarkMode();
     loadTheme();
+    
+    // Listen for profile picture updates
+    window.addEventListener('profilePictureUpdated', function(e) {
+        console.log('Profile picture updated, reloading...');
+        loadUserProfilePicture();
+    });
 });
 
 // ============================================
@@ -18,43 +24,86 @@ async function loadUserProfilePicture() {
         
         if (!userSession.userId) return;
         
-        // Fetch user data to get profile picture
-        const response = await fetch(`http://localhost:5500/api/accounts/${userSession.userId}`);
+        // Update user name from session first (faster)
+        if (userSession.firstName) {
+            const firstName = userSession.firstName.toUpperCase();
+            document.querySelectorAll('.user-name').forEach(el => {
+                el.textContent = firstName;
+            });
+            
+            // Update dropdown user info
+            const dropdownUserInfo = document.querySelector('.dropdown-user-info h4');
+            if (dropdownUserInfo && userSession.lastName) {
+                dropdownUserInfo.textContent = `${userSession.firstName} ${userSession.lastName}`.toUpperCase();
+            }
+            
+            const dropdownEmail = document.querySelector('.dropdown-user-info p');
+            if (dropdownEmail && userSession.email) {
+                dropdownEmail.textContent = userSession.email;
+            }
+        }
+        
+        // Check if we have a cached profile picture URL in sessionStorage (temporary cache)
+        const cachedPictureKey = `profilePic_${userSession.userId}`;
+        const cachedPicture = sessionStorage.getItem(cachedPictureKey);
+        
+        if (cachedPicture && cachedPicture.startsWith('data:')) {
+            // Use cached picture immediately for faster loading
+            updateAllAvatarsWithPicture(cachedPicture);
+        }
+        
+        // Fetch user data to get profile picture (always fetch to ensure it's up to date)
+        // Use trainee-accounts endpoint for trainee users
+        const apiEndpoint = userSession.role === 'trainee' ? 'trainee-accounts' : 'accounts';
+        const userId = userSession.accountId || userSession.userId;
+        const response = await fetch(`http://localhost:5500/api/${apiEndpoint}/${userId}`);
         
         if (!response.ok) return;
         
         const user = await response.json();
         
         // Update profile picture if exists
-        if (user.profilePicture) {
-            const userAvatars = document.querySelectorAll('.user-avatar');
-            userAvatars.forEach(avatar => {
-                avatar.innerHTML = `<img src="${user.profilePicture}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
-            });
+        if (user.profilePicture && user.profilePicture.startsWith('data:')) {
+            updateAllAvatarsWithPicture(user.profilePicture);
             
-            const dropdownAvatar = document.querySelector('.dropdown-avatar');
-            if (dropdownAvatar) {
-                dropdownAvatar.innerHTML = `<img src="${user.profilePicture}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
-            }
-            
-            // Store in session for quick access
-            userSession.profilePicture = user.profilePicture;
-            if (localStorage.getItem('userSession')) {
-                localStorage.setItem('userSession', JSON.stringify(userSession));
-            } else {
-                sessionStorage.setItem('userSession', JSON.stringify(userSession));
-            }
+            // Cache in sessionStorage for this session only (cleared on browser close)
+            sessionStorage.setItem(cachedPictureKey, user.profilePicture);
         }
         
-        // Update user name
+        // Update user name and email from API (more accurate)
         if (user.firstName) {
+            const firstName = user.firstName.toUpperCase();
             document.querySelectorAll('.user-name').forEach(el => {
-                el.textContent = user.firstName.toUpperCase();
+                el.textContent = firstName;
             });
+            
+            // Update dropdown user info
+            const dropdownUserInfo = document.querySelector('.dropdown-user-info h4');
+            if (dropdownUserInfo && user.lastName) {
+                dropdownUserInfo.textContent = `${user.firstName} ${user.lastName}`.toUpperCase();
+            }
+            
+            const dropdownEmail = document.querySelector('.dropdown-user-info p');
+            if (dropdownEmail && user.email) {
+                dropdownEmail.textContent = user.email;
+            }
         }
         
     } catch (error) {
         console.error('Error loading profile picture:', error);
+    }
+}
+
+// Helper function to update all avatar elements
+function updateAllAvatarsWithPicture(profilePicture) {
+    const userAvatars = document.querySelectorAll('.user-avatar');
+    userAvatars.forEach(avatar => {
+        avatar.innerHTML = `<img src="${profilePicture}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
+    });
+    
+    const dropdownAvatar = document.querySelector('.dropdown-avatar');
+    if (dropdownAvatar) {
+        dropdownAvatar.innerHTML = `<img src="${profilePicture}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile Picture">`;
     }
 }
 
@@ -126,23 +175,29 @@ function initializeMobileMenu() {
 // USER DROPDOWN
 // ============================================
 function initializeUserDropdown() {
-    const userProfile = document.getElementById('userProfile');
+    const userProfile = document.querySelector('.user-profile');
     
-    if (!userProfile) return;
+    if (!userProfile) {
+        console.warn('User profile dropdown element not found');
+        return;
+    }
     
     userProfile.addEventListener('click', function(e) {
         e.stopPropagation();
-        userProfile.classList.toggle('active');
+        this.classList.toggle('active');
     });
 
     // Close dropdown when clicking outside
     document.addEventListener('click', function(e) {
         if (!e.target.closest('.user-profile')) {
-            if (userProfile) {
-                userProfile.classList.remove('active');
-            }
+            const allProfiles = document.querySelectorAll('.user-profile');
+            allProfiles.forEach(profile => {
+                profile.classList.remove('active');
+            });
         }
     });
+    
+    console.log('User dropdown initialized successfully');
 }
 
 // ============================================
@@ -284,5 +339,9 @@ window.loadTheme = loadTheme;
 window.navigateTo = navigateTo;
 window.handleLogout = handleLogout;
 window.showNotification = showNotification;
+window.openChangePassword = function(event) {
+    if (event) event.preventDefault();
+    window.location.href = 'settings.html#password';
+};
 
 console.log('Common trainee scripts loaded successfully');

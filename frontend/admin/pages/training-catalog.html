@@ -107,13 +107,13 @@
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile">
-                        <div class="user-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                        <div class="user-avatar">A</div>
                         <span class="user-name">Admin</span>
                         <i class="bi bi-chevron-down dropdown-arrow"></i>
                         
                         <div class="user-dropdown">
                             <div class="dropdown-header">
-                                <div class="dropdown-avatar" style="background: linear-gradient(135deg, var(--primary-color), var(--primary-light)); color: white; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700;">A</div>
+                                <div class="dropdown-avatar">A</div>
                                 <div class="dropdown-user-info">
                                     <h4>Admin User</h4>
                                     <p>admin@betci.edu.ph</p>
@@ -169,51 +169,83 @@
 
                 <!-- Add/Edit Course Modal -->
                 <div id="courseModal" class="modal">
-                    <div class="modal-content">
+                    <div class="modal-content" style="max-width: 950px; width: 95%; max-height: 92vh;">
                         <div class="modal-header">
                             <h2 id="modalTitle">Add New Course</h2>
                             <button class="modal-close" onclick="closeCourseModal()">&times;</button>
                         </div>
                         <form id="courseForm" onsubmit="saveCourse(event)">
-                            <div class="modal-body">
-                                <div class="form-group">
+                            <div class="modal-body" style="padding: 24px; max-height: calc(92vh - 180px); overflow-y: auto;">
+                                <!-- Course Image Section -->
+                                <div class="form-group" style="margin-bottom: 24px;">
                                     <label class="form-label" for="courseImage">Course Image</label>
-                                    <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 8px;">
+                                    <p style="font-size: 12px; color: #999; margin-bottom: 10px;">
                                         Upload an image (max 5MB). Image will be saved and displayed in both admin and trainee dashboards.
                                     </p>
                                     <div class="image-upload-container">
-                                        <input type="file" id="courseImage" accept="image/*" onchange="previewImage(event)">
-                                        <div class="image-preview" id="imagePreview">
+                                        <input type="file" id="courseImage" accept="image/*" onchange="previewImage(event)" style="display: none;">
+                                        <div class="image-preview" id="imagePreview" onclick="document.getElementById('courseImage').click()" style="cursor: pointer; border: 2px dashed #ddd; border-radius: 10px; padding: 20px; text-align: center; background: #f9f9f9; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s;">
                                             <i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i>
-                                            <p>Click to upload course image</p>
+                                            <p style="margin: 12px 0 0 0; color: #999; font-size: 13px;">Click to upload course image</p>
                                         </div>
                                     </div>
                                 </div>
-                                <div class="form-group">
-                                    <label class="form-label" for="courseTitle">Course Title *</label>
-                                    <input type="text" id="courseTitle" name="courseTitle" class="form-control" placeholder="e.g., Forklift Operation NC II" autocomplete="off" required>
+
+                                <!-- Two Column Layout -->
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 24px;">
+                                    <!-- Left Column -->
+                                    <div>
+                                        <div class="form-group" style="margin-bottom: 18px;">
+                                            <label class="form-label" for="courseTitle">Course Title *</label>
+                                            <input type="text" id="courseTitle" name="courseTitle" class="form-control" placeholder="e.g., Forklift Operation NC II" autocomplete="off" required style="padding: 12px; font-size: 14px;">
+                                        </div>
+
+                                        <div class="form-group" style="margin-bottom: 18px;">
+                                            <label class="form-label" for="courseCategory">Category *</label>
+                                            <input type="text" id="courseCategory" name="courseCategory" class="form-control" placeholder="e.g., Heavy Equipment" autocomplete="off" required style="padding: 12px; font-size: 14px;">
+                                        </div>
+
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label class="form-label" for="courseDuration">Duration *</label>
+                                            <input type="text" id="courseDuration" name="courseDuration" class="form-control" placeholder="e.g., 3 months" autocomplete="off" required style="padding: 12px; font-size: 14px;">
+                                        </div>
+                                    </div>
+
+                                    <!-- Right Column -->
+                                    <div>
+                                        <div class="form-group" style="margin-bottom: 18px;">
+                                            <label class="form-label" for="courseImageUrl">Image URL (Optional)</label>
+                                            <input type="text" id="courseImageUrl" name="courseImageUrl" class="form-control" placeholder="e.g., /assets/img/fork.png" autocomplete="off" style="padding: 12px; font-size: 14px;">
+                                        </div>
+
+                                        <div class="form-group" style="margin-bottom: 18px;">
+                                            <label class="form-label" for="courseLevel">Course Level</label>
+                                            <select id="courseLevel" name="courseLevel" class="form-control" autocomplete="off" style="padding: 12px; font-size: 14px;">
+                                                <option value="NC I">NC I</option>
+                                                <option value="NC II" selected>NC II</option>
+                                                <option value="NC III">NC III</option>
+                                                <option value="NC IV">NC IV</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="form-group" style="margin-bottom: 0;">
+                                            <label class="form-label" for="courseStatus">Status *</label>
+                                            <select id="courseStatus" name="courseStatus" class="form-control" autocomplete="off" required style="padding: 12px; font-size: 14px;">
+                                                <option value="active">Active</option>
+                                                <option value="inactive">Inactive</option>
+                                                <option value="archived">Archived</option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="form-group">
+
+                                <!-- Full Width Description -->
+                                <div class="form-group" style="margin-bottom: 0;">
                                     <label class="form-label" for="courseDescription">Course Description *</label>
-                                    <textarea id="courseDescription" name="courseDescription" class="form-control" rows="4" placeholder="Enter course description..." autocomplete="off" required></textarea>
-                                </div>
-                                <div class="form-row">
-                                    <div class="form-group">
-                                        <label class="form-label" for="courseLevel">Course Level</label>
-                                        <select id="courseLevel" name="courseLevel" class="form-control" autocomplete="off">
-                                            <option value="NC I">NC I</option>
-                                            <option value="NC II" selected>NC II</option>
-                                            <option value="NC III">NC III</option>
-                                            <option value="NC IV">NC IV</option>
-                                        </select>
-                                    </div>
-                                    <div class="form-group">
-                                        <label class="form-label" for="courseDuration">Duration (Hours)</label>
-                                        <input type="number" id="courseDuration" name="courseDuration" class="form-control" placeholder="e.g., 40" min="1" autocomplete="off">
-                                    </div>
+                                    <textarea id="courseDescription" name="courseDescription" class="form-control" rows="4" placeholder="Enter course description..." autocomplete="off" required style="padding: 12px; font-size: 14px;"></textarea>
                                 </div>
                             </div>
-                            <div class="modal-footer">
+                            <div class="modal-footer" style="padding: 18px 24px; background: #fafafa;">
                                 <button type="button" class="btn btn-secondary" onclick="closeCourseModal()">Cancel</button>
                                 <button type="submit" class="btn btn-primary">
                                     <i class="bi bi-check"></i> Save Course
@@ -367,7 +399,7 @@
     </script>
     <script src="../assets/js/courses-data.js"></script>
     <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script src="../../assets/js/admin-dashboard.js?v=6"></script>
     <script>
         // Load dark mode theme
         if (typeof loadTheme === 'function') {
@@ -481,7 +513,15 @@
             
             const img = currentEditCard.querySelector('.course-image img');
             if (img) {
-                document.getElementById('imagePreview').innerHTML = '<img src="' + img.src + '" alt="Preview">';
+                let imgSrc = img.src;
+                // Fix Base64 images missing the data: prefix
+                if (imgSrc && !imgSrc.startsWith('data:') && !imgSrc.startsWith('http') && !imgSrc.startsWith('/')) {
+                    // If it looks like a Base64 string without data: prefix, add it
+                    if (imgSrc.includes('base64,') || imgSrc.startsWith('image/')) {
+                        imgSrc = 'data:' + imgSrc;
+                    }
+                }
+                document.getElementById('imagePreview').innerHTML = '<img src="' + imgSrc + '" alt="Preview">';
             }
             
             document.getElementById('courseModal').classList.add('active');
@@ -551,15 +591,20 @@
             let imageData = '/assets/img/logo.png'; // default with absolute path
             
             if (imgElement && imgElement.src) {
-                // Extract just the path from the full URL
-                const url = new URL(imgElement.src, window.location.href);
-                imageData = url.pathname;
-                
-                // Ensure it starts with /assets/img/
-                if (!imageData.startsWith('/assets/img/')) {
-                    // If it's a relative path like ../../assets/img/fork.png
-                    if (imageData.includes('/assets/img/')) {
-                        imageData = '/assets/img/' + imageData.split('/assets/img/')[1];
+                // Check if it's a Base64 data URL
+                if (imgElement.src.startsWith('data:')) {
+                    imageData = imgElement.src; // Keep the full data URL
+                } else {
+                    // Extract just the path from the full URL
+                    const url = new URL(imgElement.src, window.location.href);
+                    imageData = url.pathname;
+                    
+                    // Ensure it starts with /assets/img/
+                    if (!imageData.startsWith('/assets/img/')) {
+                        // If it's a relative path like ../../assets/img/fork.png
+                        if (imageData.includes('/assets/img/')) {
+                            imageData = '/assets/img/' + imageData.split('/assets/img/')[1];
+                        }
                     }
                 }
             }
@@ -783,9 +828,19 @@
             const card = document.createElement('div');
             card.className = 'course-card';
             card.dataset.courseId = course._id || course.courseId || course.id;
+            
+            // Fix Base64 images missing the data: prefix
+            let imageUrl = course.image || '../../assets/img/logo.png';
+            if (imageUrl && !imageUrl.startsWith('data:') && !imageUrl.startsWith('http') && !imageUrl.startsWith('/')) {
+                // If it looks like a Base64 string without data: prefix, add it
+                if (imageUrl.includes('base64,') || imageUrl.startsWith('image/')) {
+                    imageUrl = 'data:' + imageUrl;
+                }
+            }
+            
             card.innerHTML = `
                 <div class="course-image">
-                    <img src="${course.image || '../../assets/img/logo.png'}" alt="${course.title || course.courseName}" style="max-width: 100%; max-height: 100%;">
+                    <img src="${imageUrl}" alt="${course.title || course.courseName}" style="max-width: 100%; max-height: 100%;">
                 </div>
                 <div class="course-body">
                     <h3 class="course-title">${course.title || course.courseName}</h3>

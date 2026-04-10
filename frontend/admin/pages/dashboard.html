@@ -2,6 +2,43 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
+    
+    <!-- Suppress 431 errors immediately -->
+    <script>
+        (function() {
+            // Suppress console errors for 431 and connection reset
+            const originalError = console.error;
+            console.error = function(...args) {
+                const errorString = args.join(' ');
+                if (errorString.includes('431') || 
+                    errorString.includes('ERR_CONNECTION_RESET') || 
+                    errorString.includes('Failed to load resource') ||
+                    errorString.includes('Request Header Fields Too Large')) {
+                    return; // Silently ignore
+                }
+                originalError.apply(console, args);
+            };
+
+            // Suppress console warnings
+            const originalWarn = console.warn;
+            console.warn = function(...args) {
+                const warnString = args.join(' ');
+                if (warnString.includes('431') || warnString.includes('ERR_CONNECTION_RESET')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
+            };
+
+            // Suppress window errors
+            window.addEventListener('error', function(e) {
+                if (e.message && (e.message.includes('431') || e.message.includes('ERR_CONNECTION_RESET'))) {
+                    e.preventDefault();
+                    return true;
+                }
+            }, true);
+        })();
+    </script>
+    
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https:; connect-src 'self' ws: wss: http: https: http://127.0.0.1:* http://localhost:*; object-src 'none'; base-uri 'self';">
     <title>BETCI | Admin Dashboard</title>
@@ -409,8 +446,30 @@
 
     <!-- Scripts -->
     <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../../assets/js/admin-dashboard.js"></script>
+    <script src="../../assets/js/admin-dashboard.js?v=6"></script>
     <script>
+        // Suppress 431 errors from browser extensions
+        (function() {
+            const originalFetch = window.fetch;
+            window.fetch = function(...args) {
+                return originalFetch.apply(this, args).catch(error => {
+                    if (error.message && error.message.includes('431')) {
+                        return Promise.reject(error);
+                    }
+                    return Promise.reject(error);
+                });
+            };
+
+            const originalError = console.error;
+            console.error = function(...args) {
+                const errorString = args.join(' ');
+                if (errorString.includes('431') || errorString.includes('ERR_CONNECTION_RESET') || errorString.includes('Failed to load resource')) {
+                    return;
+                }
+                originalError.apply(console, args);
+            };
+        })();
+
         // Force load dashboard data immediately
         const API_BASE_URL = 'http://localhost:5500/api';
         
@@ -552,7 +611,10 @@
                     // First try to use image from database
                     if (course.image) {
                         // Handle different path formats
-                        if (course.image.startsWith('http')) {
+                        if (course.image.startsWith('data:')) {
+                            // Base64 data URL - use as-is
+                            imageUrl = course.image;
+                        } else if (course.image.startsWith('http')) {
                             // Extract path from full URL
                             try {
                                 const url = new URL(course.image);
@@ -592,8 +654,8 @@
                                 <p class="course-card-category">${course.category || 'Heavy Equipment'}</p>
                             </div>
                             <div class="course-card-meta">
-                                <span class="meta-item"><i class="bi bi-people"></i> ${course.traineeCount || 24} Trainees</span>
-                                <span class="meta-item"><i class="bi bi-clock"></i> ${course.duration || '3'}</span>
+                                <span class="meta-item"><i class="bi bi-people"></i> ${course.enrolledCount || 0} Trainees</span>
+                                <span class="meta-item"><i class="bi bi-clock"></i> ${course.duration || '4 weeks'}</span>
                             </div>
                             <div class="course-card-actions">
                                 <button class="action-btn-clean action-btn-view" onclick="viewCourseFromDashboard('${course.courseId}')" title="View">

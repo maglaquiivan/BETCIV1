@@ -1400,9 +1400,11 @@ body {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   max-width: 500px;
   width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
+  max-height: 92vh;
+  display: flex;
+  flex-direction: column;
   animation: modalSlideIn 0.3s ease;
+  overflow: hidden;
 }
 
 .modal-content.modal-small {
@@ -1457,6 +1459,27 @@ body {
 
 .modal-body {
   padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+/* Custom scrollbar for modal body */
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background: #E67E22;
+  border-radius: 10px;
+}
+
+.modal-body::-webkit-scrollbar-thumb:hover {
+  background: #d35400;
 }
 
 .modal-footer {
@@ -1465,6 +1488,8 @@ body {
   display: flex;
   gap: 12px;
   justify-content: flex-end;
+  flex-shrink: 0;
+  background: var(--bg-white);
 }
 
 /* ============================================
@@ -2502,6 +2527,28 @@ body.dark-mode .course-image-container {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 20px;
   margin-top: 20px;
+  max-height: calc(100vh - 280px);
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+/* Custom scrollbar for courses grid */
+.courses-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.courses-grid::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.courses-grid::-webkit-scrollbar-thumb {
+  background: #E67E22;
+  border-radius: 10px;
+}
+
+.courses-grid::-webkit-scrollbar-thumb:hover {
+  background: #d35400;
 }
 
 .course-card {

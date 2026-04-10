@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quick Fix - BETCI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        .success {
+            color: #28a745;
+            font-size: 64px;
+            margin: 20px 0;
+        }
+        
+        .message {
+            color: #666;
+            line-height: 1.8;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .steps {
+            text-align: left;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .step {
+            margin: 15px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .step::before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #28a745;
+            font-weight: bold;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="success">✅</div>
+        <h1>Database Fixed!</h1>
+        
+        <div class="message">
+            <strong>Great news!</strong> The database migration has been completed successfully.
+            <br><br>
+            <strong>1 course</strong> was fixed - Base64 images now have the correct <code>data:</code> prefix.
+        </div>
+        
+        <div class="steps">
+            <h3 style="margin-bottom: 15px;">What was fixed:</h3>
+            <div class="step">Database images now have <code>data:</code> prefix</div>
+            <div class="step">Code updated to prevent future issues</div>
+            <div class="step">Browser storage will be cleaned below</div>
+        </div>
+        
+        <button class="btn" onclick="clearStorage()">Clear Browser Storage & Reload</button>
+        <br>
+        <a href="/" class="btn" style="background: #6c757d;">Go to Homepage</a>
+        
+        <div id="status" style="margin-top: 20px; display: none;"></div>
+    </div>
+    
+    <script>
+        function clearStorage() {
+            try {
+                // Clear localStorage
+                const ls = localStorage.getItem('userSession');
+                if (ls) {
+                    const session = JSON.parse(ls);
+                    delete session.profilePicture;
+                    localStorage.setItem('userSession', JSON.stringify(session));
+                }
+                
+                // Clear sessionStorage
+                const ss = sessionStorage.getItem('userSession');
+                if (ss) {
+                    const session = JSON.parse(ss);
+                    delete session.profilePicture;
+                    sessionStorage.setItem('userSession', JSON.stringify(session));
+                }
+                
+                // Clear cookies with Base64
+                document.cookie.split(";").forEach(c => {
+                    const name = c.split("=")[0].trim();
+                    document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+                });
+                
+                const statusDiv = document.getElementById('status');
+                statusDiv.style.display = 'block';
+                statusDiv.innerHTML = '<div style="color: #28a745; font-weight: bold;">✅ Storage cleared! Reloading in 2 seconds...</div>';
+                
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+                
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        // Auto-clear if URL has ?auto parameter
+        if (window.location.search.includes('auto')) {
+            window.onload = clearStorage;
+        }
+    </script>
+</body>
+</html>

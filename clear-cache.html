@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clear Cache & Fix 404 Errors - BETCI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        .error-info {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-radius: 4px;
+        }
+        
+        .error-info h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+        
+        .error-info p {
+            color: #856404;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        
+        .steps {
+            margin-bottom: 30px;
+        }
+        
+        .step {
+            background: #f8f9fa;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .step h4 {
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+        
+        .step p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        
+        button {
+            flex: 1;
+            min-width: 150px;
+            padding: 15px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            border-left: 4px solid #28a745;
+            color: #155724;
+            display: block;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            color: #0c5460;
+            display: block;
+        }
+        
+        .icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">🔧</div>
+        <h1>Fix 404 Errors</h1>
+        <p class="subtitle">Clear browser cache and fix resource loading issues</p>
+        
+        <div class="error-info">
+            <h3>⚠️ Common 404 Error Causes</h3>
+            <p>
+                Errors like "9k=:1" or "Z:1" are typically caused by:
+                <br>• Browser extensions interfering with page loading
+                <br>• Corrupted cached resources
+                <br>• Service workers with outdated data
+            </p>
+        </div>
+        
+        <div class="steps">
+            <div class="step">
+                <h4>Step 1: Clear Browser Cache</h4>
+                <p>Click the button below to automatically clear all cached data and reload the page.</p>
+            </div>
+            
+            <div class="step">
+                <h4>Step 2: Disable Extensions (if needed)</h4>
+                <p>If errors persist, try disabling browser extensions temporarily and reload.</p>
+            </div>
+            
+            <div class="step">
+                <h4>Step 3: Hard Refresh</h4>
+                <p>Press <strong>Ctrl + Shift + R</strong> (Windows) or <strong>Cmd + Shift + R</strong> (Mac) to force reload.</p>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn-primary" onclick="clearAllCache()">
+                🗑️ Clear Cache & Reload
+            </button>
+            <button class="btn-secondary" onclick="goHome()">
+                🏠 Go to Homepage
+            </button>
+        </div>
+        
+        <div id="status" class="status"></div>
+    </div>
+    
+    <script>
+        async function clearAllCache() {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = 'status info';
+            statusDiv.textContent = '⏳ Clearing cache...';
+            
+            try {
+                // Clear localStorage
+                localStorage.clear();
+                
+                // Clear sessionStorage
+                sessionStorage.clear();
+                
+                // Clear cookies
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                
+                // Unregister service workers
+                if ('serviceWorker' in navigator) {
+                    const registrations = await navigator.serviceWorker.getRegistrations();
+                    for (let registration of registrations) {
+                        await registration.unregister();
+                    }
+                }
+                
+                // Clear cache storage
+                if ('caches' in window) {
+                    const cacheNames = await caches.keys();
+                    await Promise.all(
+                        cacheNames.map(cacheName => caches.delete(cacheName))
+                    );
+                }
+                
+                statusDiv.className = 'status success';
+                statusDiv.textContent = '✅ Cache cleared successfully! Reloading in 2 seconds...';
+                
+                // Reload after 2 seconds
+                setTimeout(() => {
+                    window.location.href = '/frontend/public/index.html';
+                }, 2000);
+                
+            } catch (error) {
+                statusDiv.className = 'status info';
+                statusDiv.textContent = '⚠️ Cache cleared partially. Please manually clear browser cache: Press Ctrl+Shift+Delete';
+                console.error('Cache clear error:', error);
+            }
+        }
+        
+        function goHome() {
+            window.location.href = '/frontend/public/index.html';
+        }
+        
+        // Auto-clear on page load if URL has ?auto parameter
+        if (window.location.search.includes('auto')) {
+            clearAllCache();
+        }
+    </script>
+</body>
+</html>

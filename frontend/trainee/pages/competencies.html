@@ -150,6 +150,215 @@
             border-bottom: none;
         }
 
+        .competency-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn-edit {
+            flex: 1;
+            padding: 10px;
+            background: #E67E22;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .btn-edit:hover {
+            background: #d35400;
+            transform: translateY(-2px);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .modal-header h3 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #999;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+
+        .modal-close:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-control {
+            padding: 10px 14px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #E67E22;
+        }
+
+        textarea.form-control {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            padding: 20px 24px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-primary {
+            background: #E67E22;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #d35400;
+        }
+
+        /* Dark Mode Modal */
+        body.dark-mode .modal-content {
+            background: #1e1e1e;
+        }
+
+        body.dark-mode .modal-header {
+            border-bottom-color: #3a3a3a;
+        }
+
+        body.dark-mode .modal-header h3 {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .modal-close:hover {
+            background: #2a2a2a;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .modal-footer {
+            border-top-color: #3a3a3a;
+        }
+
+        body.dark-mode .form-label {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .form-control {
+            background: #2a2a2a;
+            border-color: #3a3a3a;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .competency-actions {
+            border-top-color: #3a3a3a;
+        }
+
         .unit-code {
             color: #E67E22;
             font-weight: 600;
@@ -337,7 +546,7 @@
                     <li class="nav-item">
                         <a href="assessment.html" class="nav-link">
                             <i class="bi bi-clipboard-check"></i>
-                            <span>Assessment</span>
+                            <span>Forms</span>
                         </a>
                     </li>
                     <li class="nav-item">
@@ -429,8 +638,61 @@
         </div>
     </div>
 
+    <!-- Edit Competency Modal -->
+    <div class="modal" id="editCompetencyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Competency</h3>
+                <button class="modal-close" onclick="closeEditModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label class="form-label" for="editTitle">Competency Title *</label>
+                        <input type="text" id="editTitle" name="editTitle" class="form-control" placeholder="e.g., Forklift Operation" autocomplete="off" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editCode">Competency Code *</label>
+                        <input type="text" id="editCode" name="editCode" class="form-control" placeholder="e.g., COMP-001" autocomplete="off" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="editLevel">Level *</label>
+                        <select id="editLevel" class="form-control" required>
+                            <option value="NC I">NC I</option>
+                            <option value="NC II">NC II</option>
+                            <option value="NC III">NC III</option>
+                            <option value="NC IV">NC IV</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label class="form-label" for="editCourse">Course *</label>
+                        <select id="editCourse" class="form-control" required>
+                            <option value="">Select Course</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group" style="grid-column: 1/-1;">
+                        <label class="form-label" for="editDescription">Description</label>
+                        <textarea id="editDescription" class="form-control" placeholder="Competency description..." rows="4"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                <button type="button" class="btn btn-primary" onclick="saveCompetency()">
+                    <i class="bi bi-check"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
-    <script src="../assets/js/common.js"></script>
+    <script src="../assets/js/common.js?v=3"></script>
     <script src="../assets/js/mobile-menu.js"></script>
     <script>
         const API_BASE_URL = 'http://localhost:5500/api';
@@ -439,7 +701,6 @@
             loadTheme();
             loadCompetencies();
             loadCourses();
-            initUserProfile();
         });
 
         // Load all competencies
@@ -520,52 +781,140 @@
                             </ul>
                             <div class="total-hours">Total: ${totalHours} hours</div>
                         </div>
+                        <div class="competency-actions">
+                            <button class="btn-edit" onclick="openEditModal('${comp.competencyId}')">
+                                <i class="bi bi-pencil"></i> Edit Competency
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
         }
 
+        let currentCompetencyId = null;
+        let allCompetencies = [];
+
+        // Load all competencies
+        async function loadCompetencies() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/competencies`);
+                if (!response.ok) throw new Error('Failed to fetch competencies');
+                
+                allCompetencies = await response.json();
+                displayCompetencies(allCompetencies);
+                
+            } catch (error) {
+                console.error('Error loading competencies:', error);
+                document.getElementById('competenciesContainer').innerHTML = `
+                    <div class="empty-state">
+                        <i class="bi bi-exclamation-circle"></i>
+                        <h3>Failed to Load Competencies</h3>
+                        <p>Please make sure the server is running</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Open edit modal
+        async function openEditModal(competencyId) {
+            currentCompetencyId = competencyId;
+            
+            // Find competency
+            const competency = allCompetencies.find(c => c.competencyId === competencyId);
+            if (!competency) return;
+            
+            // Populate form
+            document.getElementById('editTitle').value = competency.title;
+            document.getElementById('editCode').value = competency.code;
+            document.getElementById('editLevel').value = competency.level;
+            document.getElementById('editDescription').value = competency.description;
+            
+            // Load courses for dropdown
+            try {
+                const response = await fetch(`${API_BASE_URL}/courses`);
+                const courses = await response.json();
+                const courseSelect = document.getElementById('editCourse');
+                courseSelect.innerHTML = '<option value="">Select Course</option>' +
+                    courses.map(c => `<option value="${c.courseId}" ${c.courseId === competency.courseId ? 'selected' : ''}>${c.title}</option>`).join('');
+            } catch (error) {
+                console.error('Error loading courses:', error);
+            }
+            
+            // Show modal
+            document.getElementById('editCompetencyModal').classList.add('active');
+        }
+
+        // Close edit modal
+        function closeEditModal() {
+            document.getElementById('editCompetencyModal').classList.remove('active');
+            currentCompetencyId = null;
+        }
+
+        // Save competency
+        async function saveCompetency() {
+            if (!currentCompetencyId) return;
+            
+            const title = document.getElementById('editTitle').value.trim();
+            const code = document.getElementById('editCode').value.trim();
+            const level = document.getElementById('editLevel').value;
+            const courseId = document.getElementById('editCourse').value;
+            const description = document.getElementById('editDescription').value.trim();
+            
+            if (!title || !code || !level || !courseId) {
+                alert('Please fill in all required fields');
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/competencies/${currentCompetencyId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title,
+                        code,
+                        level,
+                        courseId,
+                        description
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to update competency');
+                
+                // Show success message
+                showNotification('Competency updated successfully!', 'success');
+                
+                // Close modal and reload
+                closeEditModal();
+                loadCompetencies();
+                
+            } catch (error) {
+                console.error('Error updating competency:', error);
+                showNotification('Failed to update competency', 'error');
+            }
+        }
+
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('editCompetencyModal');
+            if (e.target === modal) {
+                closeEditModal();
+            }
+        });
+
         // Filter by course
         async function filterByCourse(courseId) {
             try {
-                let url = `${API_BASE_URL}/competencies`;
                 if (courseId && courseId !== 'all') {
-                    url = `${API_BASE_URL}/competencies/course/${courseId}`;
+                    const filtered = allCompetencies.filter(c => c.courseId === courseId);
+                    displayCompetencies(filtered);
+                } else {
+                    displayCompetencies(allCompetencies);
                 }
-                
-                const response = await fetch(url);
-                const competencies = await response.json();
-                displayCompetencies(competencies);
                 
             } catch (error) {
                 console.error('Error filtering competencies:', error);
-            }
-        }
-
-        // User profile dropdown
-        function initUserProfile() {
-            const userProfile = document.getElementById('userProfile');
-            const userDropdown = document.getElementById('userDropdown');
-            
-            if (userProfile) {
-                userProfile.addEventListener('click', function(e) {
-                    e.stopPropagation();
-                    userProfile.classList.toggle('active');
-                });
-            }
-
-            document.addEventListener('click', function(e) {
-                if (!e.target.closest('.user-profile')) {
-                    userProfile.classList.remove('active');
-                }
-            });
-        }
-
-        function handleLogout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../../auth/login.html';
             }
         }
 

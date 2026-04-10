@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fix 431 Error - BETCI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 28px;
+        }
+        
+        .error-code {
+            color: #e74c3c;
+            font-size: 48px;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .description {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            margin: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .status {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .status-item {
+            margin: 10px 0;
+            padding: 8px;
+            background: rgba(255,255,255,0.5);
+            border-radius: 5px;
+        }
+        
+        .icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+        }
+        
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #ffeaa7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">⚠️</div>
+        <h1>Fix 431 Error</h1>
+        <div class="error-code">431</div>
+        <div class="description">
+            <strong>Request Header Fields Too Large</strong><br>
+            This error occurs when large Base64 images are stored in browser storage (localStorage, sessionStorage, or cookies).
+        </div>
+        
+        <div class="warning">
+            <strong>⚡ What this will do:</strong><br>
+            Remove large Base64 profile pictures from browser storage while keeping your login session intact.
+        </div>
+        
+        <button class="btn" onclick="fixStorage()">🔧 Fix Storage Now</button>
+        <button class="btn" onclick="clearAll()">🗑️ Clear All & Reload</button>
+        
+        <div id="status" class="status"></div>
+    </div>
+    
+    <script>
+        function showStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = 'status ' + type;
+            statusDiv.innerHTML = message;
+            statusDiv.style.display = 'block';
+        }
+        
+        function fixStorage() {
+            let fixed = [];
+            let errors = [];
+            
+            try {
+                // Fix localStorage
+                const localKeys = Object.keys(localStorage);
+                localKeys.forEach(key => {
+                    try {
+                        const value = localStorage.getItem(key);
+                        if (value && value.includes('data:image')) {
+                            const size = new Blob([value]).size;
+                            if (size > 10000) { // > 10KB
+                                // If it's userSession, remove only profilePicture
+                                if (key === 'userSession') {
+                                    const session = JSON.parse(value);
+                                    if (session.profilePicture) {
+                                        delete session.profilePicture;
+                                        localStorage.setItem(key, JSON.stringify(session));
+                                        fixed.push(`✓ Removed profilePicture from localStorage.userSession (${(size/1024).toFixed(1)}KB)`);
+                                    }
+                                } else {
+                                    // Remove entire item if it's just an image
+                                    localStorage.removeItem(key);
+                                    fixed.push(`✓ Removed ${key} from localStorage (${(size/1024).toFixed(1)}KB)`);
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        errors.push(`⚠ Error processing localStorage.${key}: ${e.message}`);
+                    }
+                });
+                
+                // Fix sessionStorage
+                const sessionKeys = Object.keys(sessionStorage);
+                sessionKeys.forEach(key => {
+                    try {
+                        const value = sessionStorage.getItem(key);
+                        if (value && value.includes('data:image')) {
+                            const size = new Blob([value]).size;
+                            if (size > 10000) { // > 10KB
+                                // If it's userSession, remove only profilePicture
+                                if (key === 'userSession') {
+                                    const session = JSON.parse(value);
+                                    if (session.profilePicture) {
+                                        delete session.profilePicture;
+                                        sessionStorage.setItem(key, JSON.stringify(session));
+                                        fixed.push(`✓ Removed profilePicture from sessionStorage.userSession (${(size/1024).toFixed(1)}KB)`);
+                                    }
+                                } else {
+                                    // Remove entire item if it's just an image
+                                    sessionStorage.removeItem(key);
+                                    fixed.push(`✓ Removed ${key} from sessionStorage (${(size/1024).toFixed(1)}KB)`);
+                                }
+                            }
+                        }
+                    } catch (e) {
+                        errors.push(`⚠ Error processing sessionStorage.${key}: ${e.message}`);
+                    }
+                });
+                
+                // Clear cookies with Base64 data
+                document.cookie.split(";").forEach(cookie => {
+                    const name = cookie.split("=")[0].trim();
+                    const value = cookie.split("=")[1];
+                    if (value && value.includes('base64')) {
+                        document.cookie = name + "=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/;";
+                        fixed.push(`✓ Cleared cookie: ${name}`);
+                    }
+                });
+                
+                let message = '<h3>Storage Fixed!</h3>';
+                
+                if (fixed.length > 0) {
+                    message += '<div style="text-align: left; margin-top: 15px;">';
+                    fixed.forEach(item => {
+                        message += `<div class="status-item">${item}</div>`;
+                    });
+                    message += '</div>';
+                } else {
+                    message += '<p>No large Base64 images found in storage. Your storage is clean!</p>';
+                }
+                
+                if (errors.length > 0) {
+                    message += '<div style="margin-top: 15px; color: #856404;">';
+                    errors.forEach(err => {
+                        message += `<div class="status-item">${err}</div>`;
+                    });
+                    message += '</div>';
+                }
+                
+                message += '<p style="margin-top: 20px;"><strong>✅ You can now reload the page or continue using the app.</strong></p>';
+                
+                showStatus(message, 'success');
+                
+            } catch (error) {
+                showStatus(`<h3>Error</h3><p>${error.message}</p>`, 'info');
+            }
+        }
+        
+        function clearAll() {
+            try {
+                // Clear all storage
+                localStorage.clear();
+                sessionStorage.clear();
+                
+                // Clear all cookies
+                document.cookie.split(";").forEach(function(c) { 
+                    document.cookie = c.replace(/^ +/, "").replace(/=.*/, "=;expires=" + new Date().toUTCString() + ";path=/"); 
+                });
+                
+                // Unregister service workers
+                if ('serviceWorker' in navigator) {
+                    navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                        for(let registration of registrations) {
+                            registration.unregister();
+                        }
+                    });
+                }
+                
+                // Clear cache
+                if ('caches' in window) {
+                    caches.keys().then(function(names) {
+                        for (let name of names) {
+                            caches.delete(name);
+                        }
+                    });
+                }
+                
+                showStatus('<h3>All Storage Cleared!</h3><p>Redirecting to homepage in 2 seconds...</p>', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 2000);
+                
+            } catch (error) {
+                showStatus(`<h3>Error</h3><p>${error.message}</p>`, 'info');
+            }
+        }
+        
+        // Auto-fix if URL has ?auto parameter
+        if (window.location.search.includes('auto')) {
+            window.onload = function() {
+                fixStorage();
+            };
+        }
+    </script>
+</body>
+</html>
