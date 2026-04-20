@@ -233,7 +233,7 @@ body.login-page {
   font-weight: 600;
   color: #333333;
   margin-bottom: 8px;
-  text-transform: uppercase;
+  text-transform: none;
   letter-spacing: 0.5px;
 }
 

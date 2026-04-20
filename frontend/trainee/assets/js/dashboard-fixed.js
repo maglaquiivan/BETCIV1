@@ -4,64 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Dashboard loaded successfully!');
     loadAllCourses();
     animateProgressBars();
-    initializeMobileMenu();
 });
-
-// Mobile menu functionality
-function initializeMobileMenu() {
-    const sidebar = document.querySelector('.sidebar');
-    const menuToggle = document.getElementById('menuToggle');
-    
-    if (!sidebar || !menuToggle) return;
-    
-    // Toggle sidebar on menu button click
-    menuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('collapsed');
-        document.body.style.overflow = sidebar.classList.contains('collapsed') ? 'hidden' : '';
-    });
-    
-    // Close sidebar when clicking the close button (::before pseudo-element)
-    sidebar.addEventListener('click', function(e) {
-        const rect = sidebar.getBoundingClientRect();
-        const closeButtonX = rect.right - 60; // 20px from right + 40px button width
-        const closeButtonY = rect.top + 20; // 20px from top
-        
-        // Check if click is within close button area
-        if (sidebar.classList.contains('collapsed') &&
-            e.clientX >= closeButtonX && e.clientX <= closeButtonX + 40 &&
-            e.clientY >= closeButtonY && e.clientY <= closeButtonY + 40) {
-            sidebar.classList.remove('collapsed');
-            document.body.style.overflow = '';
-        }
-    });
-    
-    // Close sidebar when clicking overlay
-    sidebar.addEventListener('click', function(e) {
-        if (sidebar.classList.contains('collapsed') && e.target === sidebar) {
-            sidebar.classList.remove('collapsed');
-            document.body.style.overflow = '';
-        }
-    });
-    
-    // Close sidebar when clicking a nav link
-    const navLinks = sidebar.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.remove('collapsed');
-                document.body.style.overflow = '';
-            }
-        });
-    });
-    
-    // Reset on window resize
-    window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            sidebar.classList.remove('collapsed');
-            document.body.style.overflow = '';
-        }
-    });
-}
 
 async function loadAllCourses() {
     const coursesGrid = document.getElementById('coursesGrid');

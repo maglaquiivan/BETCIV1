@@ -10,24 +10,14 @@ const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/BETCI'
 
 // Middleware - Increased limits to handle base64 images
 app.use(cors());
-app.use(express.json({ limit: '10mb' }));
-app.use(express.urlencoded({ extended: true, limit: '10mb', parameterLimit: 50000 }));
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ extended: true, limit: '50mb', parameterLimit: 50000 }));
 
 // Increase header size limit to handle larger requests
 app.use((req, res, next) => {
   // Set max header size (Node.js default is 8KB, we increase to 16KB)
   req.socket.setMaxListeners(0);
   next();
-});
-
-// Error handling middleware for large payloads
-app.use((err, req, res, next) => {
-  if (err.type === 'entity.too.large') {
-    return res.status(413).json({ 
-      message: 'Request payload too large. Please reduce image size or use image URLs.' 
-    });
-  }
-  next(err);
 });
 
 // MongoDB Connection
@@ -56,6 +46,11 @@ const enrollmentRoutes = require('./routes/enrollments');
 const applicationRoutes = require('./routes/applications');
 const admissionRoutes = require('./routes/admissions');
 const changePasswordRoutes = require('./routes/changePassword');
+const passwordResetRoutes = require('./routes/passwordReset');
+
+// Verify email configuration on startup
+const { verifyEmailConfig } = require('./utils/emailService');
+verifyEmailConfig();
 
 // ============================================
 // API ROUTES - MUST BE FIRST!
@@ -74,6 +69,7 @@ app.use('/api/enrollments', enrollmentRoutes);
 app.use('/api/applications', applicationRoutes);
 app.use('/api/admissions', admissionRoutes);
 app.use('/api', changePasswordRoutes);
+app.use('/api', passwordResetRoutes);
 
 // Test route
 app.get('/api/test', (req, res) => {
@@ -134,6 +130,20 @@ app.get('/', (req, res) => {
 
 // No fallback route - let express.static handle everything
 // If a file doesn't exist, it will naturally return 404
+
+// Error handling middleware for large payloads - MUST BE AFTER ROUTES
+app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ 
+      message: 'Request payload too large. Please reduce image size or use image URLs.' 
+    });
+  }
+  if (err) {
+    console.error('Server error:', err);
+    return res.status(500).json({ message: err.message || 'Internal server error' });
+  }
+  next();
+});
 
 // Start server - Listen on 0.0.0.0 to accept connections from both localhost and 127.0.0.1
 app.listen(PORT, '0.0.0.0', () => {

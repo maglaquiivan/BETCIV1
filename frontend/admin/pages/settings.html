@@ -371,12 +371,14 @@
                             <span>Training Catalog</span>
                         </a>
                     </li>
+                    <!-- Appointments temporarily hidden
                     <li class="nav-item">
                         <a href="appointments.html" class="nav-link">
                             <i class="bi bi-calendar-check"></i>
                             <span>Appointments</span>
                         </a>
                     </li>
+                    -->
                     <li class="nav-item">
                         <a href="records.html" class="nav-link">
                             <i class="bi bi-file-earmark"></i>
@@ -601,19 +603,28 @@
                             <input type="text" id="username" name="username" value="admin" autocomplete="username" style="display: none;" aria-hidden="true">
                             <div class="form-group">
                                 <label class="form-label" for="current_password">Current Password</label>
-                                <input type="password" id="current_password" class="form-control" name="current_password" autocomplete="current-password" required>
+                                <div style="position: relative;">
+                                    <input type="password" id="current_password" class="form-control" name="current_password" autocomplete="current-password" required style="padding-right: 40px;">
+                                    <i class="bi bi-eye-slash" id="toggleCurrentPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 18px;"></i>
+                                </div>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="newPassword">New Password</label>
-                                <input type="password" class="form-control" name="new_password" id="newPassword" autocomplete="new-password" required>
+                                <div style="position: relative;">
+                                    <input type="password" class="form-control" name="new_password" id="newPassword" autocomplete="new-password" required style="padding-right: 40px;">
+                                    <i class="bi bi-eye-slash" id="toggleNewPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 18px;"></i>
+                                </div>
                                 <div class="password-strength">
                                     <div class="password-strength-bar" id="strengthBar"></div>
                                 </div>
-                                <p class="password-hint">Password must be at least 8 characters long</p>
+                                <p class="password-hint">Password must be at least 8 characters long and include a special character (!@#$%^&*)</p>
                             </div>
                             <div class="form-group">
                                 <label class="form-label" for="confirm_password">Confirm Password</label>
-                                <input type="password" id="confirm_password" class="form-control" name="confirm_password" autocomplete="new-password" required>
+                                <div style="position: relative;">
+                                    <input type="password" id="confirm_password" class="form-control" name="confirm_password" autocomplete="new-password" required style="padding-right: 40px;">
+                                    <i class="bi bi-eye-slash" id="toggleConfirmPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 18px;"></i>
+                                </div>
                             </div>
                             <button type="submit" class="btn btn-primary">
                                 <i class="bi bi-lock"></i> Update Password
@@ -801,8 +812,14 @@
                         return;
                     }
                     
-                    if (newPassword.length < 6) {
-                        showNotification('Password must be at least 6 characters!', 'error');
+                    if (newPassword.length < 8) {
+                        showNotification('Password must be at least 8 characters long!', 'error');
+                        return;
+                    }
+                    
+                    // Check for special character
+                    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+                        showNotification('Password must include at least one special character (!@#$%^&*)', 'error');
                         return;
                     }
                     
@@ -886,18 +903,80 @@
                     if (!strengthBar) return;
                     
                     let strength = 0;
-                    if (password.length >= 8) strength++;
-                    if (password.match(/[a-z]/) && password.match(/[A-Z]/)) strength++;
-                    if (password.match(/[0-9]/)) strength++;
-                    if (password.match(/[^a-zA-Z0-9]/)) strength++;
+                    const hasMinLength = password.length >= 8;
+                    const hasLowerCase = password.match(/[a-z]/);
+                    const hasUpperCase = password.match(/[A-Z]/);
+                    const hasNumber = password.match(/[0-9]/);
+                    const hasSpecialChar = password.match(/[!@#$%^&*(),.?":{}|<>]/);
+                    
+                    if (hasMinLength) strength++;
+                    if (hasLowerCase && hasUpperCase) strength++;
+                    if (hasNumber) strength++;
+                    if (hasSpecialChar) strength++;
                     
                     strengthBar.className = 'password-strength-bar';
-                    if (strength <= 1) {
+                    
+                    // Weak: less than 8 chars or no special char
+                    if (!hasMinLength || !hasSpecialChar) {
                         strengthBar.classList.add('weak');
-                    } else if (strength <= 3) {
+                    }
+                    // Medium: 8+ chars and special char, but missing other criteria
+                    else if (strength === 2) {
                         strengthBar.classList.add('medium');
-                    } else {
+                    }
+                    // Strong: 8+ chars, special char, and at least one more criteria
+                    else if (strength >= 3) {
                         strengthBar.classList.add('strong');
+                    }
+                });
+            }
+
+            // Password visibility toggle functionality
+            const toggleCurrentPassword = document.getElementById('toggleCurrentPassword');
+            const toggleNewPassword = document.getElementById('toggleNewPassword');
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            
+            if (toggleCurrentPassword) {
+                toggleCurrentPassword.addEventListener('click', function() {
+                    const input = document.getElementById('current_password');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.classList.remove('bi-eye-slash');
+                        this.classList.add('bi-eye');
+                    } else {
+                        input.type = 'password';
+                        this.classList.remove('bi-eye');
+                        this.classList.add('bi-eye-slash');
+                    }
+                });
+            }
+            
+            if (toggleNewPassword) {
+                toggleNewPassword.addEventListener('click', function() {
+                    const input = document.getElementById('newPassword');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.classList.remove('bi-eye-slash');
+                        this.classList.add('bi-eye');
+                    } else {
+                        input.type = 'password';
+                        this.classList.remove('bi-eye');
+                        this.classList.add('bi-eye-slash');
+                    }
+                });
+            }
+            
+            if (toggleConfirmPassword) {
+                toggleConfirmPassword.addEventListener('click', function() {
+                    const input = document.getElementById('confirm_password');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.classList.remove('bi-eye-slash');
+                        this.classList.add('bi-eye');
+                    } else {
+                        input.type = 'password';
+                        this.classList.remove('bi-eye');
+                        this.classList.add('bi-eye-slash');
                     }
                 });
             }

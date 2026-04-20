@@ -137,13 +137,8 @@ document.addEventListener('DOMContentLoaded', function() {
           const roleTitle = user.role === 'admin' ? 'Admin' : 'Instructor';
           showModal('success', 'Login Successful!', `Welcome back ${roleTitle}! Redirecting to dashboard...`, '../admin/pages/dashboard.html');
         } else {
-          // Trainee, staff, or any other role
-          // Check if profile is complete
-          if (!user.profileComplete) {
-            showModal('success', 'Welcome!', 'Please complete your profile before proceeding...', '../trainee/pages/manage-profile.html?firstLogin=true');
-          } else {
-            showModal('success', 'Login Successful!', 'Welcome back! Redirecting to your dashboard...', '../trainee/pages/dashboard.html');
-          }
+          // Trainee, staff, or any other role - always go to trainee dashboard
+          showModal('success', 'Login Successful!', 'Welcome back! Redirecting to your dashboard...', '../trainee/pages/dashboard.html');
         }
 
       } catch (error) {
@@ -265,8 +260,8 @@ document.addEventListener('DOMContentLoaded', function() {
         };
         localStorage.setItem('userSession', JSON.stringify(sessionData));
         
-        // Redirect directly to manage-profile page to complete profile
-        showModal('success', 'Registration Successful!', 'Redirecting to complete your profile...', '../trainee/pages/manage-profile.html?firstLogin=true');
+        // Redirect to trainee dashboard after registration
+        showModal('success', 'Registration Successful!', 'Welcome to BETCI! Redirecting to your dashboard...', '../trainee/pages/dashboard.html');
 
       } catch (error) {
         console.error('Registration error:', error);

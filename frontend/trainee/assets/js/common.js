@@ -7,11 +7,25 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeUserDropdown();
     initializeDarkMode();
     loadTheme();
+    loadCompactMode();
     
     // Listen for profile picture updates
     window.addEventListener('profilePictureUpdated', function(e) {
         console.log('Profile picture updated, reloading...');
-        loadUserProfilePicture();
+        try {
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            const sessionUserId = userSession.accountId || userSession.userId || userSession._id;
+            const detailUserId = e?.detail?.userId;
+            const detailPic = e?.detail?.profilePicture;
+            if (sessionUserId && detailUserId && sessionUserId === detailUserId && typeof detailPic === 'string' && detailPic.startsWith('data:')) {
+                sessionStorage.setItem(`profilePic_${sessionUserId}`, detailPic);
+                updateAllAvatarsWithPicture(detailPic);
+            } else {
+                loadUserProfilePicture();
+            }
+        } catch (_) {
+            loadUserProfilePicture();
+        }
     });
 });
 
@@ -21,20 +35,24 @@ document.addEventListener('DOMContentLoaded', function() {
 async function loadUserProfilePicture() {
     try {
         const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
-        
-        if (!userSession.userId) return;
+        const sessionUserId = userSession.accountId || userSession.userId || userSession._id;
+        if (!sessionUserId) return;
+
+        // Show the currently logged-in user's name/picture on trainee pages.
+        // (Endpoint selection below handles trainee/admin/instructor.)
         
         // Update user name from session first (faster)
-        if (userSession.firstName) {
-            const firstName = userSession.firstName.toUpperCase();
+        if (userSession.firstName || userSession.username || userSession.email) {
+            const displayName = (userSession.firstName || userSession.username || 'User').toUpperCase();
             document.querySelectorAll('.user-name').forEach(el => {
-                el.textContent = firstName;
+                el.textContent = displayName;
             });
             
             // Update dropdown user info
             const dropdownUserInfo = document.querySelector('.dropdown-user-info h4');
-            if (dropdownUserInfo && userSession.lastName) {
-                dropdownUserInfo.textContent = `${userSession.firstName} ${userSession.lastName}`.toUpperCase();
+            if (dropdownUserInfo) {
+                const full = `${userSession.firstName || ''} ${userSession.lastName || ''}`.trim();
+                dropdownUserInfo.textContent = (full || displayName).toUpperCase();
             }
             
             const dropdownEmail = document.querySelector('.dropdown-user-info p');
@@ -44,7 +62,7 @@ async function loadUserProfilePicture() {
         }
         
         // Check if we have a cached profile picture URL in sessionStorage (temporary cache)
-        const cachedPictureKey = `profilePic_${userSession.userId}`;
+        const cachedPictureKey = `profilePic_${sessionUserId}`;
         const cachedPicture = sessionStorage.getItem(cachedPictureKey);
         
         if (cachedPicture && cachedPicture.startsWith('data:')) {
@@ -53,14 +71,27 @@ async function loadUserProfilePicture() {
         }
         
         // Fetch user data to get profile picture (always fetch to ensure it's up to date)
-        // Use trainee-accounts endpoint for trainee users
-        const apiEndpoint = userSession.role === 'trainee' ? 'trainee-accounts' : 'accounts';
-        const userId = userSession.accountId || userSession.userId;
-        const response = await fetch(`http://localhost:5500/api/${apiEndpoint}/${userId}`);
-        
-        if (!response.ok) return;
-        
-        const user = await response.json();
+        // Try role-appropriate collections first, then fallback to legacy.
+        const endpoints = [];
+        if (userSession.role === 'admin' || userSession.role === 'instructor') {
+            endpoints.push('admin-accounts', 'accounts');
+        } else {
+            endpoints.push('trainee-accounts', 'accounts');
+        }
+        const userId = sessionUserId;
+        let user = null;
+        for (const endpoint of endpoints) {
+            try {
+                const response = await fetch(`http://localhost:5500/api/${endpoint}/${userId}`);
+                if (response.ok) {
+                    user = await response.json();
+                    break;
+                }
+            } catch (_) {
+                // try next
+            }
+        }
+        if (!user) return;
         
         // Update profile picture if exists
         if (user.profilePicture && user.profilePicture.startsWith('data:')) {
@@ -71,16 +102,17 @@ async function loadUserProfilePicture() {
         }
         
         // Update user name and email from API (more accurate)
-        if (user.firstName) {
-            const firstName = user.firstName.toUpperCase();
+        if (user.firstName || user.username || user.email) {
+            const displayName = (user.firstName || user.username || 'User').toUpperCase();
             document.querySelectorAll('.user-name').forEach(el => {
-                el.textContent = firstName;
+                el.textContent = displayName;
             });
             
             // Update dropdown user info
             const dropdownUserInfo = document.querySelector('.dropdown-user-info h4');
-            if (dropdownUserInfo && user.lastName) {
-                dropdownUserInfo.textContent = `${user.firstName} ${user.lastName}`.toUpperCase();
+            if (dropdownUserInfo) {
+                const full = `${user.firstName || ''} ${user.lastName || ''}`.trim();
+                dropdownUserInfo.textContent = (full || displayName).toUpperCase();
             }
             
             const dropdownEmail = document.querySelector('.dropdown-user-info p');
@@ -115,59 +147,79 @@ function initializeMobileMenu() {
     const menuToggle = document.getElementById('menuToggle');
     
     if (!sidebar || !menuToggle) return;
-    
+
+    // Check if mobile view
+    function isMobile() {
+        return window.innerWidth <= 768;
+    }
+
+    // Initialize sidebar state
+    if (isMobile()) {
+        // Mobile: sidebar starts hidden (collapsed)
+        sidebar.classList.add('collapsed');
+        document.body.classList.remove('sidebar-open');
+    } else {
+        // Desktop: check saved state
+        const saved = localStorage.getItem('sidebarCollapsed') === 'true';
+        sidebar.classList.toggle('collapsed', saved);
+    }
+
     // Toggle sidebar on menu button click
     menuToggle.addEventListener('click', function(e) {
         e.stopPropagation();
-        sidebar.classList.toggle('collapsed');
-        document.body.style.overflow = sidebar.classList.contains('collapsed') ? 'hidden' : '';
-    });
-    
-    // Close sidebar when clicking the close button area (top right)
-    sidebar.addEventListener('click', function(e) {
-        if (!sidebar.classList.contains('collapsed')) return;
         
-        const rect = sidebar.getBoundingClientRect();
-        const closeButtonX = rect.right - 60;
-        const closeButtonY = rect.top + 20;
-        
-        // Check if click is within close button area (40x40 button)
-        if (e.clientX >= closeButtonX && e.clientX <= closeButtonX + 40 &&
-            e.clientY >= closeButtonY && e.clientY <= closeButtonY + 40) {
-            sidebar.classList.remove('collapsed');
-            document.body.style.overflow = '';
-            e.stopPropagation();
+        if (isMobile()) {
+            // Mobile: toggle sidebar visibility with overlay
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            if (isCollapsed) {
+                sidebar.classList.remove('collapsed');
+                document.body.classList.add('sidebar-open');
+            } else {
+                sidebar.classList.add('collapsed');
+                document.body.classList.remove('sidebar-open');
+            }
+        } else {
+            // Desktop: toggle sidebar width
+            const willCollapse = !sidebar.classList.contains('collapsed');
+            sidebar.classList.toggle('collapsed', willCollapse);
+            localStorage.setItem('sidebarCollapsed', willCollapse ? 'true' : 'false');
         }
     });
-    
-    // Close sidebar when clicking overlay (outside sidebar)
+
+    // On mobile, close sidebar when clicking outside
     document.addEventListener('click', function(e) {
-        if (sidebar.classList.contains('collapsed') && 
-            !sidebar.contains(e.target) && 
-            e.target !== menuToggle &&
-            !menuToggle.contains(e.target)) {
-            sidebar.classList.remove('collapsed');
-            document.body.style.overflow = '';
+        if (!isMobile()) return;
+        if (!sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+            sidebar.classList.add('collapsed');
+            document.body.classList.remove('sidebar-open');
         }
     });
-    
-    // Close sidebar when clicking a nav link on mobile
+
+    // On mobile, tapping a nav link should hide the sidebar
     const navLinks = sidebar.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
         link.addEventListener('click', function() {
-            if (window.innerWidth <= 768 && sidebar.classList.contains('collapsed')) {
-                sidebar.classList.remove('collapsed');
-                document.body.style.overflow = '';
+            if (isMobile()) {
+                sidebar.classList.add('collapsed');
+                document.body.classList.remove('sidebar-open');
             }
         });
     });
-    
-    // Reset sidebar state on window resize to desktop
+
+    // Handle window resize
+    let resizeTimer;
     window.addEventListener('resize', function() {
-        if (window.innerWidth > 768) {
-            sidebar.classList.remove('collapsed');
-            document.body.style.overflow = '';
-        }
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(function() {
+            if (isMobile()) {
+                sidebar.classList.add('collapsed');
+                document.body.classList.remove('sidebar-open');
+            } else {
+                const saved = localStorage.getItem('sidebarCollapsed') === 'true';
+                sidebar.classList.toggle('collapsed', saved);
+                document.body.classList.remove('sidebar-open');
+            }
+        }, 250);
     });
 }
 
@@ -182,8 +234,14 @@ function initializeUserDropdown() {
         return;
     }
     
-    userProfile.addEventListener('click', function(e) {
+    // Remove any existing listeners by cloning
+    const newUserProfile = userProfile.cloneNode(true);
+    userProfile.parentNode.replaceChild(newUserProfile, userProfile);
+    
+    newUserProfile.addEventListener('click', function(e) {
+        e.preventDefault();
         e.stopPropagation();
+        console.log('User profile clicked');
         this.classList.toggle('active');
     });
 
@@ -207,12 +265,34 @@ function initializeDarkMode() {
     const darkModeBtn = document.getElementById('darkModeBtn');
     const darkModeToggle = document.getElementById('darkModeToggle');
     
+    console.log('Initializing dark mode...', { darkModeBtn, darkModeToggle });
+    
     if (darkModeBtn) {
-        darkModeBtn.addEventListener('click', toggleDarkMode);
+        // Remove any existing listeners by cloning
+        const newBtn = darkModeBtn.cloneNode(true);
+        darkModeBtn.parentNode.replaceChild(newBtn, darkModeBtn);
+        
+        newBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log('Dark mode button clicked');
+            toggleDarkMode();
+        });
+        
+        console.log('Dark mode button listener attached');
     }
     
     if (darkModeToggle) {
-        darkModeToggle.addEventListener('change', toggleDarkMode);
+        // Remove any existing listeners by cloning
+        const newToggle = darkModeToggle.cloneNode(true);
+        darkModeToggle.parentNode.replaceChild(newToggle, darkModeToggle);
+        
+        newToggle.addEventListener('change', function(e) {
+            console.log('Dark mode toggle changed');
+            toggleDarkMode();
+        });
+        
+        console.log('Dark mode toggle listener attached');
     }
 }
 
@@ -221,10 +301,17 @@ function toggleDarkMode() {
     const isDark = body.classList.toggle('dark-mode');
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
     
+    console.log('Dark mode toggled:', isDark);
+    
     // Update button icon
     const btn = document.getElementById('darkModeBtn');
     if (btn) {
-        btn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        const icon = btn.querySelector('i');
+        if (icon) {
+            icon.className = isDark ? 'bi bi-sun-fill' : 'bi bi-moon-fill';
+        } else {
+            btn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
+        }
     }
     
     // Update toggle checkbox
@@ -232,14 +319,27 @@ function toggleDarkMode() {
     if (toggle) {
         toggle.checked = isDark;
     }
+    
+    // Show notification
+    showNotification(isDark ? 'Dark mode enabled' : 'Light mode enabled', 'info');
 }
 
 function loadTheme() {
     const theme = localStorage.getItem('theme');
+    console.log('Loading theme:', theme);
+    
     if (theme === 'dark') {
         document.body.classList.add('dark-mode');
+        
         const btn = document.getElementById('darkModeBtn');
-        if (btn) btn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+        if (btn) {
+            const icon = btn.querySelector('i');
+            if (icon) {
+                icon.className = 'bi bi-sun-fill';
+            } else {
+                btn.innerHTML = '<i class="bi bi-sun-fill"></i>';
+            }
+        }
         
         const toggle = document.getElementById('darkModeToggle');
         if (toggle) toggle.checked = true;
@@ -261,6 +361,29 @@ function handleLogout() {
             sessionStorage.removeItem('userSession');
             window.location.href = '../../auth/login.html';
         }, 500);
+    }
+}
+
+// ============================================
+// COMPACT MODE
+// ============================================
+function toggleCompactMode() {
+    const compactModeToggle = document.getElementById('compactModeToggle');
+    if (!compactModeToggle) return;
+    
+    const isCompact = compactModeToggle.checked;
+    document.body.classList.toggle('compact-mode', isCompact);
+    localStorage.setItem('compactMode', isCompact);
+    
+    showNotification(isCompact ? 'Compact mode enabled' : 'Compact mode disabled', 'info');
+}
+
+function loadCompactMode() {
+    const compactMode = localStorage.getItem('compactMode') === 'true';
+    if (compactMode) {
+        document.body.classList.add('compact-mode');
+        const toggle = document.getElementById('compactModeToggle');
+        if (toggle) toggle.checked = true;
     }
 }
 
@@ -336,6 +459,8 @@ function showNotification(message, type = 'info') {
 // Make functions globally available
 window.toggleDarkMode = toggleDarkMode;
 window.loadTheme = loadTheme;
+window.toggleCompactMode = toggleCompactMode;
+window.loadCompactMode = loadCompactMode;
 window.navigateTo = navigateTo;
 window.handleLogout = handleLogout;
 window.showNotification = showNotification;

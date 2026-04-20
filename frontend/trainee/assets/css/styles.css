@@ -34,7 +34,8 @@ body {
    ============================================ */
 
 .admin-container {
-  display: flex;
+  /* Sidebar is fixed; container should not reserve sidebar width */
+  display: block;
   min-height: 100vh;
 }
 
@@ -46,9 +47,30 @@ body {
   padding: 0;
   position: fixed;
   height: 100vh;
+  max-height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   z-index: 1000;
   box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
 }
 
 .sidebar-header {
@@ -163,6 +185,13 @@ body {
   display: flex;
   flex-direction: column;
   background: var(--bg-light);
+  width: calc(100% - 210px);
+}
+
+/* Collapsed sidebar on desktop */
+.sidebar.collapsed + .main-content {
+  margin-left: 70px;
+  width: calc(100% - 70px);
 }
 
 /* TOP HEADER */
@@ -387,6 +416,9 @@ body {
   padding: 30px;
   flex: 1;
   overflow-y: auto;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 /* SECTION HEADER */
@@ -1899,6 +1931,7 @@ body.dark-mode .profile-section {
     margin-bottom: 15px;
     display: -webkit-box;
     -webkit-line-clamp: 2;
+    line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
 }

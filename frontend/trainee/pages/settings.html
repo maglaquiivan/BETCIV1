@@ -1,188 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- IMMEDIATE Extension Error Suppression - Must be first -->
-    <script>
-        // Comprehensive console suppression for browser extensions
-        (function() {
-          'use strict';
-          
-          // Store original console methods
-          const originalError = console.error;
-          const originalWarn = console.warn;
-          const originalLog = console.log;
-          
-          // Filter function for extension-related messages
-          const isExtensionError = (args) => {
-            const str = String(args).toLowerCase();
-            return str.includes('chrome-extension') || 
-                   str.includes('dngmlblcodfobpdpecaadgfbcggfjfnm') || 
-                   str.includes('web_accessible_resources') || 
-                   str.includes('lockdown-install') ||
-                   str.includes('ses removing') || 
-                   str.includes('err_failed') || 
-                   str.includes('extension context') ||
-                   str.includes('metamask') ||
-                   str.includes('receiving end does not exist') ||
-                   str.includes('could not establish connection') ||
-                   str.includes('inpage.js') ||
-                   str.includes('431') ||
-                   str.includes('request header fields too large') ||
-                   str.includes('err_connection_reset');
-          };
-          
-          // Override console.error
-          console.error = function(...args) {
-            if (!isExtensionError(args)) {
-              originalError.apply(console, args);
-            }
-          };
-          
-          // Override console.warn
-          console.warn = function(...args) {
-            if (!isExtensionError(args)) {
-              originalWarn.apply(console, args);
-            }
-          };
-          
-          // Override console.log
-          console.log = function(...args) {
-            if (!isExtensionError(args)) {
-              originalLog.apply(console, args);
-            }
-          };
-          
-          // Block extension errors at window level
-          window.addEventListener('error', function(e) {
-            if (e.filename && (e.filename.includes('chrome-extension') || 
-                e.filename.includes('inpage.js') ||
-                e.filename.includes('lockdown'))) {
-              e.preventDefault();
-              e.stopPropagation();
-              e.stopImmediatePropagation();
-              return false;
-            }
-          }, true);
-          
-          // Block unhandled promise rejections from extensions
-          window.addEventListener('unhandledrejection', function(e) {
-            const message = String(e.reason || '').toLowerCase();
-            if (message.includes('metamask') || 
-                message.includes('extension') ||
-                message.includes('receiving end') ||
-                message.includes('could not establish')) {
-              e.preventDefault();
-              e.stopPropagation();
-              e.stopImmediatePropagation();
-              return false;
-            }
-          }, true);
-          
-          // Override fetch to suppress extension requests
-          const originalFetch = window.fetch;
-          window.fetch = function(...args) {
-            const url = String(args[0] || '').toLowerCase();
-            if (url.includes('chrome-extension') || url.includes('metamask')) {
-              return Promise.reject(new Error('Extension request blocked'));
-            }
-            return originalFetch.apply(this, args).catch(err => {
-              // Suppress 431 errors from extensions
-              if (err.message && (err.message.includes('431') || err.message.includes('ERR_CONNECTION_RESET'))) {
-                console.log('Suppressed extension error:', err.message);
-                return Promise.reject(err);
-              }
-              throw err;
-            });
-          };
-          
-          // Prevent extension script injection
-          const observer = new MutationObserver(function(mutations) {
-            mutations.forEach(function(mutation) {
-              mutation.addedNodes.forEach(function(node) {
-                if (node.nodeType === 1) {
-                  if (node.tagName === 'SCRIPT' && node.src && 
-                      (node.src.includes('chrome-extension') || 
-                       node.src.includes('inpage.js') ||
-                       node.src.includes('lockdown'))) {
-                    node.remove();
-                  }
-                }
-              });
-            });
-          });
-          
-          observer.observe(document.documentElement, {
-            childList: true,
-            subtree: true
-          });
-        })();
-    </script>
-
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; object-src 'none'; base-uri 'self';">
-    <title>BETCI - Settings</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link href="../assets/css/dashboard.css" rel="stylesheet">
-    <link href="../assets/css/styles.css" rel="stylesheet">
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Settings - BETCI Trainee</title>
+    <meta name="description" content="BETCI Trainee - Settings" />
     
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/img/logo.png" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    
+    <!-- Trainee Dashboard CSS -->
+    <link rel="stylesheet" href="../assets/css/dashboard.css?v=20260414003" />
+    
+    <!-- Modern Profile Styles - Compact Version -->
     <style>
-        .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { padding: 10px 20px; border: 2px solid #ddd; background: white; border-radius: 6px; cursor: pointer; font-weight: 500; transition: all 0.3s; display: inline-flex; align-items: center; gap: 8px; }
-        .tab-btn.active { background: #E67E22; color: white; border-color: #E67E22; }
-        .tab-btn:hover { border-color: #E67E22; }
-        
-        .records-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .record-card { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent; }
-        .record-card:hover { box-shadow: 0 8px 24px rgba(230, 126, 34, 0.2); transform: translateY(-4px); border-color: #E67E22; }
-        
-        .record-header { display: flex; justify-content: space-between; align-items: start; margin-bottom: 15px; }
-        .record-title { font-size: 18px; font-weight: 600; color: #333; }
-        .record-date { font-size: 12px; color: #999; margin-top: 5px; }
-        
-        .status-badge { padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
-        .status-completed { background: #d4edda; color: #155724; }
-        .status-pending { background: #fff3cd; color: #856404; }
-        .status-failed { background: #f8d7da; color: #721c24; }
-        
-        .record-details { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 15px 0; }
-        .detail-item { padding: 10px; background: #f8f9fa; border-radius: 6px; }
-        .detail-label { font-size: 11px; color: #999; font-weight: 600; text-transform: uppercase; }
-        .detail-value { font-size: 14px; color: #333; margin-top: 4px; font-weight: 500; }
-        
-        .record-actions { display: flex; gap: 10px; margin-top: 15px; }
-        .btn-action { flex: 1; padding: 8px 12px; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 500; transition: all 0.3s; }
-        .btn-download { background: #E67E22; color: white; }
-        .btn-download:hover { background: #d35400; }
-        .btn-view { background: #f0f0f0; color: #333; }
-        .btn-view:hover { background: #e0e0e0; }
-        
-        .empty-state { text-align: center; padding: 60px 20px; color: #999; grid-column: 1/-1; }
-        .empty-state i { font-size: 48px; color: #ddd; margin-bottom: 15px; }
-        
-        /* Settings Tab Content */
-        .settings-tab-content {
-            display: none;
-        }
-        
-        .settings-tab-content.active {
-            display: block;
-        }
-        
-        /* Modern Profile Overview Styles - Compact Version */
+        /* Profile Overview Card */
         .profile-overview-card {
-            background: linear-gradient(135deg, #E67E22 0%, #d35400 100%);
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 24px;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+            border-radius: 12px;
+            padding: 24px 32px;
+            margin-bottom: 20px;
             color: white;
-            box-shadow: 0 8px 24px rgba(230, 126, 34, 0.25);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
         
         .profile-header-section {
             display: grid;
-            grid-template-columns: 180px 1fr;
+            grid-template-columns: 200px 1fr;
             gap: 32px;
             align-items: center;
         }
@@ -192,48 +44,45 @@
         }
         
         .profile-photo-circle {
-            width: 140px;
-            height: 140px;
+            width: 120px;
+            height: 120px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            background: linear-gradient(135deg, #E67E22, #d35400);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 16px;
-            font-size: 3rem;
+            margin: 0 auto 12px;
+            font-size: 2.5rem;
             font-weight: 700;
-            color: #E67E22;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            color: white;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             background-size: cover;
             background-position: center;
-            border: 4px solid rgba(255,255,255,0.3);
         }
         
         .change-photo-btn {
-            background: rgba(255,255,255,0.95);
-            border: 2px solid rgba(255,255,255,0.5);
-            color: #E67E22;
-            padding: 8px 16px;
-            border-radius: 8px;
+            background: rgba(255,255,255,0.2);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 6px;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 13px;
+            font-weight: 600;
+            font-size: 12px;
             transition: all 0.3s;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
         
         .change-photo-btn:hover {
-            background: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            background: rgba(255,255,255,0.3);
         }
         
         .photo-hint {
-            margin-top: 8px;
-            font-size: 11px;
-            color: rgba(255,255,255,0.8);
+            margin-top: 6px;
+            font-size: 10px;
+            color: rgba(255,255,255,0.6);
         }
         
         .profile-info-grid {
@@ -241,9 +90,9 @@
         }
         
         .profile-overview-title {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             color: white;
         }
         
@@ -259,89 +108,86 @@
         }
         
         .info-item {
-            background: rgba(255,255,255,0.15);
-            padding: 14px 18px;
-            border-radius: 10px;
-            border: 1px solid rgba(255,255,255,0.2);
-            backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.1);
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.15);
         }
         
         .info-label {
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.5px;
-            color: rgba(255,255,255,0.85);
-            margin-bottom: 8px;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 4px;
         }
         
         .info-value {
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: white;
         }
         
         .info-badge {
             display: inline-block;
-            background: rgba(255, 255, 255, 0.25);
-            padding: 6px 14px;
-            border-radius: 16px;
-            font-size: 14px;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            font-weight: 700;
+            background: rgba(59, 130, 246, 0.3);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 13px;
+            border: 1px solid rgba(59, 130, 246, 0.4);
         }
         
         /* Personal Information Card - Compact */
         .personal-info-card {
             background: white;
-            border-radius: 16px;
-            padding: 28px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
         }
         
         .card-header-flex {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 24px;
-            padding-bottom: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
             border-bottom: 2px solid #f0f0f0;
         }
         
         .section-title {
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 700;
-            color: #2c3e50;
+            color: #1e3a5f;
             margin: 0;
         }
         
         .btn-edit-info {
-            background: #E67E22;
+            background: #3b82f6;
             color: white;
             border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 14px;
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: all 0.3s;
         }
         
         .btn-edit-info:hover {
-            background: #d35400;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+            background: #2563eb;
+            transform: translateY(-1px);
         }
         
         .form-grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 18px;
+            gap: 16px;
         }
         
         .form-group-modern {
@@ -354,18 +200,18 @@
         
         .form-label-modern {
             display: block;
-            font-size: 11px;
+            font-size: 10px;
             font-weight: 700;
             letter-spacing: 0.5px;
             color: #64748b;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
         
         .form-input-modern {
             width: 100%;
-            padding: 12px 14px;
-            border: 2px solid #e2e8f0;
-            border-radius: 8px;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
             font-size: 14px;
             color: #1e293b;
             background: #f8fafc;
@@ -374,9 +220,9 @@
         
         .form-input-modern:focus {
             outline: none;
-            border-color: #E67E22;
+            border-color: #3b82f6;
             background: white;
-            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
         }
         
         .form-input-modern:disabled {
@@ -387,19 +233,19 @@
         
         .form-input-modern:not(:disabled) {
             background: white;
-            border-color: #E67E22;
+            border-color: #3b82f6;
         }
         
         textarea.form-input-modern {
             resize: vertical;
-            min-height: 70px;
+            min-height: 60px;
         }
         
         .form-actions-modern {
             display: flex;
-            gap: 12px;
-            margin-top: 24px;
-            padding-top: 20px;
+            gap: 10px;
+            margin-top: 20px;
+            padding-top: 16px;
             border-top: 2px solid #f0f0f0;
         }
         
@@ -407,42 +253,40 @@
             background: #10b981;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
             font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: all 0.3s;
         }
         
         .btn-save-modern:hover {
             background: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transform: translateY(-1px);
         }
         
         .btn-cancel-modern {
             background: #ef4444;
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 8px;
-            font-weight: 700;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
             font-size: 14px;
             cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             transition: all 0.3s;
         }
         
         .btn-cancel-modern:hover {
             background: #dc2626;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+            transform: translateY(-1px);
         }
         
         /* Responsive */
@@ -483,579 +327,597 @@
 </head>
 <body>
     <div class="admin-container">
-        <!-- Sidebar Container -->
+        <!-- Sidebar -->
         <aside class="sidebar">
-        <div class="sidebar-header">
-            <div class="logo-image">
-                <img src="../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
+            <div class="sidebar-header">
+                <div class="logo-image">
+                    <img src="../assets/img/logo.png" alt="BETCI Logo" class="sidebar-logo">
+                </div>
+                <div class="logo-text">
+                    <h3>BETCI</h3>
+                    <p>Trainee</p>
+                </div>
             </div>
-            <div class="logo-text">
-                <h3>BETCI</h3>
-                <p>Trainee</p>
-            </div>
-        </div>
-        
-        <nav class="sidebar-nav">
-            <ul>
-                <li class="nav-item">
-                    <a href="dashboard.html" class="nav-link">
-                        <i class="bi bi-house-door"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="courses.html" class="nav-link">
-                        <i class="bi bi-book"></i>
-                        <span>Courses</span>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="assessment.html" class="nav-link">
-                        <i class="bi bi-clipboard-check"></i>
-                        <span>Forms</span>
-                    </a>
-                </li>
-                <li class="nav-item">
+            
+            <nav class="sidebar-nav">
+                <ul>
+                    <li class="nav-item">
+                        <a href="dashboard.html" class="nav-link">
+                            <i class="bi bi-house-door"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="courses.html" class="nav-link">
+                            <i class="bi bi-book"></i>
+                            <span>Courses</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="assessment.html" class="nav-link">
+                            <i class="bi bi-clipboard-check"></i>
+                            <span>Forms</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a href="records.html" class="nav-link">
                             <i class="bi bi-file-earmark-text"></i>
                             <span>Records</span>
                         </a>
                     </li>
-                <li class="nav-item active">
-                    <a href="settings.html" class="nav-link">
-                        <i class="bi bi-gear"></i>
-                        <span>Settings</span>
-                    </a>
-                </li>
-            </ul>
-        </nav>
-    </aside>
+                    <li class="nav-item active">
+                        <a href="settings.html" class="nav-link">
+                            <i class="bi bi-gear"></i>
+                            <span>Settings</span>
+                        </a>
+                    </li>
+                    <li class="nav-item nav-logout">
+                        <a href="#" class="nav-link" onclick="handleLogout(); return false;">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
 
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
+        <!-- Main Content -->
+        <div class="main-content">
             <!-- Top Header -->
             <header class="top-header">
                 <div class="header-left">
-                    <div class="search-container">
-                        <i class="bi bi-search"></i>
-                        <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search">
-                    </div>
-                </div>
-                <div class="header-right">
                     <button class="menu-toggle" id="menuToggle">
                         <i class="bi bi-list"></i>
                     </button>
-                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <div class="search-container">
+                        <i class="bi bi-search"></i>
+                        <input type="text" id="searchInput" name="search" placeholder="Search settings..." class="search-input" autocomplete="off" aria-label="Search settings">
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <button class="dark-mode-btn" id="darkModeBtn" title="Toggle Dark Mode">
                         <i class="bi bi-moon-fill"></i>
                     </button>
-                    <div class="user-profile" id="userProfile">
+                    <div class="user-profile">
                         <div class="user-avatar">T</div>
                         <span class="user-name">Trainee</span>
                         <i class="bi bi-chevron-down dropdown-arrow"></i>
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
-                                <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
-                                <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
-                            </svg>
-                        </svg>
-                    </div>
-                    <span class="user-name">KELI</span>
-                    <i class="bi bi-chevron-down dropdown-arrow"></i>
-                    
-                    <!-- User Dropdown Menu -->
-                    <div class="user-dropdown" id="userDropdown">
-                        <div class="dropdown-header">
-                            <div class="dropdown-avatar">
-                                <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                    <circle cx="20" cy="20" r="20" fill="#E67E22"/>
-                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
-                                        <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
-                                        <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
-                                    </svg>
-                                </svg>
-                            </div>
-                            <div class="dropdown-user-info">
-                                <h4>KELI STUDENT</h4>
-                                <p>keli.student@betci.edu.ph</p>
-                            </div>
-                        </div>
-                        <div class="dropdown-divider"></div>
-                        <ul class="dropdown-menu">
-                            <li>
-                                <a href="manage-profile.html">
-                                    <i class="bi bi-person"></i>
-                                    <span>My Profile</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="settings.html">
-                                    <i class="bi bi-gear"></i>
-                                    <span>Settings</span>
-                                </a>
-                            </li>
-                            <li class="theme-toggle-item">
-                                <div class="theme-toggle-wrapper">
-                                    <i class="bi bi-palette"></i>
-                                    <span>Dark Mode</span>
-                                    <label class="theme-switch">
-                                        <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                                        <span class="theme-slider"></span>
-                                    </label>
-                                </div>
-                            </li>
-                        </ul>
-                        <div class="dropdown-divider"></div>
-                        <div class="dropdown-divider"></div>
-                        <div class="dropdown-footer">
-                            <button class="logout-btn" onclick="handleLogout()">
-                                <i class="bi bi-box-arrow-right"></i>
-                                <span>Log Out</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
-
-        <!-- Settings Section -->
-        <div class="dashboard-content">
-            <div class="section-header">
-                <h2><i class="bi bi-gear"></i> Settings</h2>
-            </div>
-            
-            <div class="tab-buttons">
-                <button class="tab-btn active" onclick="switchSettingsTab('profile', event)">
-                    <i class="bi bi-person"></i> My Profile
-                </button>
-                <button class="tab-btn" onclick="switchSettingsTab('password', event)">
-                    <i class="bi bi-lock"></i> Change Password
-                </button>
-            </div>
-
-            <div id="settingsTab" class="tab-content">
-                <div class="settings-tabs">
-                    <button class="settings-tab active" onclick="switchSettingsTab('profile', event)">
-                        <i class="bi bi-person"></i> My Profile
-                    </button>
-                    <button class="settings-tab" onclick="switchSettingsTab('password', event)">
-                        <i class="bi bi-lock"></i> Change Password
-                    </button>
-                    <button class="settings-tab" onclick="switchSettingsTab('appearance', event)">
-                        <i class="bi bi-palette"></i> Appearance
-                    </button>
-                </div>
-            </div>
-
-            <!-- Profile Tab -->
-            <div id="profile-tab" class="settings-tab-content active">
-                <!-- Profile Overview Card -->
-                <div class="profile-overview-card">
-                    <div class="profile-header-section">
-                        <div class="profile-photo-container">
-                            <div class="profile-photo-circle" id="profilePhotoCircle">
-                                <span id="profileInitials">T</span>
-                            </div>
-                            <button type="button" class="change-photo-btn" onclick="changePhoto()">
-                                <i class="bi bi-camera"></i> Change Photo
-                            </button>
-                            <p class="photo-hint">Allowed JPG, PNG. Max size of 2MB</p>
-                        </div>
                         
-                        <div class="profile-info-grid">
-                            <h2 class="profile-overview-title">Profile Overview <span id="roleLabel" style="display: inline-block; background: rgba(255, 255, 255, 0.25); padding: 6px 16px; border-radius: 16px; font-size: 15px; border: 1px solid rgba(255, 255, 255, 0.3); margin-left: 12px; font-weight: 700;">Trainee</span></h2>
-                            
-                            <div class="info-row">
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-person"></i> FULL NAME
-                                    </div>
-                                    <div class="info-value" id="displayFullName">Trainee User</div>
-                                </div>
-                                
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-hash"></i> TRAINEE ID
-                                    </div>
-                                    <div class="info-value info-badge" id="displayTraineeId">TRN-2026-001</div>
+                        <div class="user-dropdown">
+                            <div class="dropdown-header">
+                                <div class="dropdown-avatar">T</div>
+                                <div class="dropdown-user-info">
+                                    <h4>Trainee User</h4>
+                                    <p>trainee@betci.edu.ph</p>
                                 </div>
                             </div>
-                            
-                            <div class="info-row">
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-envelope"></i> EMAIL ADDRESS
-                                    </div>
-                                    <div class="info-value" id="displayEmail">trainee@betci.edu.ph</div>
-                                </div>
-                                
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-calendar"></i> DATE OF BIRTH
-                                    </div>
-                                    <div class="info-value" id="displayDateOfBirth">01/01/2000</div>
-                                </div>
-                            </div>
-                            
-                            <div class="info-row">
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-telephone"></i> PHONE NUMBER
-                                    </div>
-                                    <div class="info-value" id="displayPhone">+63 912 345 6789</div>
-                                </div>
-                                
-                                <div class="info-item">
-                                    <div class="info-label">
-                                        <i class="bi bi-geo-alt"></i> ADDRESS
-                                    </div>
-                                    <div class="info-value" id="displayAddress">Not provided</div>
-                                </div>
+                            <div class="dropdown-divider"></div>
+                            <ul class="dropdown-menu">
+                                <li><a href="settings.html"><i class="bi bi-person"></i>My Profile</a></li>
+                                <li><a href="settings.html"><i class="bi bi-gear"></i>Settings</a></li>
+                            </ul>
+                            <div class="dropdown-divider"></div>
+                            <div class="dropdown-footer">
+                                <button class="logout-btn" onclick="handleLogout()">
+                                    <i class="bi bi-box-arrow-right"></i>
+                                    Logout
+                                </button>
                             </div>
                         </div>
                     </div>
                 </div>
-                
-                <!-- Personal Information Card -->
-                <div class="personal-info-card">
-                    <div class="card-header-flex">
-                        <h3 class="section-title">Personal Information</h3>
-                        <button type="button" class="btn-edit-info" id="editInfoBtn" onclick="toggleEditMode()">
-                            <i class="bi bi-pencil-square"></i> Edit Information
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content settings-content">
+                <!-- Settings Button Tabs -->
+                <div class="settings-button-tabs">
+                    <div class="tab-label">Manage Settings</div>
+                    <div class="tab-buttons">
+                        <button class="tab-item active" onclick="showSection('manage-profile', event)">
+                            <i class="bi bi-person"></i>
+                            <span>Manage Profile</span>
+                        </button>
+                        <button class="tab-item" onclick="showSection('change-password', event)">
+                            <i class="bi bi-key"></i>
+                            <span>Change Password</span>
+                        </button>
+                        <button class="tab-item" onclick="showSection('appearance', event)">
+                            <i class="bi bi-palette"></i>
+                            <span>Appearance</span>
                         </button>
                     </div>
+                </div>
+
+                <!-- Manage Profile Section -->
+                <div id="manage-profile" class="settings-section active">
+                    <!-- Profile Overview Card -->
+                    <div class="profile-overview-card">
+                        <div class="profile-header-section">
+                            <div class="profile-photo-container">
+                                <div class="profile-photo-circle" id="profilePhotoCircle">
+                                    <span id="profileInitials">A</span>
+                                </div>
+                                <button type="button" class="change-photo-btn" onclick="changeAvatar()">
+                                    <i class="bi bi-camera"></i> Change Photo
+                                </button>
+                                <p class="photo-hint">Allowed JPG, PNG. Max size of 2MB</p>
+                            </div>
+                            
+                            <div class="profile-info-grid">
+                                <h2 class="profile-overview-title">Profile Overview <span id="roleLabel" style="display: inline-block; background: rgba(230, 126, 34, 0.3); padding: 4px 12px; border-radius: 12px; font-size: 14px; border: 1px solid rgba(230, 126, 34, 0.5); margin-left: 12px;">Trainee</span></h2>
+                                
+                                <div class="info-row">
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-person"></i> FULL NAME
+                                        </div>
+                                        <div class="info-value" id="displayFullName">Trainee User</div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-hash"></i> TRAINEE ID
+                                        </div>
+                                        <div class="info-value info-badge" id="displayAdminId">TRN-2026-001</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-row">
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-envelope"></i> EMAIL ADDRESS
+                                        </div>
+                                        <div class="info-value" id="displayEmail">trainee@betci.edu.ph</div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-calendar"></i> DATE JOINED
+                                        </div>
+                                        <div class="info-value" id="displayDateJoined">01/01/2026</div>
+                                    </div>
+                                </div>
+                                
+                                <div class="info-row">
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-telephone"></i> PHONE NUMBER
+                                        </div>
+                                        <div class="info-value" id="displayPhone">+63 9XX XXX XXXX</div>
+                                    </div>
+                                    
+                                    <div class="info-item">
+                                        <div class="info-label">
+                                            <i class="bi bi-geo-alt"></i> ADDRESS
+                                        </div>
+                                        <div class="info-value" id="displayAddress">Not provided</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                     
-                    <form id="profileForm" method="POST">
-                        <div class="form-grid-2">
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="traineeId">TRAINEE ID</label>
-                                <input type="text" id="traineeId" name="traineeId" class="form-input-modern" value="TRN-2026-001" autocomplete="off" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="username">USERNAME</label>
-                                <input type="text" id="username" name="username" class="form-input-modern" value="trainee" autocomplete="username" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="firstName">FIRST NAME</label>
-                                <input type="text" id="firstName" name="firstName" class="form-input-modern" value="Trainee" autocomplete="given-name" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="secondName">SECOND NAME</label>
-                                <input type="text" id="secondName" name="secondName" class="form-input-modern" value="" autocomplete="additional-name" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="middleName">MIDDLE NAME</label>
-                                <input type="text" id="middleName" name="middleName" class="form-input-modern" value="" autocomplete="additional-name" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="lastName">LAST NAME</label>
-                                <input type="text" id="lastName" name="lastName" class="form-input-modern" value="User" autocomplete="family-name" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="suffix">SUFFIX</label>
-                                <input type="text" id="suffix" name="suffix" class="form-input-modern" value="" autocomplete="honorific-suffix" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="dateOfBirth">DATE OF BIRTH *</label>
-                                <input type="date" id="dateOfBirth" name="dateOfBirth" class="form-input-modern" value="2000-01-01" autocomplete="bday" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="phoneNumber">PHONE NUMBER</label>
-                                <input type="tel" id="phoneNumber" name="phoneNumber" class="form-input-modern" value="+63 912 345 6789" autocomplete="tel" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern">
-                                <label class="form-label-modern" for="emailAddress">EMAIL ADDRESS</label>
-                                <input type="email" id="emailAddress" name="emailAddress" class="form-input-modern" value="trainee@betci.edu.ph" autocomplete="email" disabled>
-                            </div>
-                            
-                            <div class="form-group-modern full-width">
-                                <label class="form-label-modern" for="address">ADDRESS *</label>
-                                <textarea id="address" name="address" class="form-input-modern" rows="2" autocomplete="street-address" disabled placeholder="Enter your address"></textarea>
-                            </div>
-                        </div>
-                        
-                        <div class="form-actions-modern" id="formActions" style="display: none;">
-                            <button type="submit" class="btn-save-modern">
-                                <i class="bi bi-check-circle"></i> Save Changes
-                            </button>
-                            <button type="button" class="btn-cancel-modern" onclick="cancelEdit()">
-                                <i class="bi bi-x-circle"></i> Cancel
+                    <!-- Personal Information Card -->
+                    <div class="personal-info-card">
+                        <div class="card-header-flex">
+                            <h3 class="section-title">Personal Information</h3>
+                            <button type="button" class="btn-edit-info" id="editInfoBtn" onclick="toggleEditMode()">
+                                <i class="bi bi-pencil-square"></i> Edit Information
                             </button>
                         </div>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Password Tab -->
-            <div id="password-tab" class="settings-tab-content">
-                <div class="settings-card">
-                    <div class="settings-card-header">
-                        <div>
-                            <h3>Change Password</h3>
-                            <p>Update your account password for security</p>
-                        </div>
-                    </div>
-
-                    <form id="passwordForm" class="profile-form">
-                        <!-- Hidden username field for accessibility -->
-                        <input type="text" name="username" autocomplete="username" style="display:none;" value="KELI" readonly>
                         
-                        <div class="form-group">
-                            <label for="currentPassword">Current Password</label>
-                            <input type="password" id="currentPassword" class="form-control" placeholder="Enter your current password" autocomplete="current-password" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="newPassword">New Password</label>
-                            <input type="password" class="form-control" id="newPassword" placeholder="Enter new password" autocomplete="new-password" required>
-                            <p class="form-hint">Password must be at least 8 characters long</p>
-                        </div>
-                        <div class="form-group">
-                            <label for="confirmPassword">Confirm Password</label>
-                            <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password" autocomplete="new-password" required>
-                        </div>
-                        <button type="submit" class="btn-primary">
-                            <i class="bi bi-lock"></i> Update Password
-                        </button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Appearance Tab -->
-            <div id="appearance-tab" class="settings-tab-content">
-                <div class="settings-card">
-                    <div class="settings-card-header">
-                        <div>
-                            <h3>Appearance</h3>
-                            <p>Customize your dashboard appearance</p>
-                        </div>
-                    </div>
-
-                    <div class="appearance-options">
-                        <div class="appearance-option">
-                            <div class="appearance-info">
-                                <h4>Dark Mode</h4>
-                                <p>Switch between light and dark theme</p>
+                        <form id="profileForm" method="POST">
+                            <div class="form-grid-2">
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern" for="adminId">TRAINEE ID</label>
+                                    <input type="text" id="adminId" name="adminId" class="form-input-modern" value="TRN-2026-001" autocomplete="off" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern" for="username">USERNAME</label>
+                                    <input type="text" id="username" name="username" class="form-input-modern" value="trainee" autocomplete="username" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern" for="firstName">FIRST NAME</label>
+                                    <input type="text" id="firstName" name="firstName" class="form-input-modern" value="Trainee" autocomplete="given-name" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern" for="lastName">LAST NAME</label>
+                                    <input type="text" id="lastName" name="lastName" class="form-input-modern" value="User" autocomplete="family-name" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern" for="phone">PHONE NUMBER</label>
+                                    <input type="tel" id="phone" name="phone" class="form-input-modern" value="+63 9XX XXX XXXX" autocomplete="tel" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern">
+                                    <label class="form-label-modern" for="email">EMAIL ADDRESS</label>
+                                    <input type="email" id="email" name="email" class="form-input-modern" value="trainee@betci.edu.ph" autocomplete="email" disabled>
+                                </div>
+                                
+                                <div class="form-group-modern full-width">
+                                    <label class="form-label-modern" for="address">ADDRESS</label>
+                                    <textarea id="address" name="address" class="form-input-modern" rows="2" autocomplete="street-address" disabled placeholder="Enter your address"></textarea>
+                                </div>
                             </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-
-                        <div class="appearance-option">
-                            <div class="appearance-info">
-                                <h4>Notifications</h4>
-                                <p>Enable or disable notifications</p>
+                            
+                            <div class="form-actions-modern" id="formActions" style="display: none;">
+                                <button type="submit" class="btn-save-modern">
+                                    <i class="bi bi-check-circle"></i> Save Changes
+                                </button>
+                                <button type="button" class="btn-cancel-modern" onclick="cancelEdit()">
+                                    <i class="bi bi-x-circle"></i> Cancel
+                                </button>
                             </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
-
-                        <div class="appearance-option">
-                            <div class="appearance-info">
-                                <h4>Email Alerts</h4>
-                                <p>Receive email notifications for important updates</p>
-                            </div>
-                            <label class="toggle-switch">
-                                <input type="checkbox" checked>
-                                <span class="toggle-slider"></span>
-                            </label>
-                        </div>
+                        </form>
                     </div>
                 </div>
-            </div>
+
+                <!-- Change Password Section -->
+                <div id="change-password" class="settings-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Change Password</h2>
+                            <p class="card-subtitle">Update your account password</p>
+                        </div>
+                        <form id="passwordForm" method="POST" action="/api/password/change">
+                            <input type="text" id="usernameHidden" name="username" value="trainee" autocomplete="username" style="display: none;" aria-hidden="true">
+                            <div class="form-group">
+                                <label class="form-label" for="current_password">Current Password</label>
+                                <div style="position: relative;">
+                                    <input type="password" id="current_password" class="form-control" name="current_password" autocomplete="current-password" required style="padding-right: 40px;">
+                                    <i class="bi bi-eye-slash" id="toggleCurrentPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 18px;"></i>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="newPassword">New Password</label>
+                                <div style="position: relative;">
+                                    <input type="password" class="form-control" name="new_password" id="newPassword" autocomplete="new-password" required style="padding-right: 40px;">
+                                    <i class="bi bi-eye-slash" id="toggleNewPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 18px;"></i>
+                                </div>
+                                <div class="password-strength">
+                                    <div class="password-strength-bar" id="strengthBar"></div>
+                                </div>
+                                <p class="password-hint">Password must be at least 8 characters long and include a special character (!@#$%^&*)</p>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="confirm_password">Confirm Password</label>
+                                <div style="position: relative;">
+                                    <input type="password" id="confirm_password" class="form-control" name="confirm_password" autocomplete="new-password" required style="padding-right: 40px;">
+                                    <i class="bi bi-eye-slash" id="toggleConfirmPassword" style="position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: #666; font-size: 18px;"></i>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-lock"></i> Update Password
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Appearance Section -->
+                <div id="appearance" class="settings-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <h2 class="card-title">Appearance</h2>
+                            <p class="card-subtitle">Customize your dashboard appearance</p>
+                        </div>
+                        <div style="padding: 20px;">
+                            <div class="appearance-option">
+                                <div class="appearance-info">
+                                    <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Dark Mode</h3>
+                                    <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">Switch between light and dark theme</p>
+                                </div>
+                                <label class="toggle-switch" for="darkModeToggle">
+                                    <input type="checkbox" id="darkModeToggle" name="darkMode" autocomplete="off">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <div class="appearance-option" style="margin-top: 20px;">
+                                <div class="appearance-info">
+                                    <h3 style="font-size: 16px; font-weight: 600; margin: 0 0 4px 0;">Compact Mode</h3>
+                                    <p style="font-size: 13px; color: var(--text-secondary); margin: 0;">Reduce spacing for more content</p>
+                                </div>
+                                <label class="toggle-switch" for="compactModeToggle">
+                                    <input type="checkbox" id="compactModeToggle" name="compactMode" autocomplete="off">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script src="../assets/js/common.js?v=3"></script>
+    <!-- Scripts -->
+    <script src="../assets/js/common.js?v=7"></script>
     <script>
-        // Initialize on page load
+        // Load dark mode theme
+        if (typeof loadTheme === 'function') {
+            loadTheme();
+        }
+        // Wait for DOM to be fully loaded
         document.addEventListener('DOMContentLoaded', function() {
-            loadUserProfile();
-            loadRecords();
-            
-            // Check if tab parameter is in URL
-            const urlParams = new URLSearchParams(window.location.search);
-            const tab = urlParams.get('tab');
-            
-            if (tab === 'password') {
-                // Switch to password tab
-                const passwordBtn = document.querySelectorAll('.settings-tab')[1];
-                if (passwordBtn) {
-                    switchSettingsTab('password', { target: passwordBtn, preventDefault: () => {} });
+            // Handle hash navigation on page load
+            const hash = window.location.hash.substring(1); // Remove the # symbol
+            if (hash) {
+                const section = document.getElementById(hash);
+                if (section) {
+                    // Hide all sections
+                    document.querySelectorAll('.settings-section').forEach(s => {
+                        s.classList.remove('active');
+                    });
+                    // Remove active from all tabs
+                    document.querySelectorAll('.tab-item').forEach(item => {
+                        item.classList.remove('active');
+                    });
+                    // Show the target section
+                    section.classList.add('active');
+                    // Activate the corresponding tab
+                    const tabButton = document.querySelector(`[onclick*="${hash}"]`);
+                    if (tabButton) {
+                        tabButton.classList.add('active');
+                    }
                 }
             }
-        });
 
-        function switchSettingsTab(tabName, event) {
-            if (event) {
-                event.preventDefault();
+            // Settings dropdown toggle (if exists on page)
+            const dropdownTitle = document.querySelector('.dropdown-title');
+            const dropdownMenu = document.querySelector('.dropdown-menu-settings');
+
+            if (dropdownTitle && dropdownMenu) {
+                dropdownTitle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    dropdownMenu.classList.toggle('active');
+                    this.classList.toggle('active');
+                });
             }
-            
-            // Hide all tabs
-            const tabs = document.querySelectorAll('.settings-tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            
-            // Remove active class from all settings-tab buttons
-            const settingsButtons = document.querySelectorAll('.settings-tab');
-            settingsButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Remove active class from all tab-btn buttons
-            const tabButtons = document.querySelectorAll('.tab-btn');
-            tabButtons.forEach(btn => btn.classList.remove('active'));
-            
-            // Show selected tab
-            const selectedTab = document.getElementById(tabName + '-tab');
-            if (selectedTab) {
-                selectedTab.classList.add('active');
-            }
-            
-            // Add active class to clicked button
-            if (event && event.target) {
-                const clickedButton = event.target.closest('.settings-tab') || event.target.closest('.tab-btn');
-                if (clickedButton) {
-                    clickedButton.classList.add('active');
+
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.settings-dropdown-header')) {
+                    if (dropdownMenu) dropdownMenu.classList.remove('active');
+                    if (dropdownTitle) dropdownTitle.classList.remove('active');
                 }
-            }
-        }
+            });
 
-        function loadRecords() {
-            const records = JSON.parse(localStorage.getItem('trainingRecords') || '[]');
-            const recordsList = document.getElementById('recordsList');
-            
-            // Only proceed if recordsList element exists (not on settings page)
-            if (!recordsList) {
-                return;
-            }
-
-            if (records.length === 0) {
-                recordsList.innerHTML = `
-                    <div class="empty-state">
-                        <i class="bi bi-inbox"></i>
-                        <p>No training records yet</p>
-                    </div>
-                `;
-                return;
+            // Form handlers
+            const profileForm = document.getElementById('profileForm');
+            if (profileForm) {
+                profileForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    showNotification('Profile updated successfully!', 'success');
+                    toggleEditMode(); // Exit edit mode after saving
+                });
             }
 
-            recordsList.innerHTML = records.map((record, index) => `
-                <div class="record-card">
-                    <div class="record-header">
-                        <div>
-                            <div class="record-title">${record.courseName}</div>
-                            <div class="record-date">${new Date(record.date).toLocaleDateString()}</div>
-                        </div>
-                        <span class="status-badge status-${record.status.toLowerCase()}">${record.status}</span>
-                    </div>
-                    <div class="record-details">
-                        <div class="detail-item">
-                            <div class="detail-label">Duration</div>
-                            <div class="detail-value">${record.duration || 'N/A'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Score</div>
-                            <div class="detail-value">${record.score || 'N/A'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Instructor</div>
-                            <div class="detail-value">${record.instructor || 'N/A'}</div>
-                        </div>
-                        <div class="detail-item">
-                            <div class="detail-label">Certificate</div>
-                            <div class="detail-value">${record.certificateId || 'Pending'}</div>
-                        </div>
-                    </div>
-                    <div class="record-actions">
-                        <button class="btn-action btn-view" onclick="viewRecord(${index})">
-                            <i class="bi bi-eye"></i> View
-                        </button>
-                        <button class="btn-action btn-download" onclick="downloadRecord(${index})">
-                            <i class="bi bi-download"></i> Download
-                        </button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function viewRecord(index) {
-            const records = JSON.parse(localStorage.getItem('trainingRecords') || '[]');
-            const record = records[index];
-            alert(`${record.courseName}\n\nStatus: ${record.status}\nScore: ${record.score || 'N/A'}`);
-        }
-
-        function downloadRecord(index) {
-            const records = JSON.parse(localStorage.getItem('trainingRecords') || '[]');
-            const record = records[index];
-            alert(`Downloading certificate for ${record.courseName}...`);
-        }
-
-        // User profile dropdown
-        document.getElementById('userProfile').addEventListener('click', function(e) {
-            e.stopPropagation();
-            document.getElementById('userDropdown').classList.toggle('active');
-        });
-
-        document.addEventListener('click', function(e) {
-            if (!e.target.closest('.user-profile')) {
-                document.getElementById('userDropdown').classList.remove('active');
-            }
-        });
-
-        // Sidebar toggle for mobile
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            const menuToggle = document.getElementById('menuToggle');
-            
-            // Load saved sidebar state only on desktop
-            if (window.innerWidth > 768) {
-                const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.style.marginLeft = '60px';
-                }
-            }
-            
-            // Toggle sidebar
-            if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
-                    // Toggle sidebar - use 'collapsed' class
-                    sidebar.classList.toggle('collapsed');
+            const passwordForm = document.getElementById('passwordForm');
+            if (passwordForm) {
+                passwordForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
                     
-                    // Update main-content margin based on sidebar state and screen size
-                    if (window.innerWidth > 768) {
-                        if (sidebar.classList.contains('collapsed')) {
-                            mainContent.style.marginLeft = '60px';
-                            localStorage.setItem('sidebarCollapsed', 'true');
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.querySelector('input[name="confirm_password"]').value;
+                    
+                    // Validation
+                    if (!currentPassword || !newPassword || !confirmPassword) {
+                        showNotification('Please fill in all password fields', 'error');
+                        return;
+                    }
+                    
+                    if (newPassword !== confirmPassword) {
+                        showNotification('Passwords do not match!', 'error');
+                        return;
+                    }
+                    
+                    if (newPassword.length < 8) {
+                        showNotification('Password must be at least 8 characters long!', 'error');
+                        return;
+                    }
+                    
+                    // Check for special character
+                    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+                        showNotification('Password must include at least one special character (!@#$%^&*)', 'error');
+                        return;
+                    }
+                    
+                    if (newPassword === currentPassword) {
+                        showNotification('New password must be different from current password', 'error');
+                        return;
+                    }
+                    
+                    // Get user session
+                    const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+                    
+                    if (!userSession.accountId) {
+                        showNotification('Session expired. Please login again.', 'error');
+                        setTimeout(() => {
+                            window.location.href = '../../auth/login.html';
+                        }, 2000);
+                        return;
+                    }
+                    
+                    // Determine user type
+                    const userType = userSession.role === 'admin' || userSession.role === 'instructor' ? 'admin' : 'trainee';
+                    
+                    try {
+                        // Show loading state
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        const originalText = submitBtn.innerHTML;
+                        submitBtn.disabled = true;
+                        submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Updating...';
+                        
+                        // Call API to change password
+                        const response = await fetch('http://localhost:5500/api/change-password', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                accountId: userSession.accountId,
+                                currentPassword: currentPassword,
+                                newPassword: newPassword,
+                                userType: userType
+                            })
+                        });
+                        
+                        const result = await response.json();
+                        
+                        // Restore button state
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalText;
+                        
+                        if (result.success) {
+                            showNotification('Password changed successfully! Please login again.', 'success');
+                            // Clear session and redirect to login after 2 seconds
+                            setTimeout(() => {
+                                localStorage.removeItem('userSession');
+                                sessionStorage.removeItem('userSession');
+                                window.location.href = '../../auth/login.html';
+                            }, 2000);
                         } else {
-                            mainContent.style.marginLeft = '210px';
-                            localStorage.setItem('sidebarCollapsed', 'false');
+                            showNotification(result.message || 'Failed to change password', 'error');
                         }
+                        
+                    } catch (error) {
+                        console.error('Error changing password:', error);
+                        showNotification('An error occurred while changing password', 'error');
+                        
+                        // Restore button state
+                        const submitBtn = this.querySelector('button[type="submit"]');
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '<i class="bi bi-lock"></i> Update Password';
+                    }
+                });
+            }
+
+            // Password strength indicator
+            const newPasswordInput = document.getElementById('newPassword');
+            if (newPasswordInput) {
+                newPasswordInput.addEventListener('input', function(e) {
+                    const password = e.target.value;
+                    const strengthBar = document.getElementById('strengthBar');
+                    
+                    if (!strengthBar) return;
+                    
+                    let strength = 0;
+                    const hasMinLength = password.length >= 8;
+                    const hasLowerCase = password.match(/[a-z]/);
+                    const hasUpperCase = password.match(/[A-Z]/);
+                    const hasNumber = password.match(/[0-9]/);
+                    const hasSpecialChar = password.match(/[!@#$%^&*(),.?":{}|<>]/);
+                    
+                    if (hasMinLength) strength++;
+                    if (hasLowerCase && hasUpperCase) strength++;
+                    if (hasNumber) strength++;
+                    if (hasSpecialChar) strength++;
+                    
+                    strengthBar.className = 'password-strength-bar';
+                    
+                    // Weak: less than 8 chars or no special char
+                    if (!hasMinLength || !hasSpecialChar) {
+                        strengthBar.classList.add('weak');
+                    }
+                    // Medium: 8+ chars and special char, but missing other criteria
+                    else if (strength === 2) {
+                        strengthBar.classList.add('medium');
+                    }
+                    // Strong: 8+ chars, special char, and at least one more criteria
+                    else if (strength >= 3) {
+                        strengthBar.classList.add('strong');
+                    }
+                });
+            }
+
+            // Password visibility toggle functionality
+            const toggleCurrentPassword = document.getElementById('toggleCurrentPassword');
+            const toggleNewPassword = document.getElementById('toggleNewPassword');
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            
+            if (toggleCurrentPassword) {
+                toggleCurrentPassword.addEventListener('click', function() {
+                    const input = document.getElementById('current_password');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.classList.remove('bi-eye-slash');
+                        this.classList.add('bi-eye');
+                    } else {
+                        input.type = 'password';
+                        this.classList.remove('bi-eye');
+                        this.classList.add('bi-eye-slash');
                     }
                 });
             }
             
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
-                        sidebar.classList.remove('collapsed');
+            if (toggleNewPassword) {
+                toggleNewPassword.addEventListener('click', function() {
+                    const input = document.getElementById('newPassword');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.classList.remove('bi-eye-slash');
+                        this.classList.add('bi-eye');
+                    } else {
+                        input.type = 'password';
+                        this.classList.remove('bi-eye');
+                        this.classList.add('bi-eye-slash');
                     }
-                }
-            });
+                });
+            }
+            
+            if (toggleConfirmPassword) {
+                toggleConfirmPassword.addEventListener('click', function() {
+                    const input = document.getElementById('confirm_password');
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        this.classList.remove('bi-eye-slash');
+                        this.classList.add('bi-eye');
+                    } else {
+                        input.type = 'password';
+                        this.classList.remove('bi-eye');
+                        this.classList.add('bi-eye-slash');
+                    }
+                });
+            }
+            
+            // Attach event listeners for compact mode toggle
+            const compactModeToggle = document.getElementById('compactModeToggle');
+            if (compactModeToggle) {
+                compactModeToggle.addEventListener('change', function() {
+                    if (typeof window.toggleCompactMode === 'function') {
+                        window.toggleCompactMode();
+                    }
+                });
+            }
         });
 
-        // Handle logout
+        // Logout handler
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
                 localStorage.removeItem('userSession');
@@ -1064,36 +926,52 @@
             }
         }
 
-        // Settings tab switching
-        function switchSettingsTab(tabName, event) {
-            if (event) {
-                event.preventDefault();
+        // Show section function
+        function showSection(sectionId, event) {
+            event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.settings-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active from all tab buttons
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            const selectedSection = document.getElementById(sectionId);
+            if (selectedSection) {
+                selectedSection.classList.add('active');
             }
             
-            // Hide all tabs
-            const tabs = document.querySelectorAll('.settings-tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
-            
-            // Remove active class from all buttons (both tab-btn and settings-tab)
-            const buttons = document.querySelectorAll('.tab-btn, .settings-tab');
-            buttons.forEach(btn => btn.classList.remove('active'));
-            
-            // Show selected tab
-            const selectedTab = document.getElementById(tabName + '-tab');
-            if (selectedTab) {
-                selectedTab.classList.add('active');
+            // Add active to clicked tab button
+            const clickedButton = event.target.closest('.tab-item');
+            if (clickedButton) {
+                clickedButton.classList.add('active');
             }
+        }
+        
+        // Update breadcrumb function
+        function updateBreadcrumb(sectionId) {
+            const dropdownTitleText = document.getElementById('dropdownTitleText');
+            if (!dropdownTitleText) return;
             
-            // Add active class to clicked button
-            if (event && event.target) {
-                const clickedBtn = event.target.closest('.tab-btn') || event.target.closest('.settings-tab');
-                if (clickedBtn) {
-                    clickedBtn.classList.add('active');
-                }
+            const sectionNames = {
+                'manage-profile': 'Settings / Manage Profile',
+                'change-password': 'Settings / Change Password',
+                'appearance': 'Settings / Appearance'
+            };
+            
+            if (sectionId && sectionNames[sectionId]) {
+                dropdownTitleText.textContent = sectionNames[sectionId];
+            } else {
+                dropdownTitleText.textContent = 'Settings';
             }
         }
 
-        // Profile edit mode
+        // Toggle edit mode for profile
         let isEditMode = false;
         let originalValues = {};
 
@@ -1113,7 +991,7 @@
             if (isEditMode) {
                 // Store original values and enable inputs
                 inputs.forEach(input => {
-                    if (input.id !== 'traineeId' && input.id !== 'username') {
+                    if (input.id !== 'adminId' && input.id !== 'username') {
                         originalValues[input.id] = input.value;
                         input.disabled = false;
                     }
@@ -1151,122 +1029,6 @@
             }
         }
 
-        // API Base URL
-        const API_URL = 'http://localhost:5500/api';
-        let currentUser = null;
-
-        // Load user profile on page load
-        async function loadUserProfile() {
-            try {
-                const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
-                
-                if (!userSession.accountId) return;
-
-                // Try multiple endpoints in order: new collections first, then legacy
-                const endpoints = [];
-                
-                // Determine primary endpoint based on user role
-                if (userSession.role === 'admin' || userSession.role === 'instructor') {
-                    endpoints.push('admin-accounts', 'accounts'); // Try admin-accounts first, then legacy
-                } else {
-                    endpoints.push('trainee-accounts', 'accounts'); // Try trainee-accounts first, then legacy
-                }
-                
-                let response = null;
-                let currentUser = null;
-                
-                // Try each endpoint until one succeeds
-                for (const endpoint of endpoints) {
-                    try {
-                        response = await fetch(`${API_URL}/${endpoint}/${userSession.accountId}`);
-                        
-                        if (response.ok) {
-                            currentUser = await response.json();
-                            console.log(`User profile loaded from ${endpoint}`);
-                            break;
-                        }
-                    } catch (err) {
-                        console.log(`Failed to load from ${endpoint}, trying next...`);
-                    }
-                }
-                
-                if (!currentUser) return;
-                
-                // Set role label based on user role
-                const roleLabel = document.getElementById('roleLabel');
-                if (roleLabel && userSession.role) {
-                    if (userSession.role === 'admin' || userSession.role === 'instructor') {
-                        roleLabel.textContent = 'Admin';
-                    } else if (userSession.role === 'trainee') {
-                        roleLabel.textContent = 'Trainee';
-                    } else {
-                        roleLabel.textContent = userSession.role.charAt(0).toUpperCase() + userSession.role.slice(1);
-                    }
-                }
-                
-                // Update profile photo circle with img tag instead of background
-                if (currentUser.profilePicture) {
-                    const profilePhotoCircle = document.getElementById('profilePhotoCircle');
-                    if (profilePhotoCircle) {
-                        profilePhotoCircle.innerHTML = `<img src="${currentUser.profilePicture}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
-                    }
-                }
-                
-                // Update profile overview
-                if (currentUser.firstName && currentUser.lastName) {
-                    const fullName = `${currentUser.firstName} ${currentUser.lastName}`;
-                    const displayFullName = document.getElementById('displayFullName');
-                    const firstNameInput = document.getElementById('firstName');
-                    const lastNameInput = document.getElementById('lastName');
-                    const profileInitials = document.getElementById('profileInitials');
-                    
-                    if (displayFullName) displayFullName.textContent = fullName;
-                    if (firstNameInput) firstNameInput.value = currentUser.firstName;
-                    if (lastNameInput) lastNameInput.value = currentUser.lastName;
-                    
-                    // Update initials
-                    const initials = `${currentUser.firstName.charAt(0)}${currentUser.lastName.charAt(0)}`.toUpperCase();
-                    if (profileInitials) profileInitials.textContent = initials;
-                }
-                
-                if (currentUser.email) {
-                    const displayEmail = document.getElementById('displayEmail');
-                    const emailAddress = document.getElementById('emailAddress');
-                    if (displayEmail) displayEmail.textContent = currentUser.email;
-                    if (emailAddress) emailAddress.value = currentUser.email;
-                }
-                
-                if (currentUser.accountId) {
-                    const displayTraineeId = document.getElementById('displayTraineeId');
-                    const traineeId = document.getElementById('traineeId');
-                    if (displayTraineeId) displayTraineeId.textContent = currentUser.accountId;
-                    if (traineeId) traineeId.value = currentUser.accountId;
-                }
-                
-                if (currentUser.username) {
-                    const username = document.getElementById('username');
-                    if (username) username.value = currentUser.username;
-                }
-                
-                if (currentUser.phone) {
-                    const displayPhone = document.getElementById('displayPhone');
-                    const phoneNumber = document.getElementById('phoneNumber');
-                    if (displayPhone) displayPhone.textContent = currentUser.phone;
-                    if (phoneNumber) phoneNumber.value = currentUser.phone;
-                }
-                
-                if (currentUser.address) {
-                    const displayAddress = document.getElementById('displayAddress');
-                    const addressInput = document.getElementById('address');
-                    if (displayAddress) displayAddress.textContent = currentUser.address;
-                    if (addressInput) addressInput.value = currentUser.address;
-                }
-                
-            } catch (error) {
-                console.error('Error loading profile:', error);
-            }
-        }
-
         // Suppress 431 errors from browser extensions (MetaMask, etc.)
         const originalFetch = window.fetch;
         window.fetch = function(...args) {
@@ -1291,109 +1053,69 @@
             originalError.apply(console, args);
         };
 
-        async function changePhoto() {
+        // Change avatar function
+        function changeAvatar() {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = 'image/jpeg,image/png,image/jpg';
             
             input.onchange = async (e) => {
                 const file = e.target.files[0];
-                
                 if (!file) return;
                 
-                // Check file size (max 2MB)
+                // Validate file size (max 2MB)
                 if (file.size > 2 * 1024 * 1024) {
-                    alert('File size must be less than 2MB');
+                    showNotification('Image size must be less than 2MB', 'error');
+                    return;
+                }
+                
+                // Validate file type
+                if (!['image/jpeg', 'image/png', 'image/jpg'].includes(file.type)) {
+                    showNotification('Only JPG and PNG images are allowed', 'error');
                     return;
                 }
                 
                 // Convert to base64
                 const reader = new FileReader();
                 reader.onload = async (event) => {
+                    const base64Image = event.target.result;
+                    
                     try {
-                        const base64Image = event.target.result;
-                        
-                        // Get user session
-                        const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
-                        
-                        if (!userSession.accountId) {
-                            alert('Please login first');
+                        // Get current user session
+                        const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession'));
+                        if (!userSession || !userSession.accountId) {
+                            showNotification('User session not found', 'error');
                             return;
                         }
                         
-                        // Try multiple endpoints in order: new collections first, then legacy
-                        const endpoints = [];
+                        // Determine API endpoint based on user role
+                        const apiEndpoint = (userSession.role === 'admin' || userSession.role === 'instructor') 
+                            ? 'admin-accounts' 
+                            : 'trainee-accounts';
                         
-                        // Determine primary endpoint based on user role
-                        if (userSession.role === 'admin' || userSession.role === 'instructor') {
-                            endpoints.push('admin-accounts', 'accounts'); // Try admin-accounts first, then legacy
-                        } else {
-                            endpoints.push('trainee-accounts', 'accounts'); // Try trainee-accounts first, then legacy
-                        }
-                        
-                        let response = null;
-                        let successEndpoint = null;
-                        
-                        // Try each endpoint until one succeeds
-                        for (const endpoint of endpoints) {
-                            try {
-                                response = await fetch(`${API_URL}/${endpoint}/${userSession.accountId}`, {
-                                    method: 'PUT',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify({
-                                        profilePicture: base64Image
-                                    })
-                                });
-                                
-                                if (response.ok) {
-                                    successEndpoint = endpoint;
-                                    console.log(`Profile picture updated successfully in ${endpoint}`);
-                                    break;
-                                }
-                            } catch (err) {
-                                console.log(`Failed to update in ${endpoint}, trying next...`);
-                            }
-                        }
-
-                        if (!response || !response.ok) {
-                            throw new Error('Failed to upload photo to any collection');
-                        }
-
-                        // Update profile photo circle
-                        const profilePhotoCircle = document.getElementById('profilePhotoCircle');
-                        if (profilePhotoCircle) {
-                            profilePhotoCircle.style.backgroundImage = `url(${base64Image})`;
-                            profilePhotoCircle.style.backgroundSize = 'cover';
-                            profilePhotoCircle.style.backgroundPosition = 'center';
-                            const initials = profilePhotoCircle.querySelector('span');
-                            if (initials) initials.style.display = 'none';
-                        }
-                        
-                        // Update all user avatars
-                        const userAvatars = document.querySelectorAll('.user-avatar');
-                        userAvatars.forEach(avatar => {
-                            avatar.style.backgroundImage = `url(${base64Image})`;
-                            avatar.style.backgroundSize = 'cover';
-                            avatar.style.backgroundPosition = 'center';
-                            avatar.textContent = '';
+                        // Update profile picture in database
+                        const response = await fetch(`http://localhost:5500/api/${apiEndpoint}/${userSession.accountId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                profilePicture: base64Image
+                            })
                         });
                         
-                        // Update dropdown avatar
-                        const dropdownAvatar = document.querySelector('.dropdown-avatar');
-                        if (dropdownAvatar) {
-                            dropdownAvatar.innerHTML = `<img src="${base64Image}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
+                        if (response.ok) {
+                            // DO NOT store base64 in session - it causes 431 errors
+                            // Just update the display directly
+                            updateAvatarDisplays(base64Image);
+                            
+                            showNotification('Profile picture updated successfully', 'success');
+                        } else {
+                            showNotification('Failed to update profile picture', 'error');
                         }
-                        
-                        // DO NOT store base64 in session - it causes 431 errors
-                        // Profile pictures will be loaded from API on page load
-                        
-                        alert('Profile picture updated successfully!');
-                        
                     } catch (error) {
-                        console.error('Error uploading photo:', error);
-                        alert('Failed to upload photo. Please try again.');
+                        console.error('Error uploading profile picture:', error);
+                        showNotification('Failed to upload profile picture', 'error');
                     }
                 };
                 reader.readAsDataURL(file);
@@ -1401,101 +1123,178 @@
             
             input.click();
         }
-
-        // Form submission handlers
-        document.getElementById('profileForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Profile updated successfully!');
-            cancelEdit();
-        });
-
-        document.getElementById('passwordForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const currentPassword = document.getElementById('currentPassword').value;
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            
-            // Validation
-            if (!currentPassword || !newPassword || !confirmPassword) {
-                alert('Please fill in all password fields');
-                return;
+        
+        // Update all avatar displays on the page
+        function updateAvatarDisplays(imageUrl) {
+            // Cache the profile picture in sessionStorage for other pages
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            if (userSession.accountId) {
+                const cachedPictureKey = `adminProfilePic_${userSession.accountId}`;
+                sessionStorage.setItem(cachedPictureKey, imageUrl);
             }
             
-            if (newPassword.length < 6) {
-                alert('New password must be at least 6 characters long');
-                return;
+            // For base64 images, use img tags instead of background-image to avoid URL issues
+            const safeImageUrl = imageUrl.startsWith('data:') ? `"${imageUrl}"` : imageUrl;
+            
+            // Update large profile photo circle
+            const profilePhotoCircle = document.getElementById('profilePhotoCircle');
+            if (profilePhotoCircle) {
+                if (imageUrl.startsWith('data:')) {
+                    profilePhotoCircle.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
+                } else {
+                    profilePhotoCircle.style.backgroundImage = `url(${safeImageUrl})`;
+                    profilePhotoCircle.style.backgroundSize = 'cover';
+                    profilePhotoCircle.style.backgroundPosition = 'center';
+                    const initials = profilePhotoCircle.querySelector('span');
+                    if (initials) initials.style.display = 'none';
+                }
             }
             
-            if (newPassword !== confirmPassword) {
-                alert('New password and confirm password do not match');
-                return;
-            }
+            // Update header avatars - remove inline background styles first
+            document.querySelectorAll('.user-avatar, .dropdown-avatar').forEach(avatar => {
+                // Remove any inline background styles that might interfere
+                avatar.style.background = 'none';
+                avatar.style.backgroundImage = 'none';
+                
+                if (imageUrl.startsWith('data:')) {
+                    avatar.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;" alt="Profile">`;
+                } else {
+                    avatar.style.backgroundImage = `url(${safeImageUrl})`;
+                    avatar.style.backgroundSize = 'cover';
+                    avatar.style.backgroundPosition = 'center';
+                    avatar.textContent = '';
+                }
+            });
             
-            if (newPassword === currentPassword) {
-                alert('New password must be different from current password');
-                return;
-            }
-            
-            // Get user session
+            // Dispatch custom event to notify other pages/components
+            window.dispatchEvent(new CustomEvent('profilePictureUpdated', { 
+                detail: { imageUrl: imageUrl } 
+            }));
+        }
+        
+        // Load user profile picture on page load
+        document.addEventListener('DOMContentLoaded', function() {
             const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
             
-            if (!userSession.accountId) {
-                alert('Session expired. Please login again.');
-                window.location.href = '../../auth/login.html';
-                return;
+            // Clean up old profilePicture from session if it exists (prevents 431 errors)
+            if (userSession.profilePicture) {
+                delete userSession.profilePicture;
+                if (localStorage.getItem('userSession')) {
+                    localStorage.setItem('userSession', JSON.stringify(userSession));
+                }
+                if (sessionStorage.getItem('userSession')) {
+                    sessionStorage.setItem('userSession', JSON.stringify(userSession));
+                }
             }
             
-            // Determine user type
-            const userType = userSession.role === 'admin' || userSession.role === 'instructor' ? 'admin' : 'trainee';
+            // Determine API endpoint based on user role
+            const apiEndpoint = (userSession.role === 'admin' || userSession.role === 'instructor') 
+                ? 'admin-accounts' 
+                : 'trainee-accounts';
             
-            try {
-                // Show loading state
-                const submitBtn = this.querySelector('button[type="submit"]');
-                const originalText = submitBtn.innerHTML;
-                submitBtn.disabled = true;
-                submitBtn.innerHTML = '<i class="bi bi-hourglass-split"></i> Updating...';
-                
-                // Call API to change password
-                const response = await fetch('http://localhost:5500/api/change-password', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        accountId: userSession.accountId,
-                        currentPassword: currentPassword,
-                        newPassword: newPassword,
-                        userType: userType
+            // Load profile picture from API
+            if (userSession.accountId) {
+                fetch(`http://localhost:5500/api/${apiEndpoint}/${userSession.accountId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.profilePicture) {
+                            updateAvatarDisplays(data.profilePicture);
+                        }
                     })
-                });
-                
-                const result = await response.json();
-                
-                // Restore button state
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = originalText;
-                
-                if (result.success) {
-                    alert('✓ Password changed successfully! Please login again with your new password.');
-                    // Clear session and redirect to login
-                    localStorage.removeItem('userSession');
-                    sessionStorage.removeItem('userSession');
-                    window.location.href = '../../auth/login.html';
+                    .catch(error => console.error('Error loading profile picture:', error));
+            }
+            
+            // Set role label based on user role
+            const roleLabel = document.getElementById('roleLabel');
+            if (roleLabel && userSession.role) {
+                if (userSession.role === 'admin' || userSession.role === 'instructor') {
+                    roleLabel.textContent = 'Admin';
+                } else if (userSession.role === 'trainee') {
+                    roleLabel.textContent = 'Trainee';
                 } else {
-                    alert('✗ ' + (result.message || 'Failed to change password'));
+                    roleLabel.textContent = userSession.role.charAt(0).toUpperCase() + userSession.role.slice(1);
                 }
-                
-            } catch (error) {
-                console.error('Error changing password:', error);
-                alert('✗ An error occurred while changing password. Please try again.');
-                
-                // Restore button state
-                const submitBtn = this.querySelector('button[type="submit"]');
-                submitBtn.disabled = false;
-                submitBtn.innerHTML = '<i class="bi bi-lock"></i> Update Password';
+            }
+            
+            // Load user data from correct collection
+            if (userSession.accountId) {
+                fetch(`http://localhost:5500/api/${apiEndpoint}/${userSession.accountId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.firstName && data.lastName) {
+                            const fullName = `${data.firstName} ${data.lastName}`;
+                            const displayFullName = document.getElementById('displayFullName');
+                            const firstNameInput = document.getElementById('firstName');
+                            const lastNameInput = document.getElementById('lastName');
+                            const profileInitials = document.getElementById('profileInitials');
+                            
+                            if (displayFullName) displayFullName.textContent = fullName;
+                            if (firstNameInput) firstNameInput.value = data.firstName;
+                            if (lastNameInput) lastNameInput.value = data.lastName;
+                            
+                            const initials = `${data.firstName.charAt(0)}${data.lastName.charAt(0)}`.toUpperCase();
+                            if (profileInitials) profileInitials.textContent = initials;
+                        }
+                        
+                        if (data.email) {
+                            const displayEmail = document.getElementById('displayEmail');
+                            const emailInput = document.getElementById('email');
+                            if (displayEmail) displayEmail.textContent = data.email;
+                            if (emailInput) emailInput.value = data.email;
+                        }
+                        
+                        if (data.accountId) {
+                            const displayAdminId = document.getElementById('displayAdminId');
+                            const adminIdInput = document.getElementById('adminId');
+                            if (displayAdminId) displayAdminId.textContent = data.accountId;
+                            if (adminIdInput) adminIdInput.value = data.accountId;
+                        }
+                        
+                        if (data.username) {
+                            const usernameInput = document.getElementById('username');
+                            if (usernameInput) usernameInput.value = data.username;
+                        }
+                        
+                        if (data.phone) {
+                            const displayPhone = document.getElementById('displayPhone');
+                            const phoneInput = document.getElementById('phone');
+                            if (displayPhone) displayPhone.textContent = data.phone;
+                            if (phoneInput) phoneInput.value = data.phone;
+                        }
+                        
+                        if (data.address) {
+                            const displayAddress = document.getElementById('displayAddress');
+                            const addressInput = document.getElementById('address');
+                            if (displayAddress) displayAddress.textContent = data.address;
+                            if (addressInput) addressInput.value = data.address;
+                        }
+                        
+                        if (data.profilePicture) {
+                            updateAvatarDisplays(data.profilePicture);
+                        }
+                    })
+                    .catch(error => console.error('Error loading profile:', error));
             }
         });
+
+        // Notification function
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            const colors = {
+                success: '#27AE60',
+                error: '#E74C3C',
+                info: '#3498DB'
+            };
+            notification.style.cssText = `position: fixed; top: 20px; right: 20px; background: white; padding: 16px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 10000; border-left: 4px solid ${colors[type] || colors.info}; display: flex; align-items: center; gap: 8px; animation: slideIn 0.3s ease;`;
+            const icon = type === 'success' ? 'check-circle' : type === 'error' ? 'x-circle' : 'info-circle';
+            notification.innerHTML = `<i class="bi bi-${icon}" style="font-size: 18px; color: ${colors[type] || colors.info}"></i><span>${message}</span>`;
+            document.body.appendChild(notification);
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
     </script>
 </body>
 </html>
+

@@ -18,8 +18,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <!-- Dashboard CSS -->
-    <link rel="stylesheet" href="../assets/css/dashboard.css" />
-    <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/styles.css?v=20260414001" />
+    <link rel="stylesheet" href="../assets/css/dashboard.css?v=20260414001" />
     
     <style>
         .tab-buttons { display: flex; gap: 10px; margin-bottom: 20px; }
@@ -117,6 +117,12 @@
                             <span>Settings</span>
                         </a>
                     </li>
+                    <li class="nav-item nav-logout">
+                        <a href="#" class="nav-link" onclick="handleLogout(); return false;">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -126,46 +132,30 @@
             <!-- Top Header -->
             <header class="top-header">
                 <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
                     <div class="search-container">
                         <i class="bi bi-search"></i>
                         <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search courses">
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <button class="dark-mode-btn" id="darkModeBtn" title="Toggle Dark Mode">
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile" id="userProfile">
                         <div class="user-avatar">T</div>
-                        <span class="user-name">Trainee</span>
-                        <i class="bi bi-chevron-down dropdown-arrow"></i>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
-                                    <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
-                                    <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
-                                </svg>
-                            </svg>
-                        </div>
-                        <span class="user-name">KELI</span>
+                        <span class="user-name">TRAINEE</span>
                         <i class="bi bi-chevron-down dropdown-arrow"></i>
                         
                         <!-- User Dropdown Menu -->
                         <div class="user-dropdown" id="userDropdown">
                             <div class="dropdown-header">
-                                <div class="dropdown-avatar">
-                                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="20" cy="20" r="20" fill="#E67E22"/>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
-                                            <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
-                                            <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
-                                        </svg>
-                                    </svg>
-                                </div>
+                                <div class="dropdown-avatar">T</div>
                                 <div class="dropdown-user-info">
-                                    <h4>KELI STUDENT</h4>
-                                    <p>keli.student@betci.edu.ph</p>
+                                    <h4>TRAINEE USER</h4>
+                                    <p>trainee@betci.edu.ph</p>
                                 </div>
                             </div>
                             <div class="dropdown-divider"></div>
@@ -188,16 +178,6 @@
                                         <span>Change Password</span>
                                     </a>
                                 </li>
-                                <li class="theme-toggle-item">
-                                    <div class="theme-toggle-wrapper">
-                                        <i class="bi bi-palette"></i>
-                                        <span>Dark Mode</span>
-                                        <label class="theme-switch" for="darkModeToggle">
-                                            <input type="checkbox" id="darkModeToggle" name="darkMode" onchange="toggleDarkMode()" autocomplete="off">
-                                            <span class="theme-slider"></span>
-                                        </label>
-                                    </div>
-                                </li>
                             </ul>
                             <div class="dropdown-divider"></div>
                             <div class="dropdown-footer">
@@ -213,78 +193,113 @@
 
             <!-- Dashboard Content -->
             <div class="dashboard-content">
-                <!-- Manage Courses Header -->
-                <div style="margin-bottom: 20px;">
-                    <h2 style="font-size: 14px; font-weight: 600; color: #E67E22; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 16px 0;">
-                        MANAGE COURSES
-                    </h2>
+                <!-- Welcome Banner -->
+                <div style="background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%); padding: 24px 32px; border-radius: 12px; margin-bottom: 32px; box-shadow: 0 4px 15px rgba(230, 126, 34, 0.2);">
+                    <h1 style="font-size: 32px; font-weight: 700; color: white; margin: 0; text-shadow: 0 2px 4px rgba(0,0,0,0.1);">Welcome to Trainee Dashboard</h1>
+                    <p style="color: rgba(255,255,255,0.9); margin: 8px 0 0 0; font-size: 14px;">Track your learning progress and manage your courses</p>
+                </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon active-courses">
+                            <i class="bi bi-book-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="enrolledCoursesCount">0</h3>
+                            <p>Enrolled Courses</p>
+                            <span class="stat-change positive">+ Active</span>
+                        </div>
+                    </div>
                     
-                    <!-- Tabs -->
-                    <div style="display: flex; gap: 12px; margin-bottom: 24px;">
-                        <button class="tab-btn active" onclick="switchTab('courses')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
-                            <i class="bi bi-book"></i>
+                    <div class="stat-card">
+                        <div class="stat-icon completed">
+                            <i class="bi bi-check-circle-fill"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="completedCoursesCount">0</h3>
+                            <p>Completed Courses</p>
+                            <span class="stat-change positive">+ Keep Going!</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-icon progress">
+                            <i class="bi bi-graph-up-arrow"></i>
+                        </div>
+                        <div class="stat-info">
+                            <h3 id="overallProgress">0%</h3>
+                            <p>Overall Progress</p>
+                            <span class="stat-change positive">+ In Progress</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Courses Management Section -->
+                <div class="section-header">
+                    <h2>Courses Management</h2>
+                </div>
+
+                <div class="trainees-grid" id="coursesGrid">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                        <p>Loading courses...</p>
+                    </div>
+                </div>
+
+                <!-- Trainees Section -->
+                <div class="section-header" style="margin-top: 40px;">
+                    <h2>Trainees</h2>
+                </div>
+
+                <!-- Course Filter -->
+                <div class="courses-filter">
+                    <div class="filter-tabs" id="courseFilterTabs">
+                        <button class="filter-tab active" onclick="filterTraineesByCourse('all')">All Trainees</button>
+                        <!-- Course filter buttons will be loaded here -->
+                    </div>
+                </div>
+
+                <div class="trainees-grid" id="traineesGrid">
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                        <p>Loading trainees...</p>
+                    </div>
+                </div>
+
+                <!-- Manage Courses Section -->
+                <div style="margin-top: 40px;">
+                    <h2 style="font-size: 14px; font-weight: 600; color: #E67E22; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 20px 0;">MANAGE COURSES</h2>
+                    
+                    <!-- Tab Navigation -->
+                    <div style="display: flex; gap: 12px; margin-bottom: 30px;">
+                        <button class="manage-tab-btn active" onclick="switchManageTab('courses')" style="display: flex; align-items: center; gap: 10px; padding: 12px 24px; background: #E67E22; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="bi bi-book" style="font-size: 18px;"></i>
                             <span>Courses</span>
                         </button>
-                        <button class="tab-btn" onclick="switchTab('competencies')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
-                            <i class="bi bi-star"></i>
+                        <button class="manage-tab-btn" onclick="switchManageTab('competencies')" style="display: flex; align-items: center; gap: 10px; padding: 12px 24px; background: white; color: #666; border: 2px solid #ddd; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="bi bi-star" style="font-size: 18px;"></i>
                             <span>Competencies</span>
                         </button>
                     </div>
-                </div>
 
-                <!-- Training Courses Section -->
-                <div id="coursesTab">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                        <h2 style="font-size: 20px; font-weight: 700; color: #333; margin: 0;">Training Courses</h2>
-                    </div>
-
-                    <!-- Courses Grid -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px;" id="coursesGrid">
-                        <!-- Courses will be loaded here -->
-                        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
-                            <i class="bi bi-hourglass-split" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
-                            <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">Loading Courses...</h3>
-                            <p style="font-size: 14px; color: #999;">Please wait</p>
+                    <!-- Courses Tab Content -->
+                    <div id="manageCoursesTab" style="display: block;">
+                        <h3 style="font-size: 18px; font-weight: 700; color: #333; margin: 0 0 20px 0;">Training Courses</h3>
+                        <div class="trainees-grid" id="manageCoursesGrid">
+                            <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                                <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                                <p>Loading courses...</p>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Competencies Tab (Hidden by default) -->
-                <div id="competenciesTab" style="display: none;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
-                        <h2 style="font-size: 20px; font-weight: 700; color: #333; margin: 0;">My Competencies</h2>
-                    </div>
-
-                    <!-- Competencies Grid -->
-                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 24px;" id="competenciesContainer">
-                        <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
-                            <i class="bi bi-hourglass-split" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
-                            <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">Loading Competencies...</h3>
-                            <p style="font-size: 14px; color: #999;">Please wait</p>
+                    <!-- Competencies Tab Content -->
+                    <div id="manageCompetenciesTab" style="display: none;">
+                        <h3 style="font-size: 18px; font-weight: 700; color: #333; margin: 0 0 20px 0;">Course Competencies</h3>
+                        <div id="competenciesListContainer" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px;">
+                            <!-- Competency items will be loaded here -->
                         </div>
-                    </div>
-                </div>
-
-                <!-- Forms Section -->
-                <div style="margin-top: 48px;">
-                    <h2 style="font-size: 14px; font-weight: 600; color: #E67E22; text-transform: uppercase; letter-spacing: 0.5px; margin: 0 0 16px 0;">
-                        <i class="bi bi-clipboard-check" style="margin-right: 8px;"></i>FORMS
-                    </h2>
-                    
-                    <!-- Form Tabs -->
-                    <div style="display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;">
-                        <button class="form-tab-btn active" onclick="openForm('registration')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: #E67E22; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
-                            <i class="bi bi-person-plus-fill"></i>
-                            <span>Registration Form</span>
-                        </button>
-                        <button class="form-tab-btn" onclick="openForm('application')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
-                            <i class="bi bi-file-earmark-text-fill"></i>
-                            <span>Application Form</span>
-                        </button>
-                        <button class="form-tab-btn" onclick="openForm('admission')" style="display: flex; align-items: center; gap: 8px; padding: 10px 20px; background: white; color: #666; border: 2px solid #e0e0e0; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.3s; font-size: 14px;">
-                            <i class="bi bi-ticket-perforated-fill"></i>
-                            <span>Admission Slip</span>
-                        </button>
                     </div>
                 </div>
             </div>
@@ -292,434 +307,351 @@
     </div>
 
     <!-- Scripts -->
-    <script src="../assets/js/common.js?v=3"></script>
-    <script src="../assets/js/dashboard-fixed.js"></script>
+    <script src="../assets/js/common.js?v=7"></script>
     <script>
-        // Ensure dark mode function is available
-        if (typeof toggleDarkMode === 'undefined') {
-            window.toggleDarkMode = function() {
-                const body = document.body;
-                const isDark = body.classList.toggle('dark-mode');
-                localStorage.setItem('theme', isDark ? 'dark' : 'light');
-                const btn = document.getElementById('darkModeBtn');
-                if (btn) btn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
-            };
+        const API_BASE_URL = 'http://localhost:5500/api';
+        let allCourses = [];
+        let userEnrollments = [];
+        let currentUser = null;
+
+        // Load current user from session
+        function loadCurrentUser() {
+            const userSession = localStorage.getItem('userSession') || sessionStorage.getItem('userSession');
+            if (userSession) {
+                try {
+                    currentUser = JSON.parse(userSession);
+                } catch (e) {
+                    console.error('Error parsing user session:', e);
+                }
+            }
         }
-        
+
         // Load theme on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadTheme();
-            loadAllCourses();
+            loadCurrentUser();
+            loadDashboardData();
         });
 
-        let allCourses = [];
-
-        // Open form in popup
-        function openForm(formType) {
-            let url = '';
-            let title = '';
-            
-            switch(formType) {
-                case 'registration':
-                    url = 'assessment/registration-form.html';
-                    title = 'Registration Form';
-                    break;
-                case 'application':
-                    url = 'assessment/application-form.html';
-                    title = 'Application Form';
-                    break;
-                case 'admission':
-                    url = 'assessment/admission-slip.html';
-                    title = 'Admission Slip';
-                    break;
-            }
-            
-            // Open in a new window/popup
-            const width = 1200;
-            const height = 800;
-            const left = (screen.width - width) / 2;
-            const top = (screen.height - height) / 2;
-            
-            window.open(
-                url,
-                title,
-                `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
-            );
-        }
-
-        // Load all courses
-        async function loadAllCourses() {
-            const coursesGrid = document.getElementById('coursesGrid');
-            if (!coursesGrid) return;
-
+        // Load all dashboard data
+        async function loadDashboardData() {
             try {
-                const response = await fetch('http://localhost:5500/api/courses');
-                if (!response.ok) throw new Error('Failed to fetch courses');
-
-                allCourses = await response.json();
-                displayCourses(allCourses);
-
+                // Load courses
+                const coursesResponse = await fetch(`${API_BASE_URL}/courses`);
+                allCourses = await coursesResponse.json();
+                
+                // Load user enrollments if logged in
+                if (currentUser && (currentUser.userId || currentUser.accountId || currentUser._id)) {
+                    const userId = currentUser.userId || currentUser.accountId || currentUser._id;
+                    
+                    try {
+                        const enrollmentsResponse = await fetch(`${API_BASE_URL}/enrollments/user/${userId}`);
+                        if (enrollmentsResponse.ok) {
+                            userEnrollments = await enrollmentsResponse.json();
+                        }
+                    } catch (e) {
+                        console.log('No enrollments found:', e);
+                    }
+                }
+                
+                // Update stats
+                updateStats();
+                
+                // Display courses
+                displayCourses();
+                
+                // Load trainees
+                await loadTrainees();
+                
             } catch (error) {
-                console.error('Error loading courses:', error);
-                coursesGrid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #666;">Failed to load courses. Please make sure the server is running.</div>';
+                console.error('Error loading dashboard data:', error);
             }
         }
 
-        // Display courses in grid format (matching admin style)
-        function displayCourses(courses) {
-            const coursesGrid = document.getElementById('coursesGrid');
-            
-            if (courses.length === 0) {
-                coursesGrid.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
-                        <i class="bi bi-inbox" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
-                        <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">No Courses Found</h3>
-                        <p style="font-size: 14px; color: #999;">No courses available</p>
+        // Load trainees from database
+        let allTrainees = [];
+        let currentCourseFilter = 'all';
+        
+        async function loadTrainees() {
+            try {
+                // Fetch trainees
+                const traineesResponse = await fetch(`${API_BASE_URL}/trainees`);
+                const trainees = await traineesResponse.json();
+                
+                // Fetch enrollments to get course information
+                const enrollmentsResponse = await fetch(`${API_BASE_URL}/enrollments`);
+                const enrollments = await enrollmentsResponse.json();
+                
+                // Merge trainee data with enrollment data
+                allTrainees = trainees.map(trainee => {
+                    const traineeEnrollments = enrollments.filter(e => 
+                        (e.traineeId === trainee.traineeId || e.userId === trainee.traineeId) && 
+                        e.status === 'approved'
+                    );
+                    
+                    return {
+                        ...trainee,
+                        enrollments: traineeEnrollments,
+                        courses: traineeEnrollments.map(e => ({
+                            courseId: e.courseId,
+                            courseName: e.courseName || e.courseTitle,
+                            enrollmentDate: e.enrollmentDate || e.createdAt
+                        }))
+                    };
+                }).filter(trainee => trainee.enrollments.length > 0); // Only show trainees with approved enrollments
+                
+                // Load course filter buttons
+                loadCourseFilters();
+                
+                // Display trainees
+                displayTrainees(allTrainees);
+                
+            } catch (error) {
+                console.error('Error loading trainees:', error);
+                document.getElementById('traineesGrid').innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #e74c3c;">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                        <p>Error loading trainees: ${error.message}</p>
                     </div>
                 `;
-                return;
             }
-
-            coursesGrid.innerHTML = courses.map(course => `
-                <div style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
-                    <div style="width: 100%; height: 200px; background: linear-gradient(135deg, #E67E22, #F4C430); overflow: hidden; display: flex; align-items: center; justify-content: center;">
-                        <img src="${course.image}" alt="${course.title}" 
-                             style="width: 100%; height: 100%; object-fit: cover;"
-                             onerror="this.style.display='none'">
-                    </div>
-                    <div style="padding: 20px;">
-                        <h3 style="font-size: 16px; font-weight: 600; color: #333; margin: 0 0 6px 0;">${course.title}</h3>
-                        <p style="font-size: 13px; color: #999; margin: 0 0 12px 0;">${course.level || 'NC II'}</p>
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; margin-bottom: 16px;">
-                            <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
-                                <i class="bi bi-people" style="color: #E67E22;"></i> ${course.enrolledCount || 0} Trainees
-                            </span>
-                            <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
-                                <i class="bi bi-clock" style="color: #E67E22;"></i> ${course.duration || '4 weeks'}
-                            </span>
-                        </div>
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="viewCourse('${course.courseId}')" 
-                                    style="flex: 1; padding: 10px; background: #E67E22; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                                <i class="bi bi-eye"></i>
-                                <span>View</span>
-                            </button>
-                            <button onclick="enrollCourse('${course.courseId}')" 
-                                    style="flex: 1; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;">
-                                <i class="bi bi-plus-circle"></i>
-                                <span>Enroll</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // View course details
-        function viewCourse(courseId) {
-            showNotification('Opening course details...', 'info');
-            setTimeout(() => {
-                navigateTo('courses.html');
-            }, 500);
-        }
-
-        // Enroll in course
-        function enrollCourse(courseId) {
-            // Show toast notification
-            showEnrollmentToast();
-            
-            // Redirect to forms page after 3 seconds
-            setTimeout(() => {
-                window.location.href = 'assessment.html';
-            }, 3000);
         }
         
-        // Show enrollment toast notification
-        function showEnrollmentToast() {
-            const toast = document.createElement('div');
-            toast.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #E67E22 0%, #d35400 100%);
-                color: white;
-                padding: 20px 30px;
-                border-radius: 12px;
-                box-shadow: 0 10px 30px rgba(230, 126, 34, 0.3);
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                gap: 15px;
-                font-size: 16px;
-                font-weight: 600;
-                animation: slideInRight 0.5s ease, fadeOut 0.5s ease 2.5s;
-                min-width: 350px;
-            `;
+        // Load course filter buttons
+        function loadCourseFilters() {
+            const filterContainer = document.getElementById('courseFilterTabs');
             
-            toast.innerHTML = `
-                <div style="width: 40px; height: 40px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
-                    <i class="bi bi-check-circle-fill" style="font-size: 24px;"></i>
-                </div>
-                <div style="flex: 1;">
-                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">Enrollment Successful!</div>
-                    <div style="font-size: 13px; opacity: 0.9;">Redirecting to forms...</div>
-                </div>
-                <div style="width: 30px; height: 30px; border: 3px solid rgba(255,255,255,0.3); border-top-color: white; border-radius: 50%; animation: spin 1s linear infinite;"></div>
-            `;
+            // Get unique courses from all trainees
+            const coursesSet = new Set();
+            allTrainees.forEach(trainee => {
+                trainee.courses.forEach(course => {
+                    coursesSet.add(JSON.stringify({ id: course.courseId, name: course.courseName }));
+                });
+            });
             
-            // Add animations
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes slideInRight {
-                    from {
-                        transform: translateX(400px);
-                        opacity: 0;
-                    }
-                    to {
-                        transform: translateX(0);
-                        opacity: 1;
-                    }
-                }
-                @keyframes fadeOut {
-                    from {
-                        opacity: 1;
-                    }
-                    to {
-                        opacity: 0;
-                    }
-                }
-                @keyframes spin {
-                    to {
-                        transform: rotate(360deg);
-                    }
-                }
-            `;
-            document.head.appendChild(style);
-            document.body.appendChild(toast);
+            const uniqueCourses = Array.from(coursesSet).map(c => JSON.parse(c));
             
-            // Remove toast after 3 seconds
-            setTimeout(() => {
-                toast.remove();
-                style.remove();
-            }, 3000);
-        }
-
-        // Switch between Courses and Competencies tabs
-        function switchTab(tab) {
-            const coursesTab = document.getElementById('coursesTab');
-            const competenciesTab = document.getElementById('competenciesTab');
-            const tabButtons = document.querySelectorAll('.tab-btn');
+            // Build filter buttons HTML
+            let filtersHTML = '<button class="filter-tab active" onclick="filterTraineesByCourse(\'all\')">All Trainees</button>';
             
-            // Check if elements exist before accessing
-            if (!coursesTab || !competenciesTab) {
-                console.error('Tab elements not found');
-                return;
-            }
-            
-            if (tab === 'courses') {
-                coursesTab.style.display = 'block';
-                competenciesTab.style.display = 'none';
-                if (tabButtons[0]) {
-                    tabButtons[0].style.background = '#E67E22';
-                    tabButtons[0].style.color = 'white';
-                    tabButtons[0].style.border = 'none';
-                }
-                if (tabButtons[1]) {
-                    tabButtons[1].style.background = 'white';
-                    tabButtons[1].style.color = '#666';
-                    tabButtons[1].style.border = '2px solid #e0e0e0';
-                }
-            } else {
-                coursesTab.style.display = 'none';
-                competenciesTab.style.display = 'block';
-                if (tabButtons[1]) {
-                    tabButtons[1].style.background = '#E67E22';
-                    tabButtons[1].style.color = 'white';
-                    tabButtons[1].style.border = 'none';
-                }
-                if (tabButtons[0]) {
-                    tabButtons[0].style.background = 'white';
-                    tabButtons[0].style.color = '#666';
-                    tabButtons[0].style.border = '2px solid #e0e0e0';
-                }
+            uniqueCourses.forEach(course => {
+                const traineeCount = allTrainees.filter(t => 
+                    t.courses.some(c => c.courseId === course.id)
+                ).length;
                 
-                // Load competencies when tab is opened
-                loadCompetencies();
-            }
-        }
-
-        // Load competencies
-        async function loadCompetencies() {
-            const container = document.getElementById('competenciesContainer');
-            try {
-                const response = await fetch('http://localhost:5500/api/competencies');
-                if (!response.ok) throw new Error('Failed to fetch competencies');
-                
-                const competencies = await response.json();
-                displayCompetencies(competencies);
-                
-            } catch (error) {
-                console.error('Error loading competencies:', error);
-                container.innerHTML = `
-                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
-                        <i class="bi bi-exclamation-circle" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
-                        <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">Failed to Load</h3>
-                        <p style="font-size: 14px; color: #999;">Please make sure the server is running</p>
-                    </div>
+                filtersHTML += `
+                    <button class="filter-tab" onclick="filterTraineesByCourse('${course.id}')">
+                        ${course.name} (${traineeCount})
+                    </button>
                 `;
-            }
-        }
-
-        // Display competencies
-        function displayCompetencies(competencies) {
-            const container = document.getElementById('competenciesContainer');
+            });
             
-            if (competencies.length === 0) {
-                container.innerHTML = `
+            filterContainer.innerHTML = filtersHTML;
+        }
+        
+        // Filter trainees by course
+        function filterTraineesByCourse(courseId) {
+            currentCourseFilter = courseId;
+            
+            // Update active filter button
+            document.querySelectorAll('.filter-tab').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Filter trainees
+            let filteredTrainees = allTrainees;
+            if (courseId !== 'all') {
+                filteredTrainees = allTrainees.filter(trainee => 
+                    trainee.courses.some(c => c.courseId === courseId)
+                );
+            }
+            
+            displayTrainees(filteredTrainees);
+        }
+        
+        // Display trainees
+        function displayTrainees(trainees) {
+            const grid = document.getElementById('traineesGrid');
+            
+            if (trainees.length === 0) {
+                grid.innerHTML = `
                     <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
-                        <i class="bi bi-inbox" style="font-size: 64px; color: #ddd; margin-bottom: 16px;"></i>
-                        <h3 style="font-size: 20px; color: #666; margin: 0 0 8px 0;">No Competencies Found</h3>
+                        <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                        <p>No trainees found${currentCourseFilter !== 'all' ? ' for this course' : ''}</p>
                     </div>
                 `;
                 return;
             }
             
-            container.innerHTML = competencies.map(comp => {
-                const totalHours = comp.units.reduce((sum, unit) => sum + (unit.hours || 0), 0);
+            grid.innerHTML = trainees.map(trainee => {
+                const initials = (trainee.firstName.charAt(0) + trainee.lastName.charAt(0)).toUpperCase();
+                const primaryCourse = trainee.courses[0];
+                const courseCount = trainee.courses.length;
+                const status = trainee.status || 'active';
+                const enrollDate = primaryCourse.enrollmentDate 
+                    ? new Date(primaryCourse.enrollmentDate).toLocaleDateString()
+                    : 'N/A';
                 
                 return `
-                    <div style="background: white; border-radius: 12px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease;">
-                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
-                            <h4 style="font-size: 18px; font-weight: 600; color: #333; margin: 0; flex: 1;">${comp.title}</h4>
-                            <span style="padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: #f3e5f5; color: #7b1fa2;">${comp.level}</span>
+                    <div class="trainee-card" style="background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; border: 2px solid transparent;">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 16px;">
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <div style="width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(135deg, #E67E22, #F4C430); display: flex; align-items: center; justify-content: center; color: white; font-weight: 700; font-size: 18px;">
+                                    ${initials}
+                                </div>
+                                <div>
+                                    <h4 style="font-size: 16px; font-weight: 600; color: #333; margin: 0 0 4px 0;">${trainee.firstName} ${trainee.lastName}</h4>
+                                    <p style="font-size: 13px; color: #999; margin: 0;">${primaryCourse.courseName}${courseCount > 1 ? ` +${courseCount - 1} more` : ''}</p>
+                                </div>
+                            </div>
+                            <span class="status-badge ${status}" style="padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${status === 'active' ? '#d4edda' : status === 'inactive' ? '#f8d7da' : '#fff3cd'}; color: ${status === 'active' ? '#155724' : status === 'inactive' ? '#721c24' : '#856404'};">
+                                ${status.charAt(0).toUpperCase() + status.slice(1)}
+                            </span>
                         </div>
-                        <div style="font-size: 13px; color: #E67E22; font-weight: 600; margin-bottom: 12px;">${comp.code}</div>
-                        <p style="font-size: 14px; color: #666; line-height: 1.6; margin-bottom: 16px;">${comp.description}</p>
-                        <div style="display: flex; align-items: center; gap: 8px; padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 13px; color: #333; margin-bottom: 16px;">
-                            <i class="bi bi-book" style="color: #E67E22;"></i> ${comp.courseName}
-                        </div>
-                        <div style="border-top: 1px solid #e0e0e0; padding-top: 12px;">
-                            <div style="font-size: 14px; font-weight: 600; color: #E67E22;">Total: ${totalHours} hours (${comp.units.length} units)</div>
+                        <div style="display: grid; gap: 8px; font-size: 13px; color: #666;">
+                            <span style="display: flex; align-items: center; gap: 8px;">
+                                <i class="bi bi-envelope" style="color: #E67E22;"></i> ${trainee.email}
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 8px;">
+                                <i class="bi bi-phone" style="color: #E67E22;"></i> ${trainee.phone || 'N/A'}
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 8px;">
+                                <i class="bi bi-geo-alt" style="color: #E67E22;"></i> ${trainee.address || 'N/A'}
+                            </span>
+                            <span style="display: flex; align-items: center; gap: 8px;">
+                                <i class="bi bi-calendar" style="color: #E67E22;"></i> Enrolled: ${enrollDate}
+                            </span>
                         </div>
                     </div>
                 `;
             }).join('');
         }
 
-        // Navigation functions
-        function navigateTo(page) {
-            window.location.href = page;
+        // Update stats cards
+        function updateStats() {
+            const enrolledCount = userEnrollments.filter(e => e.status === 'active' || e.status === 'enrolled').length;
+            const completedCount = userEnrollments.filter(e => e.status === 'completed').length;
+            const totalProgress = userEnrollments.length > 0 
+                ? Math.round(userEnrollments.reduce((sum, e) => sum + (e.progress || 0), 0) / userEnrollments.length)
+                : 0;
+            
+            document.getElementById('enrolledCoursesCount').textContent = enrolledCount;
+            document.getElementById('completedCoursesCount').textContent = completedCount;
+            document.getElementById('overallProgress').textContent = totalProgress + '%';
         }
 
-        function openApplicationForm() {
-            window.location.href = 'assessment/application-form.html';
-        }
-
-        function openAdmissionSlip() {
-            window.location.href = 'assessment/admission-slip.html';
-        }
-
-        function downloadCertificates() {
-            showNotification('Downloading certificates...', 'info');
-            setTimeout(() => {
-                showNotification('Certificates downloaded successfully!', 'success');
-            }, 1500);
-        }
-
-        function contactSupport() {
-            showNotification('Opening support contact...', 'info');
-            setTimeout(() => {
-                alert('📞 BETCI Support Contact\n\n' +
-                      '📱 Phone: +63 2 8123 4567\n' +
-                      '📱 Mobile: +63 917 123 4567\n' +
-                      '📧 Email: support@betci.edu.ph\n\n' +
-                      '🕐 Office Hours:\n' +
-                      'Monday - Friday: 8:00 AM - 5:00 PM\n' +
-                      'Saturday: 8:00 AM - 12:00 PM');
-            }, 500);
-        }
-
-        function handleLogout() {
-            if (confirm('Are you sure you want to logout?')) {
-                showNotification('Logging out...', 'info');
-                setTimeout(() => {
-                    localStorage.removeItem('userSession');
-                    sessionStorage.removeItem('userSession');
-                    window.location.href = '../../auth/login.html';
-                }, 500);
+        // Display courses in admin style
+        function displayCourses() {
+            const coursesGrid = document.getElementById('coursesGrid');
+            
+            if (allCourses.length === 0) {
+                coursesGrid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                        <p>No courses available</p>
+                    </div>
+                `;
+                return;
             }
+
+            // Show all courses (not just first 6)
+            coursesGrid.innerHTML = allCourses.map(course => {
+                const enrollment = userEnrollments.find(e => e.courseId === course._id);
+                const isEnrolled = !!enrollment;
+                
+                // Get course image with proper path handling
+                let imagePath = course.image || '';
+                
+                if (imagePath.startsWith('data:')) {
+                    // Base64 data URL - use as-is
+                } else if (imagePath.startsWith('http')) {
+                    // Full URL - use as-is
+                } else if (imagePath.startsWith('/assets/')) {
+                    // Absolute path - convert to relative for trainee pages
+                    imagePath = '../..' + imagePath;
+                } else if (imagePath.includes('/assets/')) {
+                    // Extract the /assets/ part and make it relative
+                    const assetsPart = imagePath.substring(imagePath.indexOf('/assets/'));
+                    imagePath = '../..' + assetsPart;
+                } else if (imagePath.startsWith('../')) {
+                    // Already relative - adjust for trainee pages depth
+                    imagePath = '../../' + imagePath.substring(3);
+                } else if (imagePath && !imagePath.startsWith('.')) {
+                    // Filename only - add path
+                    imagePath = '../../assets/img/' + imagePath;
+                } else {
+                    // Default fallback
+                    imagePath = '../../assets/img/logo.png';
+                }
+                
+                return `
+                    <div class="trainee-card" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; border: 2px solid transparent;">
+                        <div style="width: 100%; height: 200px; overflow: hidden; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                            <img src="${imagePath}" alt="${course.title}" 
+                                 style="width: 100%; height: 100%; object-fit: cover;" 
+                                 onerror="this.onerror=null; this.src='../../assets/img/logo.png';">
+                            ${isEnrolled ? `
+                                <div style="position: absolute; top: 12px; right: 12px; background: rgba(16, 185, 129, 0.95); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">
+                                    <i class="bi bi-check-circle-fill"></i> Enrolled
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div style="padding: 20px;">
+                            <h3 style="font-size: 16px; font-weight: 600; color: #333; margin: 0 0 8px 0;">${course.title}</h3>
+                            <p style="font-size: 13px; color: #999; margin: 0 0 12px 0;">${course.level || 'NC II'}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; margin-bottom: 16px;">
+                                <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
+                                    <i class="bi bi-people" style="color: #E67E22;"></i> ${course.enrolledCount || 0} Trainees
+                                </span>
+                                <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
+                                    <i class="bi bi-clock" style="color: #E67E22;"></i> ${course.duration || '4 weeks'}
+                                </span>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button onclick="viewCourse('${course._id}')" 
+                                        style="flex: 1; padding: 10px; background: white; color: #E67E22; border: 2px solid #E67E22; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                    <i class="bi bi-eye"></i> View
+                                </button>
+                                ${isEnrolled ? `
+                                    <button disabled
+                                            style="flex: 1; padding: 10px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: not-allowed; opacity: 0.9; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                        <i class="bi bi-check-circle-fill"></i> Enrolled
+                                    </button>
+                                ` : `
+                                    <button onclick="enrollCourse('${course._id}')" 
+                                            style="flex: 1; padding: 10px; background: #E67E22; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                        <i class="bi bi-plus-circle"></i> Enroll
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
         }
 
-        // Show notification
-        function showNotification(message, type = 'info') {
-            // Remove existing notifications
-            const existingNotifications = document.querySelectorAll('.notification');
-            existingNotifications.forEach(notif => notif.remove());
-            
-            const notification = document.createElement('div');
-            notification.className = `notification notification-${type}`;
-            
-            const colors = {
-                success: '#27AE60',
-                error: '#e74c3c',
-                warning: '#f39c12',
-                info: '#3498db'
-            };
-            
-            const icons = {
-                success: 'bi-check-circle-fill',
-                error: 'bi-x-circle-fill',
-                warning: 'bi-exclamation-triangle-fill',
-                info: 'bi-info-circle-fill'
-            };
-            
-            notification.innerHTML = `
-                <i class="bi ${icons[type] || icons.info}"></i>
-                <span>${message}</span>
-            `;
-            
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: ${colors[type] || colors.info};
-                color: white;
-                padding: 16px 24px;
-                border-radius: 8px;
-                z-index: 10000;
-                opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.3s ease;
-                max-width: 350px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-                font-weight: 500;
-                display: flex;
-                align-items: center;
-                gap: 12px;
-                font-size: 14px;
-            `;
-            
-            document.body.appendChild(notification);
-            
-            requestAnimationFrame(() => {
-                notification.style.opacity = '1';
-                notification.style.transform = 'translateX(0)';
-            });
-            
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.remove();
-                    }
-                }, 300);
-            }, 3000);
+        // View course details
+        function viewCourse(courseId) {
+            window.location.href = 'courses.html';
         }
 
-        // Load theme function
+        // Enroll in course
+        function enrollCourse(courseId) {
+            const course = allCourses.find(c => c._id === courseId);
+            if (!course) return;
+            
+            // Store course info and redirect to assessment
+            sessionStorage.setItem('enrollmentCourse', JSON.stringify({
+                courseId: course._id,
+                courseName: course.title,
+                courseDescription: course.description
+            }));
+            
+            window.location.href = 'assessment.html';
+        }
+
+        // Load theme
         function loadTheme() {
-            const theme = localStorage.getItem('theme');
+            const theme = localStorage.getItem('theme') || 'light';
             if (theme === 'dark') {
                 document.body.classList.add('dark-mode');
                 const btn = document.getElementById('darkModeBtn');
@@ -727,11 +659,284 @@
             }
         }
 
-        // Open change password (from dropdown link)
-        function openChangePassword(event) {
-            if (event) event.preventDefault();
-            navigateTo('settings.html#password');
+        // Switch between Courses and Competencies tabs in Manage Courses section
+        function switchManageTab(tab) {
+            const coursesTab = document.getElementById('manageCoursesTab');
+            const competenciesTab = document.getElementById('manageCompetenciesTab');
+            const tabButtons = document.querySelectorAll('.manage-tab-btn');
+            
+            if (tab === 'courses') {
+                coursesTab.style.display = 'block';
+                competenciesTab.style.display = 'none';
+                tabButtons[0].style.background = '#E67E22';
+                tabButtons[0].style.color = 'white';
+                tabButtons[0].style.borderColor = '#E67E22';
+                tabButtons[1].style.background = 'white';
+                tabButtons[1].style.color = '#666';
+                tabButtons[1].style.borderColor = '#ddd';
+                
+                // Load courses in manage section if not already loaded
+                loadManageCourses();
+            } else {
+                coursesTab.style.display = 'none';
+                competenciesTab.style.display = 'block';
+                tabButtons[1].style.background = '#E67E22';
+                tabButtons[1].style.color = 'white';
+                tabButtons[1].style.borderColor = '#E67E22';
+                tabButtons[0].style.background = 'white';
+                tabButtons[0].style.color = '#666';
+                tabButtons[0].style.borderColor = '#ddd';
+                
+                // Load competencies
+                loadDashboardCompetencies();
+            }
         }
+
+        // Load courses in the manage section
+        function loadManageCourses() {
+            const manageCoursesGrid = document.getElementById('manageCoursesGrid');
+            
+            if (allCourses.length === 0) {
+                manageCoursesGrid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #999;">
+                        <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                        <p>No courses available</p>
+                    </div>
+                `;
+                return;
+            }
+
+            manageCoursesGrid.innerHTML = allCourses.map(course => {
+                const enrollment = userEnrollments.find(e => e.courseId === course._id);
+                const isEnrolled = !!enrollment;
+                
+                let imagePath = course.image || '../../assets/img/logo.png';
+                if (imagePath.startsWith('/assets/')) {
+                    imagePath = '../..' + imagePath;
+                } else if (imagePath.startsWith('../assets/')) {
+                    imagePath = '../../assets/' + imagePath.substring(10);
+                } else if (!imagePath.startsWith('data:') && !imagePath.startsWith('http')) {
+                    imagePath = '../../assets/img/logo.png';
+                }
+                
+                return `
+                    <div class="trainee-card" style="background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); transition: all 0.3s ease; cursor: pointer; border: 2px solid transparent;">
+                        <div style="width: 100%; height: 200px; overflow: hidden; background: linear-gradient(135deg, #f5f5f5 0%, #e8e8e8 100%); display: flex; align-items: center; justify-content: center; position: relative;">
+                            <img src="${imagePath}" alt="${course.title}" 
+                                 style="width: 100%; height: 100%; object-fit: cover;" 
+                                 onerror="this.onerror=null; this.src='../../assets/img/logo.png';">
+                            ${isEnrolled ? `
+                                <div style="position: absolute; top: 12px; right: 12px; background: rgba(16, 185, 129, 0.95); color: white; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 700;">
+                                    <i class="bi bi-check-circle-fill"></i> Enrolled
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div style="padding: 20px;">
+                            <h3 style="font-size: 16px; font-weight: 600; color: #333; margin: 0 0 8px 0;">${course.title}</h3>
+                            <p style="font-size: 13px; color: #999; margin: 0 0 12px 0;">${course.level || 'NC II'}</p>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-top: 1px solid #f0f0f0; border-bottom: 1px solid #f0f0f0; margin-bottom: 16px;">
+                                <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
+                                    <i class="bi bi-people" style="color: #E67E22;"></i> ${course.enrolledCount || 0} Trainees
+                                </span>
+                                <span style="display: flex; align-items: center; gap: 6px; font-size: 13px; color: #666;">
+                                    <i class="bi bi-clock" style="color: #E67E22;"></i> ${course.duration || '4 weeks'}
+                                </span>
+                            </div>
+                            <div style="display: flex; gap: 10px;">
+                                <button onclick="viewCourse('${course._id}')" 
+                                        style="flex: 1; padding: 10px; background: white; color: #E67E22; border: 2px solid #E67E22; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                    <i class="bi bi-eye"></i> View
+                                </button>
+                                ${isEnrolled ? `
+                                    <button disabled
+                                            style="flex: 1; padding: 10px; background: #10b981; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: not-allowed; opacity: 0.9; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                        <i class="bi bi-check-circle-fill"></i> Enrolled
+                                    </button>
+                                ` : `
+                                    <button onclick="enrollCourse('${course._id}')" 
+                                            style="flex: 1; padding: 10px; background: #E67E22; color: white; border: none; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                                        <i class="bi bi-plus-circle"></i> Enroll
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Load competencies for dashboard
+        async function loadDashboardCompetencies() {
+            const container = document.getElementById('competenciesListContainer');
+            
+            try {
+                // Fetch all competencies (not filtered by enrolled courses)
+                const response = await fetch(`${API_BASE_URL}/competencies`);
+                if (!response.ok) throw new Error('Failed to fetch competencies');
+                
+                let competencies = await response.json();
+                
+                if (competencies.length === 0) {
+                    container.innerHTML = `
+                        <div style="text-align: center; padding: 40px 20px; color: #999; grid-column: 1/-1;">
+                            <i class="bi bi-inbox" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                            <p>No competencies available</p>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                // Change container to grid layout
+                container.style.display = 'grid';
+                container.style.gridTemplateColumns = 'repeat(auto-fill, minmax(320px, 1fr))';
+                container.style.gap = '20px';
+                
+                container.innerHTML = competencies.map(comp => {
+                    const totalHours = comp.units ? comp.units.reduce((sum, unit) => sum + (unit.hours || 0), 0) : 0;
+                    const unitCount = comp.units ? comp.units.length : 0;
+                    const totalCredits = comp.units ? comp.units.reduce((sum, unit) => sum + (unit.credits || 0), 0) : 0;
+                    
+                    // Handle image path
+                    let imageUrl = comp.image || '';
+                    if (imageUrl.startsWith('data:')) {
+                        // Base64 data URL - use as-is
+                    } else if (imageUrl.startsWith('http')) {
+                        // Full URL - use as-is
+                    } else if (imageUrl.startsWith('/assets/')) {
+                        imageUrl = '../..' + imageUrl;
+                    } else if (imageUrl.includes('/assets/')) {
+                        const assetsPart = imageUrl.substring(imageUrl.indexOf('/assets/'));
+                        imageUrl = '../..' + assetsPart;
+                    } else if (imageUrl.startsWith('../')) {
+                        imageUrl = '../../' + imageUrl.substring(3);
+                    } else if (imageUrl && !imageUrl.startsWith('.')) {
+                        imageUrl = '../../assets/img/' + imageUrl;
+                    }
+                    
+                    const levelColors = {
+                        'NC I': '#3498db',
+                        'NC II': '#E67E22',
+                        'NC III': '#9b59b6',
+                        'NC IV': '#e74c3c'
+                    };
+                    const levelColor = levelColors[comp.level] || '#E67E22';
+                    
+                    return `
+                        <div class="competency-card" style="
+                            background: white;
+                            border-radius: 12px;
+                            overflow: hidden;
+                            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+                            transition: all 0.3s;
+                            display: flex;
+                            flex-direction: column;
+                        ">
+                            <div style="position: relative; height: 200px; overflow: hidden; background: linear-gradient(135deg, ${levelColor} 0%, ${levelColor}dd 100%);">
+                                ${imageUrl ? `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover;" alt="${comp.title}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 400 200%22%3E%3Crect fill=%22%23ffffff%22 opacity=%220.1%22 width=%22400%22 height=%22200%22/%3E%3C/svg%3E'">` : ''}
+                            </div>
+                            
+                            <div style="padding: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                                    <h3 class="competency-title" style="
+                                        font-size: 16px;
+                                        font-weight: 700;
+                                        margin: 0;
+                                        color: #1e3a5f;
+                                        line-height: 1.3;
+                                        flex: 1;
+                                    ">${comp.title}</h3>
+                                    <span style="
+                                        background: #E67E22;
+                                        color: white;
+                                        padding: 4px 10px;
+                                        border-radius: 12px;
+                                        font-size: 11px;
+                                        font-weight: 700;
+                                        white-space: nowrap;
+                                        margin-left: 12px;
+                                    ">${comp.level}</span>
+                                </div>
+                                
+                                <div style="font-size: 13px; color: #E67E22; font-weight: 600; margin-bottom: 12px;">${comp.code}</div>
+                                
+                                <p class="competency-description" style="
+                                    font-size: 13px;
+                                    line-height: 1.6;
+                                    color: #666;
+                                    margin: 0 0 16px 0;
+                                ">${comp.description || 'No description available'}</p>
+                                
+                                <div style="border-top: 1px solid #eee; padding-top: 16px; margin-top: 16px;">
+                                    <h4 style="
+                                        font-size: 12px;
+                                        font-weight: 700;
+                                        color: #333;
+                                        margin: 0 0 12px 0;
+                                        display: flex;
+                                        align-items: center;
+                                        gap: 6px;
+                                    ">
+                                        <i class="bi bi-list-check" style="color: #E67E22;"></i>
+                                        Units of Competency (${unitCount})
+                                    </h4>
+                                    <ul style="list-style: none; padding: 0; margin: 0;">
+                                        ${comp.units && comp.units.length > 0 ? comp.units.slice(0, 3).map(unit => `
+                                            <li style="
+                                                font-size: 12px;
+                                                color: #666;
+                                                margin-bottom: 8px;
+                                                display: flex;
+                                                align-items: center;
+                                                gap: 8px;
+                                            ">
+                                                <i class="bi bi-check-circle-fill" style="color: #27ae60; font-size: 10px;"></i>
+                                                <span style="flex: 1;">${unit.unitTitle || unit.unitCode}</span>
+                                            </li>
+                                        `).join('') : '<li style="font-size: 12px; color: #999;">No units available</li>'}
+                                    </ul>
+                                    ${unitCount > 3 ? `<div style="font-size: 12px; color: #E67E22; margin-top: 8px; font-weight: 600;">+${unitCount - 3} more units</div>` : ''}
+                                </div>
+                                
+                                <div style="display: flex; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; font-size: 12px;">
+                                    <div style="display: flex; align-items: center; gap: 6px; color: #666;">
+                                        <i class="bi bi-clock" style="color: #E67E22;"></i>
+                                        <span>${totalHours} hours</span>
+                                    </div>
+                                    <div style="display: flex; align-items: center; gap: 6px; color: #666;">
+                                        <i class="bi bi-award" style="color: #E67E22;"></i>
+                                        <span>${totalCredits} credits</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+                
+                // Add hover effects
+                const cards = container.querySelectorAll('.competency-card');
+                cards.forEach((card) => {
+                    card.addEventListener('mouseenter', function() {
+                        this.style.transform = 'translateY(-4px)';
+                        this.style.boxShadow = '0 8px 20px rgba(0,0,0,0.15)';
+                    });
+                    
+                    card.addEventListener('mouseleave', function() {
+                        this.style.transform = 'translateY(0)';
+                        this.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+                    });
+                });
+                
+            } catch (error) {
+                console.error('Error loading competencies:', error);
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px 20px; color: #e74c3c; grid-column: 1/-1;">
+                        <i class="bi bi-exclamation-triangle" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                        <p>Failed to load competencies</p>
+                    </div>
+                `;
+            }
+        }
+
     </script>
 
 </body>

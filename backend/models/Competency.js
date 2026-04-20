@@ -40,6 +40,10 @@ const competencySchema = new mongoose.Schema({
     type: String,
     enum: ['active', 'inactive', 'draft'],
     default: 'active'
+  },
+  image: {
+    type: String,
+    default: ''
   }
 }, {
   timestamps: true

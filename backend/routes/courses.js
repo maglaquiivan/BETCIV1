@@ -76,16 +76,6 @@ router.put('/:id', async (req, res) => {
   try {
     const updateData = { ...req.body };
     
-    // Validate image size if provided
-    if (updateData.image && updateData.image.startsWith('data:')) {
-      // If it's a base64 image, check size (500KB limit)
-      if (updateData.image.length > 500 * 1024) {
-        return res.status(413).json({ 
-          message: 'Image data too large (max 500KB). Please use a smaller image or provide an image URL instead.' 
-        });
-      }
-    }
-    
     let course;
     
     // Try to find and update by courseId first

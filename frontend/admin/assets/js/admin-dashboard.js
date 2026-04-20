@@ -546,9 +546,17 @@ function initializeDarkMode() {
 
 function toggleDarkMode() {
     // Dark mode toggle is now handled by dark-mode.js
-    // Call the dark-mode.js function
-    if (typeof window.toggleDarkMode === 'function') {
-        window.toggleDarkMode();
+    const body = document.body;
+    body.classList.toggle('dark-mode');
+    
+    // Save preference
+    const isDark = body.classList.contains('dark-mode');
+    localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    
+    // Update button
+    const btn = document.getElementById('darkModeBtn');
+    if (btn) {
+        btn.innerHTML = isDark ? '<i class="bi bi-sun-fill"></i>' : '<i class="bi bi-moon-fill"></i>';
     }
 }
 
@@ -975,10 +983,18 @@ function loadAdminProfilePicture() {
             // Always fetch from API to ensure we have the latest
             fetch(`http://localhost:5500/api/admin-accounts/${userId}`)
                 .then(response => {
-                    if (!response.ok) throw new Error('Failed to fetch admin profile');
+                    if (!response.ok) {
+                        console.warn(`Admin account ${userId} not found in database. Using session data.`);
+                        return null;
+                    }
                     return response.json();
                 })
                 .then(admin => {
+                    if (!admin) {
+                        console.log('Using session data for admin profile');
+                        return;
+                    }
+                    
                     console.log('Admin profile loaded from API:', admin);
                     
                     // Update name from API (more accurate)
@@ -1020,7 +1036,8 @@ function loadAdminProfilePicture() {
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching admin profile:', error);
+                    console.warn('Could not fetch admin profile from database:', error.message);
+                    console.log('Using session data for admin profile');
                 });
         }
         

@@ -18,8 +18,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <!-- Dashboard CSS -->
-    <link rel="stylesheet" href="../assets/css/dashboard.css" />
     <link rel="stylesheet" href="../assets/css/styles.css" />
+    <link rel="stylesheet" href="../assets/css/dashboard.css" />
     
     <style>
         /* Records Page Specific Styles */
@@ -27,6 +27,9 @@
             padding: 20px;
             flex: 1;
             overflow-y: auto;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
         }
 
         .section-header {
@@ -876,6 +879,12 @@
                             <span>Settings</span>
                         </a>
                     </li>
+                    <li class="nav-item nav-logout">
+                        <a href="#" class="nav-link" onclick="handleLogout(); return false;">
+                            <i class="bi bi-box-arrow-right"></i>
+                            <span>Logout</span>
+                        </a>
+                    </li>
                 </ul>
             </nav>
         </aside>
@@ -885,43 +894,27 @@
             <!-- Top Header -->
             <header class="top-header">
                 <div class="header-left">
+                    <button class="menu-toggle" id="menuToggle">
+                        <i class="bi bi-list"></i>
+                    </button>
                     <div class="search-container">
                         <i class="bi bi-search"></i>
                         <input type="text" id="searchInput" name="search" placeholder="Search..." class="search-input" autocomplete="off" aria-label="Search">
                     </div>
                 </div>
                 <div class="header-right">
-                    <button class="menu-toggle" id="menuToggle">
-                        <i class="bi bi-list"></i>
-                    </button>
-                    <button class="dark-mode-btn" id="darkModeBtn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+                    <button class="dark-mode-btn" id="darkModeBtn" title="Toggle Dark Mode">
                         <i class="bi bi-moon-fill"></i>
                     </button>
                     <div class="user-profile" id="userProfile">
                         <div class="user-avatar">T</div>
-                        <span class="user-name">Trainee</span>
-                        <i class="bi bi-chevron-down dropdown-arrow"></i>
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
-                                    <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
-                                    <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
-                                </svg>
-                            </svg>
-                        </div>
-                        <span class="user-name" id="userName">TRAINEE</span>
+                        <span class="user-name">TRAINEE</span>
                         <i class="bi bi-chevron-down dropdown-arrow"></i>
                         
                         <!-- User Dropdown Menu -->
                         <div class="user-dropdown" id="userDropdown">
                             <div class="dropdown-header">
-                                <div class="dropdown-avatar">
-                                    <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                        <circle cx="20" cy="20" r="20" fill="#E67E22"/>
-                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" x="8" y="8">
-                                            <path d="M12 12C14.2091 12 16 10.2091 16 8C16 5.79086 14.2091 4 12 4C9.79086 4 8 5.79086 8 8C8 10.2091 9.79086 12 12 12Z" fill="white"/>
-                                            <path d="M12 14C8.13401 14 5 17.134 5 21H3.5C3.5 16.3056 7.30558 12.5 12 12.5C16.6944 12.5 20.5 16.3056 20.5 21H19C19 17.134 15.866 14 12 14Z" fill="white"/>
-                                        </svg>
-                                    </svg>
-                                </div>
+                                <div class="dropdown-avatar">T</div>
                                 <div class="dropdown-user-info">
                                     <h4>Trainee User</h4>
                                     <p>trainee@betci.edu.ph</p>
@@ -940,16 +933,6 @@
                                         <i class="bi bi-gear"></i>
                                         <span>Settings</span>
                                     </a>
-                                </li>
-                                <li class="theme-toggle-item">
-                                    <div class="theme-toggle-wrapper">
-                                        <i class="bi bi-palette"></i>
-                                        <span>Dark Mode</span>
-                                        <label class="theme-switch">
-                                            <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()">
-                                            <span class="theme-slider"></span>
-                                        </label>
-                                    </div>
                                 </li>
                             </ul>
                             <div class="dropdown-divider"></div>
@@ -1007,7 +990,7 @@
         </div>
     </div>
 
-    <script src="../assets/js/common.js?v=3"></script>
+    <script src="../assets/js/common.js?v=7"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             loadRecords();
@@ -1204,18 +1187,22 @@
                         <div class="trainee-card">
                             <div class="trainee-avatar">
                                 ${trainee.profilePicture ? 
-                                    `<img src="${trainee.profilePicture}" alt="${trainee.firstName} ${trainee.lastName}">` : 
+                                    `<img src="${trainee.profilePicture}" alt="${trainee.firstName} ${trainee.lastName}" onerror="this.style.display='none'; this.parentElement.innerHTML='${initials}';">` : 
                                     initials
                                 }
                             </div>
                             <div class="trainee-name">${trainee.firstName} ${trainee.lastName}</div>
                             <div class="trainee-email">${trainee.email}</div>
-                            <span class="trainee-status ${trainee.status || 'active'}">${trainee.status || 'Active'}</span>
+                            <span class="trainee-status ${trainee.status || 'active'}">${(trainee.status || 'Active').toUpperCase()}</span>
                             
                             <div class="trainee-info">
                                 <div class="trainee-info-item">
                                     <span class="trainee-info-label"><i class="bi bi-person-badge"></i> Account ID</span>
-                                    <span class="trainee-info-value">${trainee.accountId}</span>
+                                    <span class="trainee-info-value">${trainee.accountId || 'N/A'}</span>
+                                </div>
+                                <div class="trainee-info-item">
+                                    <span class="trainee-info-label"><i class="bi bi-book"></i> Course</span>
+                                    <span class="trainee-info-value">${trainee.course || 'No course'}</span>
                                 </div>
                                 <div class="trainee-info-item">
                                     <span class="trainee-info-label"><i class="bi bi-telephone"></i> Phone</span>
@@ -1226,7 +1213,7 @@
                                     <span class="trainee-info-value">${trainee.address || 'N/A'}</span>
                                 </div>
                                 <div class="trainee-info-item">
-                                    <span class="trainee-info-label"><i class="bi bi-calendar-plus"></i> Joined</span>
+                                    <span class="trainee-info-label"><i class="bi bi-calendar-plus"></i> Enrolled</span>
                                     <span class="trainee-info-value">${joinDate}</span>
                                 </div>
                                 <div class="trainee-info-item">
@@ -1554,50 +1541,6 @@
                 alert('Failed to download certificate. Please try again.');
             }
         }
-
-        // Sidebar toggle for mobile
-        document.addEventListener('DOMContentLoaded', function() {
-            const sidebar = document.querySelector('.sidebar');
-            const mainContent = document.querySelector('.main-content');
-            const menuToggle = document.getElementById('menuToggle');
-            
-            // Load saved sidebar state only on desktop
-            if (window.innerWidth > 768) {
-                const sidebarCollapsed = localStorage.getItem('sidebarCollapsed') === 'true';
-                if (sidebarCollapsed) {
-                    sidebar.classList.add('collapsed');
-                    mainContent.style.marginLeft = '60px';
-                }
-            }
-            
-            // Toggle sidebar
-            if (menuToggle) {
-                menuToggle.addEventListener('click', function() {
-                    // Toggle sidebar - use 'collapsed' class
-                    sidebar.classList.toggle('collapsed');
-                    
-                    // Update main-content margin based on sidebar state and screen size
-                    if (window.innerWidth > 768) {
-                        if (sidebar.classList.contains('collapsed')) {
-                            mainContent.style.marginLeft = '60px';
-                            localStorage.setItem('sidebarCollapsed', 'true');
-                        } else {
-                            mainContent.style.marginLeft = '210px';
-                            localStorage.setItem('sidebarCollapsed', 'false');
-                        }
-                    }
-                });
-            }
-            
-            // Close sidebar when clicking outside on mobile
-            document.addEventListener('click', function(e) {
-                if (window.innerWidth <= 768) {
-                    if (!e.target.closest('.sidebar') && !e.target.closest('.menu-toggle')) {
-                        sidebar.classList.remove('collapsed');
-                    }
-                }
-            });
-        });
     </script>
 </body>
 </html>

@@ -107,12 +107,14 @@
                             <span>Competencies</span>
                         </a>
                     </li>
+                    <!-- Appointments temporarily hidden
                     <li class="nav-item">
                         <a href="appointments.html" class="nav-link">
                             <i class="bi bi-calendar-check"></i>
                             <span>Appointments</span>
                         </a>
                     </li>
+                    -->
                     <li class="nav-item">
                         <a href="records.html" class="nav-link">
                             <i class="bi bi-file-earmark"></i>
@@ -505,13 +507,6 @@
         function previewImageFile(event) {
             const file = event.target.files[0];
             if (file) {
-                // Check file size (limit to 1MB for better performance)
-                if (file.size > 1 * 1024 * 1024) {
-                    alert('Image size should be less than 1MB for optimal performance');
-                    event.target.value = '';
-                    return;
-                }
-                
                 // Check file type
                 if (!file.type.startsWith('image/')) {
                     alert('Please upload an image file (JPG, PNG, GIF)');
@@ -561,15 +556,6 @@
                             compressedSize: currentImageData.length,
                             dimensions: `${width}x${height}`
                         });
-                        
-                        // Check if compressed image is still too large (500KB limit)
-                        if (currentImageData.length > 500 * 1024) {
-                            alert('Compressed image is still too large. Please use a smaller image or provide an image URL instead.');
-                            currentImageData = null;
-                            event.target.value = '';
-                            document.getElementById('imagePreview').innerHTML = '<i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i><p style="margin: 8px 0 0 0; color: #999; font-size: 13px;">Click to upload course image</p>';
-                            return;
-                        }
                         
                         document.getElementById('imagePreview').innerHTML = '<img src="' + currentImageData + '" alt="Preview" style="max-width: 100%; max-height: 100%; object-fit: contain;">';
                         // Clear the URL input when file is uploaded
@@ -791,7 +777,7 @@
                     <div class="form-group" style="margin-bottom: 24px;">
                         <label class="form-label" for="courseImageFile">Course Image</label>
                         <p style="font-size: 12px; color: #999; margin-bottom: 10px;">
-                            Upload an image (max 5MB). Image will be saved and displayed in both admin and trainee dashboards.
+                            Upload an image. Image will be saved and displayed in both admin and trainee dashboards.
                         </p>
                         <div class="image-upload-container">
                             <input type="file" id="courseImageFile" accept="image/*" onchange="previewImageFile(event)" style="display: none;">

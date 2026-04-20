@@ -414,6 +414,19 @@
             font-family: 'Roboto', sans-serif;
         }
 
+        /* Screen reader only text */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
         /* Note Section */
         .note-section {
             border: 1px solid #333;
@@ -702,23 +715,23 @@
             <div class="form-content">
                 <!-- Reference Number -->
                 <div class="ref-section">
-                    <label class="ref-label">REFERENCE NUMBER :</label>
+                    <label for="admRefNum1" class="ref-label">REFERENCE NUMBER :</label>
                     <div class="ref-boxes">
-                        <input type="text" class="ref-input ref-yellow" maxlength="1">
-                        <input type="text" class="ref-input ref-yellow" maxlength="1">
-                        <input type="text" class="ref-input ref-light-blue" maxlength="1">
-                        <input type="text" class="ref-input ref-light-blue" maxlength="1">
-                        <input type="text" class="ref-input ref-pink" maxlength="1">
-                        <input type="text" class="ref-input ref-pink" maxlength="1">
-                        <input type="text" class="ref-input ref-green" maxlength="1">
-                        <input type="text" class="ref-input ref-green" maxlength="1">
-                        <input type="text" class="ref-input ref-orange" maxlength="1">
-                        <input type="text" class="ref-input ref-orange" maxlength="1">
-                        <input type="text" class="ref-input ref-orange" maxlength="1">
-                        <input type="text" class="ref-input ref-purple" maxlength="1">
-                        <input type="text" class="ref-input ref-purple" maxlength="1">
-                        <input type="text" class="ref-input ref-purple" maxlength="1">
-                        <input type="text" class="ref-input ref-purple" maxlength="1">
+                        <input type="text" id="admRefNum1" name="admRefNum1" class="ref-input ref-yellow" maxlength="1">
+                        <input type="text" id="admRefNum2" name="admRefNum2" class="ref-input ref-yellow" maxlength="1">
+                        <input type="text" id="admRefNum3" name="admRefNum3" class="ref-input ref-light-blue" maxlength="1">
+                        <input type="text" id="admRefNum4" name="admRefNum4" class="ref-input ref-light-blue" maxlength="1">
+                        <input type="text" id="admRefNum5" name="admRefNum5" class="ref-input ref-pink" maxlength="1">
+                        <input type="text" id="admRefNum6" name="admRefNum6" class="ref-input ref-pink" maxlength="1">
+                        <input type="text" id="admRefNum7" name="admRefNum7" class="ref-input ref-green" maxlength="1">
+                        <input type="text" id="admRefNum8" name="admRefNum8" class="ref-input ref-green" maxlength="1">
+                        <input type="text" id="admRefNum9" name="admRefNum9" class="ref-input ref-orange" maxlength="1">
+                        <input type="text" id="admRefNum10" name="admRefNum10" class="ref-input ref-orange" maxlength="1">
+                        <input type="text" id="admRefNum11" name="admRefNum11" class="ref-input ref-orange" maxlength="1">
+                        <input type="text" id="admRefNum12" name="admRefNum12" class="ref-input ref-purple" maxlength="1">
+                        <input type="text" id="admRefNum13" name="admRefNum13" class="ref-input ref-purple" maxlength="1">
+                        <input type="text" id="admRefNum14" name="admRefNum14" class="ref-input ref-purple" maxlength="1">
+                        <input type="text" id="admRefNum15" name="admRefNum15" class="ref-input ref-purple" maxlength="1">
                     </div>
                 </div>
 
@@ -726,14 +739,14 @@
                 <div class="form-grid">
                     <!-- Name of Applicant -->
                     <div class="form-field">
-                        <label class="field-label">Name of Applicant:</label>
-                        <input type="text" id="applicantName" class="field-input" placeholder="">
+                        <label for="applicantName" class="field-label">Name of Applicant:</label>
+                        <input type="text" id="applicantName" name="applicantName" class="field-input" placeholder="">
                     </div>
 
                     <!-- Tel. Number -->
                     <div class="form-field">
-                        <label class="field-label">Tel. Number:</label>
-                        <input type="text" id="telNumber" class="field-input" placeholder="">
+                        <label for="telNumber" class="field-label">Tel. Number:</label>
+                        <input type="tel" id="telNumber" name="telNumber" class="field-input" placeholder="">
                     </div>
 
                     <!-- Picture Box -->
@@ -743,29 +756,30 @@
                             <div class="picture-placeholder-text">Click To Insert Picture</div>
                             <div class="picture-subtext">(Passport size)</div>
                         </div>
-                        <img id="picturePreview">
-                        <input type="file" id="pictureUpload" accept="image/*" onchange="handlePictureUpload(event)">
+                        <img id="picturePreview" alt="Applicant picture preview">
+                        <label for="pictureUpload" class="sr-only">Upload picture</label>
+                        <input type="file" id="pictureUpload" name="pictureUpload" accept="image/*" onchange="handlePictureUpload(event)">
                     </div>
                 </div>
 
                 <!-- Assessment Applied Section -->
                 <div class="assessment-section">
                     <div class="assessment-field">
-                        <label class="assessment-label">Assessment applied for:</label>
-                        <input type="text" id="assessmentApplied" class="assessment-input" placeholder="">
+                        <label for="assessmentApplied" class="assessment-label">Assessment applied for:</label>
+                        <input type="text" id="assessmentApplied" name="assessmentApplied" class="assessment-input" placeholder="">
                     </div>
 
                     <div class="assessment-field">
-                        <label class="assessment-label">Official Receipt Number:</label>
-                        <input type="text" id="receiptNumber" class="assessment-input" placeholder="">
+                        <label for="receiptNumber" class="assessment-label">Official Receipt Number:</label>
+                        <input type="text" id="receiptNumber" name="receiptNumber" class="assessment-input" placeholder="">
                     </div>
                 </div>
 
                 <!-- Date Issued -->
                 <div class="assessment-section">
                     <div class="assessment-field">
-                        <label class="assessment-label">Date Issued:</label>
-                        <input type="date" id="dateIssued" class="assessment-input">
+                        <label for="dateIssued" class="assessment-label">Date Issued:</label>
+                        <input type="date" id="dateIssued" name="dateIssued" class="assessment-input">
                     </div>
                 </div>
 
@@ -773,8 +787,8 @@
                 <div class="officer-section">
                     <div class="officer-header">To be accomplished by the Processing Officer</div>
                     <div class="officer-field">
-                        <label class="officer-label">Name of Assessment Center:</label>
-                        <input type="text" id="assessmentCenter" class="officer-input" placeholder="">
+                        <label for="assessmentCenter" class="officer-label">Name of Assessment Center:</label>
+                        <input type="text" id="assessmentCenter" name="assessmentCenter" class="officer-input" placeholder="">
                     </div>
                 </div>
 
@@ -808,12 +822,12 @@
                 <!-- Date and Time Section -->
                 <div class="datetime-section">
                     <div class="datetime-field">
-                        <label class="datetime-label">Assessment Date:</label>
-                        <input type="date" id="assessmentDate" class="datetime-input">
+                        <label for="assessmentDate" class="datetime-label">Assessment Date:</label>
+                        <input type="date" id="assessmentDate" name="assessmentDate" class="datetime-input">
                     </div>
                     <div class="datetime-field">
-                        <label class="datetime-label">Assessment Time:</label>
-                        <input type="time" id="assessmentTime" class="datetime-input">
+                        <label for="assessmentTime" class="datetime-label">Assessment Time:</label>
+                        <input type="time" id="assessmentTime" name="assessmentTime" class="datetime-input">
                     </div>
                 </div>
 
@@ -822,12 +836,12 @@
                     <div class="signature-box">
                         <div class="signature-line"></div>
                         <div class="signature-label">Printed Name & Signature of Processing Officer</div>
-                        <div class="date-label">Date: <input type="date" class="date-input"></div>
+                        <div class="date-label"><label for="processingOfficerDate">Date:</label> <input type="date" id="processingOfficerDate" name="processingOfficerDate" class="date-input"></div>
                     </div>
                     <div class="signature-box">
                         <div class="signature-line"></div>
                         <div class="signature-label">Printed Name & Signature of Applicant</div>
-                        <div class="date-label">Date: <input type="date" class="date-input"></div>
+                        <div class="date-label"><label for="applicantDate">Date:</label> <input type="date" id="applicantDate" name="applicantDate" class="date-input"></div>
                     </div>
                 </div>
 
@@ -875,6 +889,27 @@
                 reader.readAsDataURL(file);
             }
         }
+
+        // Auto-capitalize first letter for text inputs
+        function autoCapitalizeFirstLetter(input) {
+            input.addEventListener('blur', function() {
+                if (this.value.length > 0) {
+                    this.value = this.value.charAt(0).toUpperCase() + this.value.slice(1);
+                }
+            });
+        }
+
+        // Apply auto-capitalize to name fields
+        const textInputsToCapitalize = [
+            'applicantName', 'assessmentApplied', 'assessmentCenter'
+        ];
+
+        textInputsToCapitalize.forEach(id => {
+            const element = document.getElementById(id);
+            if (element) {
+                autoCapitalizeFirstLetter(element);
+            }
+        });
 
         // Load applicant data from localStorage
         document.addEventListener('DOMContentLoaded', function() {
@@ -940,6 +975,13 @@
         }
 
         async function submitAdmissionSlip() {
+            // Show confirmation popup
+            const confirmed = confirm('Are you sure you want to submit this admission slip? Please verify all information is correct before proceeding.');
+            
+            if (!confirmed) {
+                return;
+            }
+
             // Validate required fields
             const applicantName = document.getElementById('applicantName').value;
             const assessmentApplied = document.getElementById('assessmentApplied').value;
