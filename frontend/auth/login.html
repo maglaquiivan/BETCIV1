@@ -245,3 +245,33 @@
 
 </body>
 </html>
+
+  <!-- Clear Login Form on Page Load -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Clear all form inputs
+      const loginForm = document.querySelector('.login-form');
+      if (loginForm) {
+        loginForm.reset();
+      }
+      
+      // Also clear individual fields to be sure
+      const emailInput = document.getElementById('login-email');
+      const passwordInput = document.getElementById('login-password');
+      const registerFirstName = document.getElementById('register-firstname');
+      const registerLastName = document.getElementById('register-lastname');
+      const registerEmail = document.getElementById('register-email');
+      const registerAddress = document.getElementById('register-address');
+      const registerPassword = document.getElementById('register-password');
+      const registerConfirm = document.getElementById('register-confirm');
+      
+      if (emailInput) emailInput.value = '';
+      if (passwordInput) passwordInput.value = '';
+      if (registerFirstName) registerFirstName.value = '';
+      if (registerLastName) registerLastName.value = '';
+      if (registerEmail) registerEmail.value = '';
+      if (registerAddress) registerAddress.value = '';
+      if (registerPassword) registerPassword.value = '';
+      if (registerConfirm) registerConfirm.value = '';
+    });
+  </script>

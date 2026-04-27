@@ -22,6 +22,9 @@
     
     <!-- Appointments Page CSS -->
     <link rel="stylesheet" href="../assets/css/appointments.css" />
+    
+    <!-- Session Check Script (Load First) -->
+    <script src="../../assets/js/session-check.js"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -358,9 +361,8 @@
         // Logout handler
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../../public/index.html';
+                // Call the logout function from session-check.js
+                logout();
             }
         }
 

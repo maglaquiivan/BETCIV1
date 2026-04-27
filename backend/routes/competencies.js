@@ -25,7 +25,15 @@ router.get('/course/:courseId', async (req, res) => {
 // Get single competency
 router.get('/:id', async (req, res) => {
   try {
-    const competency = await Competency.findOne({ competencyId: req.params.id });
+    let competency;
+    // Try to find by _id first (MongoDB ID), then by competencyId
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      // Valid MongoDB ObjectId
+      competency = await Competency.findById(req.params.id);
+    }
+    if (!competency) {
+      competency = await Competency.findOne({ competencyId: req.params.id });
+    }
     if (!competency) {
       return res.status(404).json({ message: 'Competency not found' });
     }
@@ -49,11 +57,19 @@ router.post('/', async (req, res) => {
 // Update competency
 router.put('/:id', async (req, res) => {
   try {
-    const competency = await Competency.findOneAndUpdate(
-      { competencyId: req.params.id },
-      req.body,
-      { new: true }
-    );
+    let competency;
+    // Try to find by _id first (MongoDB ID), then by competencyId
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      // Valid MongoDB ObjectId
+      competency = await Competency.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    }
+    if (!competency) {
+      competency = await Competency.findOneAndUpdate(
+        { competencyId: req.params.id },
+        req.body,
+        { new: true }
+      );
+    }
     if (!competency) {
       return res.status(404).json({ message: 'Competency not found' });
     }
@@ -66,7 +82,15 @@ router.put('/:id', async (req, res) => {
 // Delete competency
 router.delete('/:id', async (req, res) => {
   try {
-    const competency = await Competency.findOneAndDelete({ competencyId: req.params.id });
+    let competency;
+    // Try to find by _id first (MongoDB ID), then by competencyId
+    if (req.params.id.match(/^[0-9a-fA-F]{24}$/)) {
+      // Valid MongoDB ObjectId
+      competency = await Competency.findByIdAndDelete(req.params.id);
+    }
+    if (!competency) {
+      competency = await Competency.findOneAndDelete({ competencyId: req.params.id });
+    }
     if (!competency) {
       return res.status(404).json({ message: 'Competency not found' });
     }

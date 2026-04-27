@@ -222,14 +222,97 @@ router.put('/:enrollmentId/status', async (req, res) => {
     }
 });
 
-// DELETE enrollment
-router.delete('/:enrollmentId', async (req, res) => {
+// PUT update enrollment by MongoDB _id (for approve/decline from frontend)
+router.put('/:id', async (req, res) => {
     try {
-        const enrollment = await Enrollment.findOneAndDelete({ enrollmentId: req.params.enrollmentId });
+        const { status, progress } = req.body;
+        
+        // Try to find by MongoDB _id first
+        let enrollment = await Enrollment.findById(req.params.id);
+        
+        // If not found by _id, try by enrollmentId
+        if (!enrollment) {
+            enrollment = await Enrollment.findOne({ enrollmentId: req.params.id });
+        }
+        
         if (!enrollment) {
             return res.status(404).json({ message: 'Enrollment not found' });
         }
-        res.json({ message: 'Enrollment deleted successfully' });
+        
+        // Update status if provided
+        if (status) {
+            enrollment.status = status;
+            if (status === 'Approved') {
+                enrollment.status = 'active';
+            } else if (status === 'Declined') {
+                enrollment.status = 'dropped';
+            }
+            
+            if (enrollment.status === 'completed' && !enrollment.completionDate) {
+                enrollment.completionDate = new Date();
+            }
+        }
+        
+        // Update progress if provided
+        if (progress !== undefined) {
+            enrollment.progress = progress;
+            enrollment.lastAccessedDate = new Date();
+            
+            // Auto-complete if progress reaches 100%
+            if (progress >= 100 && enrollment.status !== 'completed') {
+                enrollment.status = 'completed';
+                enrollment.completionDate = new Date();
+            }
+        }
+        
+        const updatedEnrollment = await enrollment.save();
+        
+        // Update trainee record as well
+        const user = await User.findOne({ userId: enrollment.userId });
+        if (user) {
+            const trainee = await Trainee.findOne({ email: user.email });
+            if (trainee) {
+                const courseIndex = trainee.enrolledCourses.findIndex(c => c.courseId === enrollment.courseId);
+                if (courseIndex !== -1) {
+                    if (status) trainee.enrolledCourses[courseIndex].status = enrollment.status;
+                    if (progress !== undefined) trainee.enrolledCourses[courseIndex].progress = progress;
+                    await trainee.save();
+                }
+            }
+        }
+        
+        res.json(updatedEnrollment);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+});
+
+// DELETE enrollment by MongoDB _id
+router.delete('/:id', async (req, res) => {
+    try {
+        // Try to find by MongoDB _id first
+        let enrollment = await Enrollment.findByIdAndDelete(req.params.id);
+        
+        // If not found by _id, try by enrollmentId
+        if (!enrollment) {
+            enrollment = await Enrollment.findOneAndDelete({ enrollmentId: req.params.id });
+        }
+        
+        if (!enrollment) {
+            return res.status(404).json({ message: 'Enrollment not found' });
+        }
+        
+        // Also remove from trainee record
+        const user = await User.findOne({ userId: enrollment.userId });
+        if (user) {
+            const trainee = await Trainee.findOne({ email: user.email });
+            if (trainee) {
+                trainee.enrolledCourses = trainee.enrolledCourses.filter(c => c.courseId !== enrollment.courseId);
+                await trainee.save();
+            }
+        }
+        
+        res.json({ message: 'Enrollment deleted successfully', enrollment });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

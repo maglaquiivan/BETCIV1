@@ -1,0 +1,53 @@
+<!-- Form Preview Modal Template for Admin Dashboard -->
+<!-- Include this in your admin dashboard HTML file -->
+
+<!-- Modal Overlay and Container -->
+<div id="formPreviewModal" class="form-preview-modal-overlay">
+    <div class="form-preview-modal">
+        <!-- Modal Header -->
+        <div class="form-preview-header">
+            <div class="form-preview-header-info">
+                <!-- Header content will be populated by JavaScript -->
+            </div>
+            <button class="form-preview-close" onclick="closeFormPreviewModal()" title="Close">×</button>
+        </div>
+
+        <!-- Modal Body -->
+        <div class="form-preview-body">
+            <!-- Content will be populated by JavaScript -->
+        </div>
+
+        <!-- Modal Footer -->
+        <div class="form-preview-footer">
+            <button type="button" class="preview-action-btn preview-print-btn" onclick="printFormPreview()">
+                <i class="bi bi-printer"></i> Print
+            </button>
+            <button type="button" class="preview-action-btn preview-close-btn" onclick="closeFormPreviewModal()">
+                <i class="bi bi-x-circle"></i> Close
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Usage Instructions:
+1. Include this modal template in your admin dashboard HTML file
+2. Add the following to your HTML head:
+   <link rel="stylesheet" href="path/to/form-preview-modal.css">
+3. Add the following before closing body tag:
+   <script src="path/to/form-preview-modal.js"></script>
+4. Call these functions from your admin dashboard:
+   - openApplicationPreview(applicationId) - to preview an application
+   - openAdmissionPreview(admissionId) - to preview an admission slip
+   - closeFormPreviewModal() - to close the modal
+   - printFormPreview() - to print the current preview
+
+Example HTML for "View Details" button:
+<button onclick="openApplicationPreview('${application._id}')" class="btn btn-sm btn-info">
+    <i class="bi bi-eye"></i> View Details
+</button>
+
+Or for admission:
+<button onclick="openAdmissionPreview('${admission._id}')" class="btn btn-sm btn-info">
+    <i class="bi bi-eye"></i> View Details
+</button>
+-->

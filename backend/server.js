@@ -2,6 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const session = require('express-session');
+const MongoStore = require('connect-mongo').default;
 require('dotenv').config();
 
 const app = express();
@@ -9,9 +11,45 @@ const PORT = process.env.PORT || 5500;
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/BETCI';
 
 // Middleware - Increased limits to handle base64 images
-app.use(cors());
+app.use(cors({
+  origin: function(origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost and 127.0.0.1 on any port
+    if (origin.includes('localhost') || origin.includes('127.0.0.1')) {
+      return callback(null, true);
+    }
+    
+    // Allow file:// protocol (for local file access)
+    if (origin === 'file://') {
+      return callback(null, true);
+    }
+    
+    // Reject other origins
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true // Allow cookies to be sent
+}));
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ extended: true, limit: '50mb', parameterLimit: 50000 }));
+
+// Session middleware
+app.use(session({
+  secret: process.env.SESSION_SECRET || 'betci-secret-key-change-in-production',
+  resave: false,
+  saveUninitialized: false,
+  store: MongoStore.create({
+    mongoUrl: MONGODB_URI,
+    collectionName: 'sessions',
+    ttl: 24 * 60 * 60 // Session expires after 24 hours
+  }),
+  cookie: {
+    secure: false, // Set to true in production with HTTPS
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 
 // Increase header size limit to handle larger requests
 app.use((req, res, next) => {

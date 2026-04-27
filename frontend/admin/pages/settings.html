@@ -132,6 +132,7 @@
             font-size: 14px;
             font-weight: 600;
             color: white;
+            text-transform: capitalize;
         }
         
         .info-badge {
@@ -219,6 +220,21 @@
             color: #1e293b;
             background: #f8fafc;
             transition: all 0.3s;
+        }
+        
+        /* Capitalize first letter of each word for name fields */
+        #firstName,
+        #lastName {
+            text-transform: capitalize;
+        }
+        
+        /* Display address in uppercase */
+        #address {
+            text-transform: uppercase;
+        }
+        
+        #displayAddress {
+            text-transform: uppercase;
         }
         
         .form-input-modern:focus {
@@ -327,6 +343,9 @@
             }
         }
     </style>
+    
+    <!-- Session Check Script (Load First) -->
+    <script src="../../assets/js/session-check.js"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -787,6 +806,13 @@
             if (profileForm) {
                 profileForm.addEventListener('submit', function(e) {
                     e.preventDefault();
+                    
+                    // Convert address to uppercase before saving
+                    const addressField = document.getElementById('address');
+                    if (addressField && addressField.value) {
+                        addressField.value = addressField.value.toUpperCase();
+                    }
+                    
                     showNotification('Profile updated successfully!', 'success');
                     toggleEditMode(); // Exit edit mode after saving
                 });
@@ -1002,9 +1028,8 @@
         // Logout handler
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../../public/index.html';
+                // Call the logout function from session-check.js
+                logout();
             }
         }
 
@@ -1091,6 +1116,42 @@
                 formActions.style.display = 'none';
             }
         }
+        
+        // Convert text to proper case (capitalize first letter of each word)
+        function toProperCase(text) {
+            if (!text) return text;
+            return text.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+        }
+        
+        // Add event listeners to name fields to handle caps lock
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstNameInput = document.getElementById('firstName');
+            const lastNameInput = document.getElementById('lastName');
+            
+            // Handle first name input
+            if (firstNameInput) {
+                firstNameInput.addEventListener('input', function(e) {
+                    const cursorPosition = e.target.selectionStart;
+                    const originalLength = e.target.value.length;
+                    e.target.value = toProperCase(e.target.value);
+                    const newLength = e.target.value.length;
+                    // Restore cursor position
+                    e.target.setSelectionRange(cursorPosition, cursorPosition);
+                });
+            }
+            
+            // Handle last name input
+            if (lastNameInput) {
+                lastNameInput.addEventListener('input', function(e) {
+                    const cursorPosition = e.target.selectionStart;
+                    const originalLength = e.target.value.length;
+                    e.target.value = toProperCase(e.target.value);
+                    const newLength = e.target.value.length;
+                    // Restore cursor position
+                    e.target.setSelectionRange(cursorPosition, cursorPosition);
+                });
+            }
+        });
 
         function cancelEdit() {
             const form = document.getElementById('profileForm');
@@ -1187,6 +1248,25 @@
                         });
                         
                         if (response.ok) {
+                            // Clear the cached profile picture to force reload
+                            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+                            if (userSession.accountId) {
+                                const cachedPictureKey = `adminProfilePic_${userSession.accountId}`;
+                                const cacheTimestampKey = `${cachedPictureKey}_timestamp`;
+                                sessionStorage.removeItem(cachedPictureKey);
+                                sessionStorage.removeItem(cacheTimestampKey);
+                                console.log('✓ Cleared cached profile picture');
+                            }
+                            
+                            // Update the cache with new image and timestamp
+                            if (userSession.accountId) {
+                                const cachedPictureKey = `adminProfilePic_${userSession.accountId}`;
+                                const cacheTimestampKey = `${cachedPictureKey}_timestamp`;
+                                sessionStorage.setItem(cachedPictureKey, base64Image);
+                                sessionStorage.setItem(cacheTimestampKey, Date.now().toString());
+                                console.log('✓ Updated cached profile picture with timestamp');
+                            }
+                            
                             // DO NOT store base64 in session - it causes 431 errors
                             // Just update the display directly
                             updateAvatarDisplays(base64Image);

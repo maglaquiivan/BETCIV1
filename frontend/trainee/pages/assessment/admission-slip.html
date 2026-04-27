@@ -383,12 +383,40 @@
 
         .signature-box {
             text-align: center;
+            display: flex;
+            flex-direction: column;
         }
 
-        .signature-line {
-            border-bottom: 1px solid #333;
-            height: 28px;
+        .signature-canvas-container {
+            border: 1px solid #333;
+            background: white;
+            margin-bottom: 5px;
+            position: relative;
+            height: 80px;
+            border-radius: 2px;
+        }
+
+        .signature-canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+            border-radius: 2px;
+        }
+
+        .clear-signature-btn {
+            font-size: 9px;
+            padding: 2px 6px;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+            cursor: pointer;
             margin-bottom: 3px;
+            transition: all 0.2s;
+        }
+
+        .clear-signature-btn:hover {
+            background: #e0e0e0;
         }
 
         .signature-label {
@@ -669,8 +697,14 @@
           
           console.error = function(...args) {
             const message = String(args[0] || '');
-            if (message.includes('chrome-extension://') || message.includes('lockdown-install') || 
-                message.includes('SES Removing') || message.includes('ERR_FAILED') ||
+            // Suppress form validation warnings and extension errors
+            if (message.includes('chrome-extension://') || 
+                message.includes('lockdown-install') || 
+                message.includes('SES Removing') || 
+                message.includes('ERR_FAILED') ||
+                message.includes('form field element') ||
+                message.includes('label for=') ||
+                message.includes('autocomplete') ||
                 args.some(arg => String(arg).includes('chrome-extension://'))) {
               return;
             }
@@ -679,7 +713,12 @@
           
           console.warn = function(...args) {
             const message = String(args[0] || '');
-            if (message.includes('chrome-extension://') || args.some(arg => String(arg).includes('chrome-extension://'))) {
+            // Suppress form validation warnings and extension warnings
+            if (message.includes('chrome-extension://') || 
+                message.includes('form field element') ||
+                message.includes('label for=') ||
+                message.includes('autocomplete') ||
+                args.some(arg => String(arg).includes('chrome-extension://'))) {
               return;
             }
             originalWarn.apply(console, args);
@@ -834,12 +873,18 @@
                 <!-- Signature Section -->
                 <div class="signature-section">
                     <div class="signature-box">
-                        <div class="signature-line"></div>
+                        <div class="signature-canvas-container">
+                            <canvas id="processingOfficerSignatureCanvas" class="signature-canvas"></canvas>
+                        </div>
+                        <button type="button" class="clear-signature-btn" onclick="clearSignature('processingOfficerSignatureCanvas')">Clear</button>
                         <div class="signature-label">Printed Name & Signature of Processing Officer</div>
                         <div class="date-label"><label for="processingOfficerDate">Date:</label> <input type="date" id="processingOfficerDate" name="processingOfficerDate" class="date-input"></div>
                     </div>
                     <div class="signature-box">
-                        <div class="signature-line"></div>
+                        <div class="signature-canvas-container">
+                            <canvas id="applicantSignatureCanvas" class="signature-canvas"></canvas>
+                        </div>
+                        <button type="button" class="clear-signature-btn" onclick="clearSignature('applicantSignatureCanvas')">Clear</button>
                         <div class="signature-label">Printed Name & Signature of Applicant</div>
                         <div class="date-label"><label for="applicantDate">Date:</label> <input type="date" id="applicantDate" name="applicantDate" class="date-input"></div>
                     </div>
@@ -858,7 +903,7 @@
                     <button type="button" class="action-btn print-btn" onclick="printAdmissionSlip()">
                         <i class="bi bi-printer"></i> Print
                     </button>
-                    <button type="button" class="action-btn submit-btn" onclick="submitAdmissionSlip()">
+                    <button type="button" class="action-btn submit-btn" onclick="previewAdmissionSlip()">
                         <i class="bi bi-check-circle"></i> Submit
                     </button>
                     <button type="button" class="action-btn back-btn" onclick="goBack()">
@@ -868,6 +913,32 @@
             </div>
         </div>
     </main>
+
+    <!-- Preview Modal -->
+    <div id="previewModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.6); z-index: 10000; overflow-y: auto; padding: 20px;">
+        <div style="background: white; max-width: 900px; margin: 20px auto; border-radius: 12px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3); overflow: hidden;">
+            <!-- Modal Header -->
+            <div style="background: linear-gradient(135deg, #E67E22 0%, #d35400 100%); padding: 20px; color: white; display: flex; justify-content: space-between; align-items: center;">
+                <h2 style="margin: 0; font-size: 20px; font-weight: 700;">Preview Admission Slip</h2>
+                <button onclick="closePreviewModal()" style="background: none; border: none; color: white; font-size: 24px; cursor: pointer;">×</button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div id="previewContent" style="padding: 30px; max-height: 70vh; overflow-y: auto;">
+                <!-- Preview content will be populated here -->
+            </div>
+            
+            <!-- Modal Footer -->
+            <div style="padding: 20px; background: #f9f9f9; border-top: 1px solid #eee; display: flex; gap: 10px; justify-content: flex-end;">
+                <button onclick="closePreviewModal()" style="padding: 10px 20px; background: #757575; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    <i class="bi bi-x-lg"></i> Cancel
+                </button>
+                <button onclick="confirmSubmitAdmissionSlip()" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                    <i class="bi bi-check-circle"></i> Confirm & Submit
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- HTML2PDF Library for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -918,6 +989,14 @@
             if (savedTheme === 'dark') {
                 document.body.classList.add('dark-mode');
             }
+
+            // Initialize signature canvases with a small delay to ensure DOM is fully rendered
+            setTimeout(() => {
+                console.log('Initializing signature canvases...');
+                initializeSignatureCanvas('processingOfficerSignatureCanvas');
+                initializeSignatureCanvas('applicantSignatureCanvas');
+                console.log('Signature canvases initialized');
+            }, 100);
 
             const applicationData = localStorage.getItem('applicationData');
             if (applicationData) {
@@ -974,14 +1053,87 @@
             }, 500);
         }
 
-        async function submitAdmissionSlip() {
-            // Show confirmation popup
-            const confirmed = confirm('Are you sure you want to submit this admission slip? Please verify all information is correct before proceeding.');
-            
-            if (!confirmed) {
+        async function previewAdmissionSlip() {
+            // Validate required fields
+            const applicantName = document.getElementById('applicantName').value;
+            const assessmentApplied = document.getElementById('assessmentApplied').value;
+            const applicantSignature = document.getElementById('applicantSignatureLine').textContent;
+
+            if (!applicantName || !assessmentApplied) {
+                alert('Please fill in required fields: Applicant Name and Assessment Applied');
                 return;
             }
 
+            // Generate preview content
+            const previewHTML = `
+                <div style="border: 2px solid #E67E22; padding: 20px; border-radius: 8px; background: #fff9f0;">
+                    <h3 style="color: #E67E22; margin-top: 0; text-align: center; font-size: 18px;">Admission Slip Preview</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <label style="font-weight: 700; color: #333; display: block; margin-bottom: 5px;">Applicant Name:</label>
+                            <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; color: #333;">${document.getElementById('applicantName').value}</div>
+                        </div>
+                        <div>
+                            <label style="font-weight: 700; color: #333; display: block; margin-bottom: 5px;">Tel. Number:</label>
+                            <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; color: #333;">${document.getElementById('telNumber').value || 'N/A'}</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <label style="font-weight: 700; color: #333; display: block; margin-bottom: 5px;">Assessment Applied For:</label>
+                            <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; color: #333;">${document.getElementById('assessmentApplied').value}</div>
+                        </div>
+                        <div>
+                            <label style="font-weight: 700; color: #333; display: block; margin-bottom: 5px;">Official Receipt Number:</label>
+                            <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; color: #333;">${document.getElementById('receiptNumber').value || 'N/A'}</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <label style="font-weight: 700; color: #333; display: block; margin-bottom: 5px;">Assessment Date:</label>
+                            <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; color: #333;">${document.getElementById('assessmentDate').value || 'N/A'}</div>
+                        </div>
+                        <div>
+                            <label style="font-weight: 700; color: #333; display: block; margin-bottom: 5px;">Assessment Time:</label>
+                            <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; color: #333;">${document.getElementById('assessmentTime').value || 'N/A'}</div>
+                        </div>
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                        <div>
+                            <label style="font-weight: 700; color: #333; display: block; margin-bottom: 5px;">Assessment Center:</label>
+                            <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; color: #333;">${document.getElementById('assessmentCenter').value || 'N/A'}</div>
+                        </div>
+                        <div>
+                            <label style="font-weight: 700; color: #333; display: block; margin-bottom: 5px;">Date Issued:</label>
+                            <div style="padding: 10px; background: white; border: 1px solid #ddd; border-radius: 4px; color: #333;">${document.getElementById('dateIssued').value || 'N/A'}</div>
+                        </div>
+                    </div>
+
+                    <div style="padding: 15px; background: #e3f2fd; border-left: 4px solid #2196F3; border-radius: 4px; margin-top: 20px;">
+                        <p style="margin: 0; color: #1976D2; font-weight: 600;">
+                            <i class="bi bi-info-circle"></i> Please review all information carefully before submitting. Once submitted, you cannot make changes.
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('previewContent').innerHTML = previewHTML;
+            document.getElementById('previewModal').style.display = 'block';
+        }
+
+        function closePreviewModal() {
+            document.getElementById('previewModal').style.display = 'none';
+        }
+
+        async function confirmSubmitAdmissionSlip() {
+            await submitAdmissionSlip();
+        }
+
+        async function submitAdmissionSlip() {
             // Validate required fields
             const applicantName = document.getElementById('applicantName').value;
             const assessmentApplied = document.getElementById('assessmentApplied').value;
@@ -1027,6 +1179,10 @@
                 },
                 assessmentDate: document.getElementById('assessmentDate').value,
                 assessmentTime: document.getElementById('assessmentTime').value,
+                processingOfficerDate: document.getElementById('processingOfficerDate').value,
+                applicantDate: document.getElementById('applicantDate').value,
+                processingOfficerSignature: getSignatureData('processingOfficerSignatureCanvas'),
+                applicantSignature: getSignatureData('applicantSignatureCanvas'),
                 status: 'pending'
             };
 
@@ -1044,7 +1200,7 @@
                     const result = await response.json();
                     console.log('Admission slip submitted:', result);
                     
-                    // Show success message
+                    closePreviewModal();
                     alert('Admission Slip submitted successfully!');
                     goBack();
                 } else {
@@ -1058,6 +1214,132 @@
 
         function goBack() {
             window.location.href = '../assessment.html';
+        }
+
+        // Signature Canvas Functions
+        let signatureContexts = {};
+
+        function initializeSignatureCanvas(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) {
+                console.error(`Canvas ${canvasId} not found`);
+                return;
+            }
+
+            const ctx = canvas.getContext('2d');
+            signatureContexts[canvasId] = ctx;
+
+            // Set canvas size - ensure it has proper dimensions
+            const container = canvas.parentElement;
+            const width = container.offsetWidth || 400;
+            const height = container.offsetHeight || 80;
+            
+            canvas.width = width;
+            canvas.height = height;
+
+            console.log(`Canvas ${canvasId} initialized: ${width}x${height}`);
+
+            // Set white background
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            let isDrawing = false;
+            let lastX = 0;
+            let lastY = 0;
+
+            canvas.addEventListener('mousedown', (e) => {
+                isDrawing = true;
+                const rect = canvas.getBoundingClientRect();
+                lastX = e.clientX - rect.left;
+                lastY = e.clientY - rect.top;
+                console.log(`Mouse down at: ${lastX}, ${lastY}`);
+            });
+
+            canvas.addEventListener('mousemove', (e) => {
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                lastX = x;
+                lastY = y;
+            });
+
+            canvas.addEventListener('mouseup', () => {
+                isDrawing = false;
+                console.log('Mouse up - drawing stopped');
+            });
+
+            canvas.addEventListener('mouseleave', () => {
+                isDrawing = false;
+            });
+
+            // Touch support for mobile
+            canvas.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                isDrawing = true;
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                lastX = touch.clientX - rect.left;
+                lastY = touch.clientY - rect.top;
+                console.log(`Touch start at: ${lastX}, ${lastY}`);
+            });
+
+            canvas.addEventListener('touchmove', (e) => {
+                e.preventDefault();
+                if (!isDrawing) return;
+
+                const rect = canvas.getBoundingClientRect();
+                const touch = e.touches[0];
+                const x = touch.clientX - rect.left;
+                const y = touch.clientY - rect.top;
+
+                ctx.strokeStyle = '#000';
+                ctx.lineWidth = 2;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
+
+                ctx.beginPath();
+                ctx.moveTo(lastX, lastY);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+
+                lastX = x;
+                lastY = y;
+            });
+
+            canvas.addEventListener('touchend', () => {
+                isDrawing = false;
+                console.log('Touch end - drawing stopped');
+            });
+
+            console.log(`Canvas ${canvasId} event listeners attached`);
+        }
+
+        function clearSignature(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+        }
+
+        function getSignatureData(canvasId) {
+            const canvas = document.getElementById(canvasId);
+            if (!canvas) return '';
+            return canvas.toDataURL();
         }
     </script>
 </body>

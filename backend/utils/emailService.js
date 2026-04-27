@@ -4,22 +4,54 @@ require('dotenv').config();
 /**
  * Email Service for sending password reset emails
  * Uses Gmail SMTP with Nodemailer
+ * 
+ * IMPORTANT: You MUST use Gmail App Password, not your regular password
+ * Get it from: https://myaccount.google.com/apppasswords
  */
 
-// Create reusable transporter
-const createTransporter = () => {
-  return nodemailer.createTransport({
-    service: 'gmail',
+/**
+ * Create and verify email transporter
+ * @returns {Promise<nodemailer.Transporter>} Configured transporter
+ */
+const createTransporter = async () => {
+  // Check if credentials are configured
+  if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD) {
+    throw new Error('EMAIL_USER and EMAIL_PASSWORD must be set in .env file');
+  }
+
+  if (process.env.EMAIL_PASSWORD === 'PASTE_YOUR_APP_PASSWORD_HERE') {
+    throw new Error('Please replace PASTE_YOUR_APP_PASSWORD_HERE with your actual Gmail App Password');
+  }
+
+  console.log('📧 Creating email transporter...');
+  console.log('   Email User:', process.env.EMAIL_USER);
+  console.log('   Password Set:', process.env.EMAIL_PASSWORD ? 'Yes (hidden)' : 'No');
+
+  // Create transporter with Gmail SMTP
+  const transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false, // Use TLS
     auth: {
       user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASSWORD // Use App Password, not regular password
+      pass: process.env.EMAIL_PASSWORD
     },
-    // Additional security options
-    secure: true,
     tls: {
       rejectUnauthorized: true
-    }
+    },
+    debug: true, // Enable debug output
+    logger: true // Log to console
   });
+
+  // Verify transporter configuration
+  try {
+    await transporter.verify();
+    console.log('✓ Email transporter verified successfully');
+    return transporter;
+  } catch (error) {
+    console.error('✗ Email transporter verification failed:', error.message);
+    throw new Error(`Email configuration error: ${error.message}`);
+  }
 };
 
 /**
@@ -27,16 +59,23 @@ const createTransporter = () => {
  * @param {string} email - Recipient email address
  * @param {string} resetToken - Password reset token
  * @param {string} firstName - User's first name for personalization
- * @returns {Promise} - Resolves when email is sent
+ * @returns {Promise<Object>} - Result with success status and messageId
  */
 const sendPasswordResetEmail = async (email, resetToken, firstName = 'User') => {
+  console.log('\n📨 Attempting to send password reset email...');
+  console.log('   To:', email);
+  console.log('   First Name:', firstName);
+  console.log('   Token:', resetToken.substring(0, 10) + '...');
+
   try {
-    const transporter = createTransporter();
+    // Create and verify transporter
+    const transporter = await createTransporter();
     
     // Construct reset URL
-    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${resetToken}`;
+    const resetUrl = `${process.env.FRONTEND_URL || 'http://localhost:5500'}/auth/reset-password.html?token=${resetToken}`;
+    console.log('   Reset URL:', resetUrl);
     
-    // Email HTML template with button and styling
+    // Email HTML template
     const htmlContent = `
       <!DOCTYPE html>
       <html lang="en">
@@ -84,16 +123,8 @@ const sendPasswordResetEmail = async (email, resetToken, firstName = 'User') => 
                       </tr>
                     </table>
                     
-                    <p style="margin: 30px 0 20px 0; color: #666666; font-size: 14px; line-height: 1.6;">
-                      Or copy and paste this link into your browser:
-                    </p>
-                    
-                    <p style="margin: 0 0 30px 0; padding: 15px; background-color: #f8f9fa; border-radius: 4px; word-break: break-all;">
-                      <a href="${resetUrl}" style="color: #E67E22; text-decoration: none; font-size: 13px;">${resetUrl}</a>
-                    </p>
-                    
                     <!-- Warning Box -->
-                    <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; margin: 20px 0;">
+                    <table role="presentation" style="width: 100%; border-collapse: collapse; background-color: #fff3cd; border-left: 4px solid #ffc107; border-radius: 4px; margin: 30px 0 20px 0;">
                       <tr>
                         <td style="padding: 15px;">
                           <p style="margin: 0; color: #856404; font-size: 14px; line-height: 1.5;">
@@ -156,35 +187,121 @@ If you didn't request a password reset, please ignore this email.
       html: htmlContent
     };
     
+    console.log('   Sending email...');
+    
     // Send email
     const info = await transporter.sendMail(mailOptions);
     
-    console.log('✓ Password reset email sent:', info.messageId);
-    return { success: true, messageId: info.messageId };
+    console.log('✓ Password reset email sent successfully!');
+    console.log('   Message ID:', info.messageId);
+    console.log('   Response:', info.response);
+    
+    return { 
+      success: true, 
+      messageId: info.messageId,
+      response: info.response 
+    };
     
   } catch (error) {
-    console.error('✗ Error sending password reset email:', error);
-    throw new Error('Failed to send password reset email');
+    console.error('\n✗ Failed to send password reset email');
+    console.error('   Error Type:', error.name);
+    console.error('   Error Message:', error.message);
+    console.error('   Error Code:', error.code);
+    console.error('   Full Error:', error);
+    
+    // Provide helpful error messages
+    if (error.message.includes('Invalid login')) {
+      throw new Error('Invalid Gmail credentials. Please check EMAIL_USER and EMAIL_PASSWORD in .env file. Make sure you are using an App Password, not your regular Gmail password.');
+    } else if (error.message.includes('EAUTH')) {
+      throw new Error('Authentication failed. Please generate a new Gmail App Password from https://myaccount.google.com/apppasswords');
+    } else if (error.message.includes('ECONNECTION') || error.message.includes('ETIMEDOUT')) {
+      throw new Error('Connection to Gmail SMTP server failed. Please check your internet connection and firewall settings.');
+    } else if (error.message.includes('EMAIL_USER') || error.message.includes('EMAIL_PASSWORD')) {
+      throw new Error(error.message);
+    } else {
+      throw new Error(`Email sending failed: ${error.message}`);
+    }
   }
 };
 
 /**
- * Verify email configuration on startup
+ * Test email configuration
+ * Call this function to verify your email setup is working
+ */
+const testEmailConfig = async () => {
+  console.log('\n========================================');
+  console.log('Testing Email Configuration');
+  console.log('========================================\n');
+
+  try {
+    // Check environment variables
+    console.log('1. Checking environment variables...');
+    if (!process.env.EMAIL_USER) {
+      throw new Error('EMAIL_USER is not set in .env file');
+    }
+    if (!process.env.EMAIL_PASSWORD) {
+      throw new Error('EMAIL_PASSWORD is not set in .env file');
+    }
+    if (process.env.EMAIL_PASSWORD === 'PASTE_YOUR_APP_PASSWORD_HERE') {
+      throw new Error('EMAIL_PASSWORD is still set to placeholder value');
+    }
+    console.log('   ✓ Environment variables are set');
+
+    // Create and verify transporter
+    console.log('\n2. Creating and verifying transporter...');
+    const transporter = await createTransporter();
+    console.log('   ✓ Transporter created and verified');
+
+    // Send test email
+    console.log('\n3. Sending test email...');
+    const testResult = await sendPasswordResetEmail(
+      process.env.EMAIL_USER, // Send to yourself
+      'TEST_TOKEN_' + Date.now(),
+      'Test User'
+    );
+    console.log('   ✓ Test email sent successfully');
+
+    console.log('\n========================================');
+    console.log('✓ Email Configuration Test PASSED');
+    console.log('========================================\n');
+    console.log('Check your inbox at:', process.env.EMAIL_USER);
+    console.log('Message ID:', testResult.messageId);
+
+    return true;
+  } catch (error) {
+    console.error('\n========================================');
+    console.error('✗ Email Configuration Test FAILED');
+    console.error('========================================\n');
+    console.error('Error:', error.message);
+    console.error('\nPlease fix the issue and try again.');
+    return false;
+  }
+};
+
+/**
+ * Verify email configuration on startup (silent check)
  */
 const verifyEmailConfig = async () => {
   try {
-    const transporter = createTransporter();
-    await transporter.verify();
-    console.log('✓ Email service configured successfully');
+    if (!process.env.EMAIL_USER || !process.env.EMAIL_PASSWORD || 
+        process.env.EMAIL_PASSWORD === 'PASTE_YOUR_APP_PASSWORD_HERE') {
+      console.warn('⚠️  Email service not configured. Password reset will not work.');
+      console.warn('   Please set EMAIL_USER and EMAIL_PASSWORD in .env file');
+      return false;
+    }
+
+    const transporter = await createTransporter();
+    console.log('✓ Email service configured and ready');
     return true;
   } catch (error) {
     console.error('✗ Email service configuration error:', error.message);
-    console.error('  Please check EMAIL_USER and EMAIL_PASSWORD in .env file');
+    console.error('  Password reset emails will not be sent until this is fixed.');
     return false;
   }
 };
 
 module.exports = {
   sendPasswordResetEmail,
-  verifyEmailConfig
+  verifyEmailConfig,
+  testEmailConfig
 };

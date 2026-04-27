@@ -880,7 +880,7 @@
                                         Units of Competency (${unitCount})
                                     </h4>
                                     <ul style="list-style: none; padding: 0; margin: 0;">
-                                        ${comp.units && comp.units.length > 0 ? comp.units.slice(0, 3).map(unit => `
+                                        ${comp.units && comp.units.length > 0 ? comp.units.map(unit => `
                                             <li style="
                                                 font-size: 12px;
                                                 color: #666;
@@ -894,7 +894,6 @@
                                             </li>
                                         `).join('') : '<li style="font-size: 12px; color: #999;">No units available</li>'}
                                     </ul>
-                                    ${unitCount > 3 ? `<div style="font-size: 12px; color: #E67E22; margin-top: 8px; font-weight: 600;">+${unitCount - 3} more units</div>` : ''}
                                 </div>
                                 
                                 <div style="display: flex; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; font-size: 12px;">
@@ -937,6 +936,19 @@
             }
         }
 
+    </script>
+    
+    <!-- Session Check Script -->
+    <script src="../../assets/js/session-check.js"></script>
+    
+    <!-- Logout Handler -->
+    <script>
+        function handleLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                // Call the logout function from session-check.js
+                logout();
+            }
+        }
     </script>
 
 </body>

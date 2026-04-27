@@ -66,7 +66,14 @@ router.put('/:id', async (req, res) => {
 // Delete admission
 router.delete('/:id', async (req, res) => {
   try {
-    const admission = await Admission.findOneAndDelete({ admissionId: req.params.id });
+    // Try to find by MongoDB _id first
+    let admission = await Admission.findByIdAndDelete(req.params.id);
+    
+    // If not found by _id, try by admissionId
+    if (!admission) {
+      admission = await Admission.findOneAndDelete({ admissionId: req.params.id });
+    }
+    
     if (!admission) {
       return res.status(404).json({ message: 'Admission not found' });
     }

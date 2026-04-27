@@ -46,9 +46,13 @@ router.get('/:id', async (req, res) => {
     // Try to find by courseId first
     course = await Course.findOne({ courseId: req.params.id });
     
-    // If not found, try to find by MongoDB _id
-    if (!course) {
-      course = await Course.findById(req.params.id);
+    // If not found and ID looks like a MongoDB ObjectId, try that
+    if (!course && mongoose.Types.ObjectId.isValid(req.params.id)) {
+      try {
+        course = await Course.findById(req.params.id);
+      } catch (err) {
+        console.log('Error finding by ObjectId:', err.message);
+      }
     }
     
     if (!course) {
@@ -56,6 +60,7 @@ router.get('/:id', async (req, res) => {
     }
     res.json(course);
   } catch (error) {
+    console.error('Get course error:', error);
     res.status(500).json({ message: error.message });
   }
 });
@@ -85,13 +90,17 @@ router.put('/:id', async (req, res) => {
       { new: true, runValidators: true }
     );
     
-    // If not found, try to find and update by MongoDB _id
-    if (!course) {
-      course = await Course.findByIdAndUpdate(
-        req.params.id,
-        updateData,
-        { new: true, runValidators: true }
-      );
+    // If not found and ID looks like a MongoDB ObjectId, try that
+    if (!course && mongoose.Types.ObjectId.isValid(req.params.id)) {
+      try {
+        course = await Course.findByIdAndUpdate(
+          req.params.id,
+          updateData,
+          { new: true, runValidators: true }
+        );
+      } catch (err) {
+        console.log('Error updating by ObjectId:', err.message);
+      }
     }
     
     if (!course) {
@@ -120,9 +129,13 @@ router.delete('/:id', async (req, res) => {
     // Try to find and delete by courseId first
     course = await Course.findOneAndDelete({ courseId: req.params.id });
     
-    // If not found, try to find and delete by MongoDB _id
-    if (!course) {
-      course = await Course.findByIdAndDelete(req.params.id);
+    // If not found and ID looks like a MongoDB ObjectId, try that
+    if (!course && mongoose.Types.ObjectId.isValid(req.params.id)) {
+      try {
+        course = await Course.findByIdAndDelete(req.params.id);
+      } catch (err) {
+        console.log('Error deleting by ObjectId:', err.message);
+      }
     }
     
     if (!course) {
@@ -130,6 +143,7 @@ router.delete('/:id', async (req, res) => {
     }
     res.json({ message: 'Course deleted', success: true });
   } catch (error) {
+    console.error('Delete course error:', error);
     res.status(500).json({ message: error.message });
   }
 });

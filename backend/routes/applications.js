@@ -66,7 +66,14 @@ router.put('/:id', async (req, res) => {
 // Delete application
 router.delete('/:id', async (req, res) => {
   try {
-    const application = await Application.findOneAndDelete({ applicationId: req.params.id });
+    // Try to find by MongoDB _id first
+    let application = await Application.findByIdAndDelete(req.params.id);
+    
+    // If not found by _id, try by applicationId
+    if (!application) {
+      application = await Application.findOneAndDelete({ applicationId: req.params.id });
+    }
+    
     if (!application) {
       return res.status(404).json({ message: 'Application not found' });
     }

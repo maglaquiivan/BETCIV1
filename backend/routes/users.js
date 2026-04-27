@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
 const User = require('../models/User');
 const Account = require('../models/Account');
 const AdminAccount = require('../models/AdminAccount');
@@ -15,6 +16,22 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Check session status - MUST be before /:id route
+router.get('/check-session', (req, res) => {
+  if (req.session && req.session.isAuthenticated) {
+    res.json({
+      isAuthenticated: true,
+      userId: req.session.userId,
+      username: req.session.username,
+      email: req.session.email,
+      role: req.session.role,
+      userType: req.session.userType
+    });
+  } else {
+    res.json({ isAuthenticated: false });
+  }
+});
+
 // Get single user
 router.get('/:id', async (req, res) => {
   try {
@@ -26,6 +43,20 @@ router.get('/:id', async (req, res) => {
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
+});
+
+// Logout
+router.post('/logout', (req, res) => {
+  const username = req.session.username;
+  req.session.destroy((err) => {
+    if (err) {
+      console.error('Logout error:', err);
+      return res.status(500).json({ message: 'Error logging out' });
+    }
+    res.clearCookie('connect.sid');
+    console.log('User logged out:', username);
+    res.json({ message: 'Logged out successfully' });
+  });
 });
 
 // Login - accepts email or username (userId)
@@ -100,8 +131,28 @@ router.post('/login', async (req, res) => {
     
     console.log('User found:', user ? 'Yes' : 'No');
     
-    if (!user || user.password !== password) {
-      console.log('Login failed: Invalid credentials');
+    if (!user) {
+      console.log('Login failed: User not found');
+      return res.status(401).json({ message: 'Invalid credentials' });
+    }
+    
+    console.log('User details:');
+    console.log('  Email:', user.email);
+    console.log('  Username:', user.username);
+    console.log('  Password field exists:', !!user.password);
+    console.log('  Password length:', user.password ? user.password.length : 0);
+    console.log('  Password starts with $2b$:', user.password ? user.password.startsWith('$2b$') : false);
+    
+    // Compare password using bcrypt
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    
+    console.log('Password comparison:');
+    console.log('  Input password:', password);
+    console.log('  Stored hash:', user.password.substring(0, 30) + '...');
+    console.log('  Match result:', isPasswordValid);
+    
+    if (!isPasswordValid) {
+      console.log('Login failed: Invalid password');
       return res.status(401).json({ message: 'Invalid credentials' });
     }
     
@@ -111,7 +162,30 @@ router.post('/login', async (req, res) => {
       await user.save();
     }
     
+    // Create session
+    req.session.userId = user.userId || user.accountId;
+    req.session.accountId = user.accountId;
+    req.session.username = user.username;
+    req.session.email = user.email;
+    req.session.role = user.role;
+    req.session.userType = userType;
+    req.session.isAuthenticated = true;
+    
+    // Save session and wait for it to complete before responding
+    await new Promise((resolve, reject) => {
+      req.session.save((err) => {
+        if (err) {
+          console.error('Session save error:', err);
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+    
     console.log('Login successful for:', email, '- Type:', userType);
+    console.log('Session created:', req.session.userId);
+    
     res.json({
       userId: user.userId || user.accountId,
       accountId: user.accountId,
@@ -123,7 +197,7 @@ router.post('/login', async (req, res) => {
       profilePicture: user.profilePicture,
       phone: user.phone,
       address: user.address,
-      userType: userType // Added to help frontend know which collection to use
+      userType: userType
     });
   } catch (error) {
     console.error('Login error:', error);

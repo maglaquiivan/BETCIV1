@@ -448,16 +448,21 @@ function displayUsersByRole(accounts) {
                         <td>${account.email}</td>
                         <td><span class="status-badge ${statusClass}">${account.status}</span></td>
                         <td>
-                            <div class="action-buttons-row">
-                                <button class="action-btn action-btn-view" onclick="viewAccount('${account.accountId}')" title="View">
-                                    <i class="bi bi-eye-fill"></i>
+                            <div style="position: relative;">
+                                <button class="menu-btn" onclick="toggleActionMenu(this)" style="background: #E67E22; color: white; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);">
+                                    <i class="bi bi-three-dots-vertical"></i>
                                 </button>
-                                <button class="action-btn action-btn-edit" onclick="editAccount('${account.accountId}')" title="Edit">
-                                    <i class="bi bi-pencil-square"></i>
-                                </button>
-                                <button class="action-btn action-btn-delete" onclick="openDeleteAccountModal('${account.accountId}', '${account.username}')" title="Delete">
-                                    <i class="bi bi-trash3-fill"></i>
-                                </button>
+                                <div class="action-menu" style="display: none; position: fixed; background: white; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); z-index: 10000; min-width: 180px;">
+                                    <button onclick="viewAccount('${account.accountId}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #333; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease; border-bottom: 1px solid #eee;">
+                                        <i class="bi bi-eye" style="color: #E67E22;"></i> View
+                                    </button>
+                                    <button onclick="editAccount('${account.accountId}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #333; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease; border-bottom: 1px solid #eee;">
+                                        <i class="bi bi-pencil" style="color: #2196F3;"></i> Edit
+                                    </button>
+                                    <button onclick="openDeleteAccountModal('${account.accountId}', '${account.username}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #e74c3c; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease;">
+                                        <i class="bi bi-trash" style="color: #e74c3c;"></i> Delete
+                                    </button>
+                                </div>
                             </div>
                         </td>
                     </tr>

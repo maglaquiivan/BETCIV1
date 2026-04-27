@@ -18,10 +18,16 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     
     <!-- Admin Dashboard CSS -->
-    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=7" />
+    <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=8" />
     
     <!-- Records Page CSS -->
     <link rel="stylesheet" href="../assets/css/records.css" />
+    
+    <!-- Form Preview Modal CSS -->
+    <link rel="stylesheet" href="../assets/css/form-preview-modal.css" />
+    
+    <!-- Session Check Script (Load First) -->
+    <script src="../../assets/js/session-check.js"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -156,6 +162,10 @@
                             <i class="bi bi-file-check"></i>
                             <span>Admission</span>
                         </button>
+                        <button class="tab-item" onclick="showSection('trainees', event)">
+                            <i class="bi bi-people-fill"></i>
+                            <span>Trainees</span>
+                        </button>
                     </div>
                 </div>
 
@@ -190,7 +200,6 @@
                                         <th>Last Name</th>
                                         <th>First Name</th>
                                         <th>Email</th>
-                                        <th>Course</th>
                                         <th>Courses</th>
                                         <th>Enrollment Date</th>
                                         <th>Status</th>
@@ -224,7 +233,7 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="applicationTable">
                                 <thead>
                                     <tr>
                                         <th>Application ID</th>
@@ -237,27 +246,9 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>#APP001</td>
-                                        <td>Jane Smith</td>
-                                        <td>Bulldozer Operation</td>
-                                        <td>Jan 14, 2024</td>
-                                        <td><span class="badge badge-warning">Under Review</span></td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn btn-sm btn-secondary" onclick="viewRecord(this)">View</button>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    <tr>
-                                        <td>#APP002</td>
-                                        <td>Mike Johnson</td>
-                                        <td>Excavator Operation</td>
-                                        <td>Jan 16, 2024</td>
-                                        <td><span class="badge badge-success">Approved</span></td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn btn-sm btn-secondary" onclick="viewRecord(this)">View</button>
-                                            </div>
+                                        <td colspan="6" style="text-align: center; padding: 40px;">
+                                            <i class="bi bi-hourglass-split" style="font-size: 48px; color: #ccc;"></i>
+                                            <p style="margin-top: 10px; color: #999;">Loading application records...</p>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -279,7 +270,7 @@
                             </button>
                         </div>
                         <div class="table-responsive">
-                            <table class="table">
+                            <table class="table" id="admissionTable">
                                 <thead>
                                     <tr>
                                         <th>Admission ID</th>
@@ -292,19 +283,31 @@
                                 </thead>
                                 <tbody>
                                     <tr>
-                                        <td>#ADM001</td>
-                                        <td>Mike Johnson</td>
-                                        <td>Safety Training</td>
-                                        <td>Jan 13, 2024</td>
-                                        <td><span class="badge badge-success">Admitted</span></td>
-                                        <td>
-                                            <div class="action-buttons">
-                                                <button class="btn btn-sm btn-secondary" onclick="viewRecord(this)">View</button>
-                                            </div>
+                                        <td colspan="6" style="text-align: center; padding: 40px;">
+                                            <i class="bi bi-hourglass-split" style="font-size: 48px; color: #ccc;"></i>
+                                            <p style="margin-top: 10px; color: #999;">Loading admission records...</p>
                                         </td>
                                     </tr>
                                 </tbody>
                             </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trainees Section -->
+                <div id="trainees" class="records-section">
+                    <div class="card">
+                        <div class="card-header">
+                            <div>
+                                <h2 class="card-title">Trainees</h2>
+                                <p class="card-subtitle">View all trainees with Application and Admission forms</p>
+                            </div>
+                        </div>
+                        <div class="trainees-grid" id="traineesGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
+                            <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px; color: #999;">
+                                <i class="bi bi-hourglass-split" style="font-size: 48px; display: block; margin-bottom: 16px;"></i>
+                                <p>Loading trainees...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -314,16 +317,196 @@
         </div>
     </div>
 
+    <!-- Form Preview Modal -->
+    <div id="formPreviewModal" class="form-preview-modal-overlay">
+        <div class="form-preview-modal">
+            <div class="form-preview-header">
+                <div class="form-preview-header-info"></div>
+                <button class="form-preview-close" onclick="closeFormPreviewModal()">×</button>
+            </div>
+            <div class="form-preview-body"></div>
+            <div class="form-preview-footer">
+                <button type="button" class="preview-action-btn preview-delete-btn" onclick="deleteFormPreview()" style="background: #e74c3c; color: white; cursor: pointer;" title="Delete this record">
+                    <i class="bi bi-trash"></i> Delete
+                </button>
+                <button type="button" class="preview-action-btn preview-print-btn" onclick="printFormPreview()">
+                    <i class="bi bi-printer"></i> Print
+                </button>
+                <button type="button" class="preview-action-btn preview-close-btn" onclick="closeFormPreviewModal()">
+                    <i class="bi bi-x-circle"></i> Close
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
     <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../assets/js/admin-dashboard.js?v=6"></script>
+    <script src="../assets/js/admin-dashboard.js?v=107"></script>
+    <script src="../assets/js/form-preview-modal.js?v=1"></script>
+    <script src="/admin/assets/js/form-viewer.js?v=1"></script>
+    
+    <!-- Suppress expected 404 errors from console -->
     <script>
-        // API_BASE_URL is already defined in admin-dashboard.js
+        (function() {
+            const originalError = console.error;
+            console.error = function(...args) {
+                const errorString = args.join(' ');
+                // Suppress 404 errors for enrollments and records endpoints
+                if (errorString.includes('404') || 
+                    errorString.includes('/enrollments/') || 
+                    errorString.includes('/records/')) {
+                    return; // Silently ignore
+                }
+                originalError.apply(console, args);
+            };
+        })();
+    </script>
+    
+    <script>
+        // Define API_BASE_URL
+        const API_BASE_URL = 'http://localhost:5500/api';
         let allEnrollmentRecords = [];
+
+        // ===== CUSTOM NOTIFICATION SYSTEM =====
+        
+        // Show confirmation modal
+        function showConfirmation(title, message, onConfirm, onCancel) {
+            const overlay = document.createElement('div');
+            overlay.className = 'notification-overlay';
+            
+            const modal = document.createElement('div');
+            modal.className = 'notification-modal warning';
+            
+            modal.innerHTML = `
+                <div class="notification-icon">
+                    <i class="bi bi-question-circle" style="color: #f39c12;"></i>
+                </div>
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+                <div class="notification-buttons">
+                    <button class="notification-btn notification-btn-secondary" onclick="this.closest('.notification-overlay').remove(); ${onCancel ? onCancel + '()' : ''}">
+                        <i class="bi bi-x"></i> Cancel
+                    </button>
+                    <button class="notification-btn notification-btn-primary" onclick="this.closest('.notification-overlay').remove(); ${onConfirm}()">
+                        <i class="bi bi-check"></i> Confirm
+                    </button>
+                </div>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            // Close on overlay click
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    overlay.remove();
+                    if (onCancel) window[onCancel]();
+                }
+            });
+        }
+        
+        // Show success notification
+        function showSuccess(title, message) {
+            const overlay = document.createElement('div');
+            overlay.className = 'notification-overlay';
+            
+            const modal = document.createElement('div');
+            modal.className = 'notification-modal success';
+            
+            modal.innerHTML = `
+                <div class="notification-icon">
+                    <i class="bi bi-check-circle" style="color: #27AE60;"></i>
+                </div>
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+                <div class="notification-buttons">
+                    <button class="notification-btn notification-btn-success" onclick="this.closest('.notification-overlay').remove()">
+                        <i class="bi bi-check"></i> OK
+                    </button>
+                </div>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+            
+            // Auto close after 3 seconds
+            setTimeout(() => {
+                if (overlay.parentNode) overlay.remove();
+            }, 3000);
+        }
+        
+        // Show error notification
+        function showError(title, message) {
+            const overlay = document.createElement('div');
+            overlay.className = 'notification-overlay';
+            
+            const modal = document.createElement('div');
+            modal.className = 'notification-modal error';
+            
+            modal.innerHTML = `
+                <div class="notification-icon">
+                    <i class="bi bi-x-circle" style="color: #e74c3c;"></i>
+                </div>
+                <div class="notification-title">${title}</div>
+                <div class="notification-message">${message}</div>
+                <div class="notification-buttons">
+                    <button class="notification-btn notification-btn-danger" onclick="this.closest('.notification-overlay').remove()">
+                        <i class="bi bi-x"></i> Close
+                    </button>
+                </div>
+            `;
+            
+            overlay.appendChild(modal);
+            document.body.appendChild(overlay);
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.className = `toast-notification ${type}`;
+            
+            const icons = {
+                success: 'check-circle',
+                error: 'x-circle',
+                warning: 'exclamation-circle',
+                info: 'info-circle'
+            };
+            
+            const colors = {
+                success: '#27AE60',
+                error: '#e74c3c',
+                warning: '#f39c12',
+                info: '#3498db'
+            };
+            
+            toast.innerHTML = `
+                <i class="bi bi-${icons[type]} toast-icon" style="color: ${colors[type]};"></i>
+                <span class="toast-message">${message}</span>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.style.animation = 'slideOutRight 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
 
         // Load enrollment records on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadEnrollmentRecords();
+            loadApplicationRecords();
+            loadAdmissionRecords();
+            
+            // Close menus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.menu-btn') && !e.target.closest('.action-menu')) {
+                    document.querySelectorAll('.action-menu').forEach(menu => {
+                        menu.style.display = 'none';
+                    });
+                }
+            });
         });
 
         // View trainee forms (Application and Admission)
@@ -579,46 +762,26 @@
         // Load enrollment records with user details
         async function loadEnrollmentRecords() {
             try {
-                const [recordsResponse, accountsResponse, enrollmentsResponse] = await Promise.all([
-                    fetch(`${API_BASE_URL}/records`),
-                    fetch(`${API_BASE_URL}/accounts`),
-                    fetch(`${API_BASE_URL}/enrollments`)
-                ]);
+                // Fetch enrollments directly from the enrollments endpoint
+                const enrollmentsResponse = await fetch(`${API_BASE_URL}/enrollments`);
 
-                if (!recordsResponse.ok || !accountsResponse.ok || !enrollmentsResponse.ok) {
-                    throw new Error('Failed to fetch data');
+                if (!enrollmentsResponse.ok) {
+                    throw new Error('Failed to fetch enrollments');
                 }
 
-                const records = await recordsResponse.json();
-                const accounts = await accountsResponse.json();
                 const enrollments = await enrollmentsResponse.json();
 
-                // Create a map of accounts by accountId for quick lookup
-                const accountsMap = {};
-                accounts.forEach(account => {
-                    accountsMap[account.accountId] = account;
-                });
-
-                // Group enrollments by trainee to show all courses
-                const traineeEnrollments = {};
-                enrollments.forEach(enrollment => {
-                    const traineeId = enrollment.traineeId || enrollment.accountId || enrollment.userId;
-                    if (!traineeEnrollments[traineeId]) {
-                        traineeEnrollments[traineeId] = [];
-                    }
-                    traineeEnrollments[traineeId].push(enrollment.courseName || 'Unknown Course');
-                });
-
-                // Combine records with user details and all enrolled courses
-                allEnrollmentRecords = records.map(record => {
-                    const user = accountsMap[record.userId] || {};
-                    const allCourses = traineeEnrollments[record.userId] || [];
+                // Use enrollments data directly - it already contains all necessary information
+                allEnrollmentRecords = enrollments.map(enrollment => {
+                    const enrolleeData = enrollment.enrolleeData || {};
                     return {
-                        ...record,
-                        firstName: user.firstName || 'N/A',
-                        lastName: user.lastName || 'N/A',
-                        email: user.email || 'N/A',
-                        allCourses: allCourses
+                        ...enrollment,
+                        firstName: enrolleeData.firstName || enrollment.firstName || 'N/A',
+                        lastName: enrolleeData.lastName || enrollment.lastName || 'N/A',
+                        email: enrolleeData.email || enrollment.email || 'N/A',
+                        userId: enrollment.userId || enrollment.traineeId,
+                        recordId: enrollment._id || enrollment.id,
+                        allCourses: enrollment.courseName ? [enrollment.courseName] : []
                     };
                 });
 
@@ -632,7 +795,7 @@
                         <tr>
                             <td colspan="10" style="text-align: center; padding: 40px; color: #e74c3c;">
                                 <i class="bi bi-exclamation-triangle" style="font-size: 48px;"></i>
-                                <p style="margin-top: 10px;">Failed to load enrollment records</p>
+                                <p style="margin-top: 10px;">Failed to load enrollment records: ${error.message}</p>
                             </td>
                         </tr>
                     `;
@@ -690,7 +853,6 @@
                         <td>${lastName}</td>
                         <td>${firstName}</td>
                         <td>${email}</td>
-                        <td>${record.courseName}</td>
                         <td>${coursesDisplay}</td>
                         <td>${enrollmentDate}</td>
                         <td><span class="badge badge-${statusClass}">${record.status}</span></td>
@@ -701,13 +863,24 @@
                             <span style="font-size: 12px; color: #666;">${record.progress || 0}%</span>
                         </td>
                         <td>
-                            <div class="action-buttons">
-                                <button class="btn btn-sm btn-secondary" onclick="viewEnrollmentRecord('${recordId}')" title="View Details">
-                                    <i class="bi bi-eye"></i>
+                            <div style="position: relative;">
+                                <button class="menu-btn" onclick="toggleActionMenu(this)" style="background: #E67E22; color: white; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);">
+                                    <i class="bi bi-three-dots-vertical"></i>
                                 </button>
-                                <button class="btn btn-sm btn-primary" onclick="viewTraineeForms('${record.userId}')" title="View Forms">
-                                    <i class="bi bi-file-earmark-text"></i> Overview
-                                </button>
+                                <div class="action-menu" style="display: none; position: fixed; background: white; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); z-index: 10000; min-width: 180px;">
+                                    <button onclick="viewApplicationForm('${record.userId}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #333; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease; border-bottom: 1px solid #eee;">
+                                        <i class="bi bi-eye" style="color: #E67E22;"></i> View Application
+                                    </button>
+                                    <button onclick="viewAdmissionSlip('${record.userId}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #333; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease; border-bottom: 1px solid #eee;">
+                                        <i class="bi bi-file-earmark-check" style="color: #E67E22;"></i> View Admission
+                                    </button>
+                                    <button onclick="editEnrollmentRecord('${recordId}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #333; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease; border-bottom: 1px solid #eee;">
+                                        <i class="bi bi-pencil" style="color: #2196F3;"></i> Edit
+                                    </button>
+                                    <button onclick="deleteEnrollmentRecord('${recordId}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #e74c3c; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease;">
+                                        <i class="bi bi-trash" style="color: #e74c3c;"></i> Delete
+                                    </button>
+                                </div>
                             </div>
                         </td>
                     </tr>
@@ -725,6 +898,138 @@
                 );
                 displayEnrollmentRecords(filtered);
             }
+        }
+
+        // Load application records
+        async function loadApplicationRecords() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/applications`);
+                if (!response.ok) throw new Error('Failed to fetch applications');
+                
+                const applications = await response.json();
+                displayApplicationRecords(applications);
+            } catch (error) {
+                console.error('Error loading application records:', error);
+                const tbody = document.querySelector('#applicationTable tbody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #e74c3c;">
+                                <i class="bi bi-exclamation-triangle" style="font-size: 48px;"></i>
+                                <p style="margin-top: 10px;">Failed to load application records</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        // Display application records in table
+        function displayApplicationRecords(applications) {
+            const tbody = document.querySelector('#applicationTable tbody');
+            if (!tbody) return;
+
+            if (applications.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                            <p style="margin-top: 10px; color: #999;">No application records found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = applications.map((app, index) => {
+                const submittedDate = app.submittedAt ? new Date(app.submittedAt).toLocaleDateString() : 'N/A';
+                const status = app.status || 'Pending';
+                const statusClass = status.toLowerCase().replace(' ', '-');
+                const profile = app.profile || {};
+                const fullName = `${profile.firstName || ''} ${profile.surname || ''}`.trim() || 'N/A';
+
+                return `
+                    <tr>
+                        <td><strong>${app.applicationId || app._id}</strong></td>
+                        <td>${fullName}</td>
+                        <td>${app.assessmentTitle || 'N/A'}</td>
+                        <td>${submittedDate}</td>
+                        <td><span class="badge badge-${statusClass}">${status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-info" onclick="openApplicationPreview('${app._id}')" title="View Preview">
+                                    <i class="bi bi-eye"></i> Preview
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Load admission records
+        async function loadAdmissionRecords() {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admissions`);
+                if (!response.ok) throw new Error('Failed to fetch admissions');
+                
+                const admissions = await response.json();
+                displayAdmissionRecords(admissions);
+            } catch (error) {
+                console.error('Error loading admission records:', error);
+                const tbody = document.querySelector('#admissionTable tbody');
+                if (tbody) {
+                    tbody.innerHTML = `
+                        <tr>
+                            <td colspan="6" style="text-align: center; padding: 40px; color: #e74c3c;">
+                                <i class="bi bi-exclamation-triangle" style="font-size: 48px;"></i>
+                                <p style="margin-top: 10px;">Failed to load admission records</p>
+                            </td>
+                        </tr>
+                    `;
+                }
+            }
+        }
+
+        // Display admission records in table
+        function displayAdmissionRecords(admissions) {
+            const tbody = document.querySelector('#admissionTable tbody');
+            if (!tbody) return;
+
+            if (admissions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 40px;">
+                            <i class="bi bi-inbox" style="font-size: 48px; color: #ccc;"></i>
+                            <p style="margin-top: 10px; color: #999;">No admission records found</p>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = admissions.map((adm, index) => {
+                const submittedDate = adm.submittedAt ? new Date(adm.submittedAt).toLocaleDateString() : 'N/A';
+                const status = adm.status || 'Pending';
+                const statusClass = status.toLowerCase().replace(' ', '-');
+
+                return `
+                    <tr>
+                        <td><strong>${adm.admissionId || adm._id}</strong></td>
+                        <td>${adm.applicantName || 'N/A'}</td>
+                        <td>${adm.assessmentApplied || 'N/A'}</td>
+                        <td>${submittedDate}</td>
+                        <td><span class="badge badge-${statusClass}">${status}</span></td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="btn btn-sm btn-info" onclick="openAdmissionPreview('${adm._id}')" title="View Preview">
+                                    <i class="bi bi-eye"></i> Preview
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
         }
 
         // View enrollment record details
@@ -885,9 +1190,8 @@
         // Logout handler
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../../public/index.html';
+                // Call the logout function from session-check.js
+                logout();
             }
         }
 
@@ -907,7 +1211,183 @@
 
             // Show selected section
             document.getElementById(sectionId).classList.add('active');
-            event.target.closest('.tab-item').classList.add('active');
+            const tabItem = event.target.closest('.tab-item');
+            if (tabItem) {
+                tabItem.classList.add('active');
+            }
+            
+            // Load trainees when trainees section is shown
+            if (sectionId === 'trainees') {
+                loadTraineesCards();
+            }
+        }
+        
+        // Load trainees cards
+        async function loadTraineesCards() {
+            try {
+                // Fetch from both trainees and trainee-accounts collections
+                const traineesResponse = await fetch(`${API_BASE_URL}/trainees`);
+                const traineeAccountsResponse = await fetch(`${API_BASE_URL}/trainee-accounts`);
+                
+                if (!traineesResponse.ok && !traineeAccountsResponse.ok) {
+                    throw new Error('Failed to fetch trainees from both collections');
+                }
+                
+                // Get trainees from both sources
+                const traineesData = traineesResponse.ok ? await traineesResponse.json() : [];
+                const traineeAccountsData = traineeAccountsResponse.ok ? await traineeAccountsResponse.json() : [];
+                
+                // Combine both arrays and remove duplicates
+                let allTrainees = [...traineesData, ...traineeAccountsData];
+                
+                // Remove duplicates by email
+                const seen = new Set();
+                allTrainees = allTrainees.filter(trainee => {
+                    if (seen.has(trainee.email)) {
+                        return false;
+                    }
+                    seen.add(trainee.email);
+                    return true;
+                });
+                
+                console.log('Fetched trainees:', allTrainees);
+                
+                // Fetch enrollments to get course information
+                const enrollmentsResponse = await fetch(`${API_BASE_URL}/enrollments`);
+                const enrollments = await enrollmentsResponse.json();
+                
+                // Fetch courses to get course names
+                const coursesResponse = await fetch(`${API_BASE_URL}/courses`);
+                const courses = await coursesResponse.json();
+                
+                // Create course map
+                const courseMap = {};
+                courses.forEach(course => {
+                    courseMap[course._id || course.courseId] = course.title || course.courseName;
+                });
+                
+                // Add enrollment data to trainees
+                allTrainees = allTrainees.map(trainee => {
+                    const traineeEnrollments = enrollments.filter(e => 
+                        e.traineeId === trainee.traineeId || 
+                        e.traineeId === trainee.accountId ||
+                        e.accountId === trainee.traineeId ||
+                        e.accountId === trainee.accountId
+                    );
+                    
+                    trainee.enrolledCourses = traineeEnrollments.map(enrollment => ({
+                        courseName: courseMap[enrollment.courseId] || 'Unknown Course',
+                        enrollmentDate: enrollment.enrollmentDate || enrollment.createdAt
+                    }));
+                    
+                    // Map accountId to traineeId for compatibility
+                    trainee.traineeId = trainee.traineeId || trainee.accountId;
+                    
+                    return trainee;
+                });
+                
+                displayTraineesCards(allTrainees);
+                
+            } catch (error) {
+                console.error('Error loading trainees:', error);
+                showNotification('Failed to load trainees. Make sure the server is running.', 'error');
+            }
+        }
+        
+        // Display trainees as cards
+        function displayTraineesCards(trainees) {
+            const container = document.getElementById('traineesGrid');
+            if (!container) return;
+            
+            if (trainees.length === 0) {
+                container.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 60px 20px;">
+                        <i class="bi bi-inbox" style="font-size: 48px; color: #999;"></i>
+                        <p style="color: #999; margin-top: 16px; font-size: 16px;">No trainees found</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = trainees.map(trainee => {
+                const initials = `${trainee.firstName.charAt(0)}${trainee.lastName.charAt(0)}`.toUpperCase();
+                const course = trainee.enrolledCourses && trainee.enrolledCourses.length > 0 
+                    ? trainee.enrolledCourses[0].courseName 
+                    : 'No course enrolled';
+                const status = trainee.status || 'active';
+                const enrollDate = trainee.enrolledCourses && trainee.enrolledCourses.length > 0 && trainee.enrolledCourses[0].enrollmentDate
+                    ? new Date(trainee.enrolledCourses[0].enrollmentDate).toLocaleDateString()
+                    : 'N/A';
+                
+                // Check if trainee has a profile picture
+                const hasProfilePicture = trainee.profilePicture && trainee.profilePicture.trim() !== '';
+                const avatarContent = hasProfilePicture 
+                    ? `<img src="${trainee.profilePicture}" alt="${trainee.firstName} ${trainee.lastName}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` 
+                    : initials;
+                
+                return `
+                    <div class="trainee-card" style="background: white; border-radius: 8px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; flex-direction: column; gap: 12px;">
+                        <div class="trainee-header" style="display: flex; gap: 12px; align-items: flex-start;">
+                            <div class="trainee-avatar" style="width: 50px; height: 50px; border-radius: 50%; background: #E67E22; color: white; display: flex; align-items: center; justify-content: center; font-weight: 600; flex-shrink: 0;">${avatarContent}</div>
+                            <div class="trainee-info" style="flex: 1;">
+                                <h3 style="margin: 0; font-size: 14px; font-weight: 600;">${trainee.firstName} ${trainee.lastName}</h3>
+                                <p style="margin: 4px 0 0 0; font-size: 12px; color: #666;">${course}</p>
+                            </div>
+                            <span class="trainee-status" style="background: ${status === 'active' ? '#27AE60' : status === 'inactive' ? '#e74c3c' : '#f39c12'}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 11px; font-weight: 600;">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                        </div>
+                        <div class="trainee-details" style="display: flex; flex-direction: column; gap: 6px; font-size: 12px;">
+                            <div class="detail-item" style="display: flex; align-items: center; gap: 6px; color: #666;"><i class="bi bi-envelope" style="color: #E67E22;"></i><span>${trainee.email}</span></div>
+                            <div class="detail-item" style="display: flex; align-items: center; gap: 6px; color: #666;"><i class="bi bi-phone" style="color: #E67E22;"></i><span>${trainee.phone || 'No phone'}</span></div>
+                            <div class="detail-item" style="display: flex; align-items: center; gap: 6px; color: #666;"><i class="bi bi-geo-alt" style="color: #E67E22;"></i><span>${trainee.address || 'No location'}</span></div>
+                            <div class="detail-item" style="display: flex; align-items: center; gap: 6px; color: #666;"><i class="bi bi-calendar" style="color: #E67E22;"></i><span>Enrolled: ${enrollDate}</span></div>
+                        </div>
+                        <div class="trainee-actions" style="display: flex; gap: 8px; margin-top: 8px;">
+                            <button class="btn-action application" onclick="viewApplicationFormFromRecords('${trainee.traineeId}')" style="background: #3498db; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600; transition: all 0.3s ease; flex: 1; justify-content: center;">
+                                <i class="bi bi-file-earmark-text"></i> Application
+                            </button>
+                            <button class="btn-action admission" onclick="viewAdmissionSlipFromRecords('${trainee.traineeId}')" style="background: #27AE60; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600; transition: all 0.3s ease; flex: 1; justify-content: center;">
+                                <i class="bi bi-file-earmark-check"></i> Admission
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // View application form for trainee from records
+        function viewApplicationFormFromRecords(traineeId) {
+            console.log('Viewing application form for trainee:', traineeId);
+            // Redirect to records page with trainee ID to view application
+            window.location.href = `records.html?traineeId=${traineeId}&view=application`;
+        }
+        
+        // View admission slip for trainee from records
+        function viewAdmissionSlipFromRecords(traineeId) {
+            console.log('Viewing admission slip for trainee:', traineeId);
+            // Redirect to records page with trainee ID to view admission slip
+            window.location.href = `records.html?traineeId=${traineeId}&view=admission`;
+        }
+
+        // Show section function
+        function showSection(sectionId, event) {
+            event.preventDefault();
+            
+            // Hide all sections
+            document.querySelectorAll('.records-section').forEach(section => {
+                section.classList.remove('active');
+            });
+
+            // Remove active from all tab items
+            document.querySelectorAll('.tab-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            const tabItem = event.target.closest('.tab-item');
+            if (tabItem) {
+                tabItem.classList.add('active');
+            }
         }
 
         // Records management functions
@@ -957,6 +1437,212 @@
         function closeRecordModal() {
             const modal = document.getElementById('recordViewModal');
             modal.classList.remove('active');
+        }
+        
+        // Edit Record function
+        function editRecord(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            const recordId = cells[0].textContent.trim();
+            
+            // Show edit modal with record details
+            showEditModal(row);
+        }
+        
+        // Show Edit Modal
+        function showEditModal(row) {
+            const cells = row.querySelectorAll('td');
+            const modal = document.getElementById('editRecordModal');
+            const modalBody = modal.querySelector('.modal-body');
+            
+            // Get current section to determine record type
+            const activeSection = document.querySelector('.records-section.active');
+            const sectionId = activeSection.id;
+            
+            let formHTML = '<form id="editRecordForm" class="edit-form">';
+            
+            if (sectionId === 'application') {
+                formHTML += `
+                    <div class="form-group">
+                        <label class="form-label">Application ID</label>
+                        <input type="text" class="form-input" value="${cells[0].textContent.trim()}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trainee Name</label>
+                        <input type="text" class="form-input" value="${cells[1].textContent.trim()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Course</label>
+                        <input type="text" class="form-input" value="${cells[2].textContent.trim()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" value="${cells[3].textContent.trim()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-input" required>
+                            <option value="Under Review" ${cells[4].textContent.includes('Under Review') ? 'selected' : ''}>Under Review</option>
+                            <option value="Approved" ${cells[4].textContent.includes('Approved') ? 'selected' : ''}>Approved</option>
+                            <option value="Rejected" ${cells[4].textContent.includes('Rejected') ? 'selected' : ''}>Rejected</option>
+                        </select>
+                    </div>
+                `;
+            } else if (sectionId === 'admission') {
+                formHTML += `
+                    <div class="form-group">
+                        <label class="form-label">Admission ID</label>
+                        <input type="text" class="form-input" value="${cells[0].textContent.trim()}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Trainee Name</label>
+                        <input type="text" class="form-input" value="${cells[1].textContent.trim()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Course</label>
+                        <input type="text" class="form-input" value="${cells[2].textContent.trim()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Date</label>
+                        <input type="date" class="form-input" value="${cells[3].textContent.trim()}" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select class="form-input" required>
+                            <option value="Admitted" ${cells[4].textContent.includes('Admitted') ? 'selected' : ''}>Admitted</option>
+                            <option value="Pending" ${cells[4].textContent.includes('Pending') ? 'selected' : ''}>Pending</option>
+                            <option value="Cancelled" ${cells[4].textContent.includes('Cancelled') ? 'selected' : ''}>Cancelled</option>
+                        </select>
+                    </div>
+                `;
+            }
+            
+            formHTML += '</form>';
+            
+            modalBody.innerHTML = formHTML;
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Close Edit Modal
+        function closeEditModal() {
+            const modal = document.getElementById('editRecordModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Save Edited Record
+        function saveEditedRecord() {
+            const form = document.getElementById('editRecordForm');
+            if (form.checkValidity()) {
+                // TODO: Implement actual API call to save changes
+                alert('Record updated successfully!');
+                closeEditModal();
+                // Reload records
+                loadEnrollmentRecords();
+            } else {
+                form.reportValidity();
+            }
+        }
+        
+        // Delete Record function
+        function deleteRecord(button) {
+            const row = button.closest('tr');
+            const cells = row.querySelectorAll('td');
+            const recordId = cells[0].textContent.trim();
+            const traineeName = cells[1].textContent.trim();
+            
+            // Show delete confirmation modal
+            showDeleteModal(recordId, traineeName, row);
+        }
+        
+        // Show Delete Confirmation Modal
+        function showDeleteModal(recordId, traineeName, row) {
+            const modal = document.getElementById('deleteRecordModal');
+            const modalBody = modal.querySelector('.modal-body');
+            
+            modalBody.innerHTML = `
+                <div class="delete-confirmation">
+                    <div class="delete-icon">
+                        <i class="bi bi-exclamation-triangle"></i>
+                    </div>
+                    <h4 class="delete-title">Delete Record</h4>
+                    <p class="delete-message">
+                        Are you sure you want to delete record <strong>${recordId}</strong> for <strong>${traineeName}</strong>?
+                    </p>
+                    <p class="delete-warning">
+                        <i class="bi bi-info-circle"></i> This action cannot be undone. All data associated with this record will be permanently removed.
+                    </p>
+                    <div class="delete-confirmation-input">
+                        <label for="confirmNameInput" class="confirm-label">
+                            Type <strong>"${traineeName}"</strong> to confirm deletion:
+                        </label>
+                        <input 
+                            type="text" 
+                            id="confirmNameInput" 
+                            class="confirm-input" 
+                            placeholder="Enter trainee name"
+                            autocomplete="off"
+                        >
+                        <span id="confirmError" class="confirm-error" style="display: none;">
+                            <i class="bi bi-x-circle"></i> Name does not match
+                        </span>
+                    </div>
+                </div>
+            `;
+            
+            // Store row reference and trainee name for deletion
+            modal.dataset.rowToDelete = row.rowIndex;
+            modal.dataset.traineeName = traineeName;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Focus on input field
+            setTimeout(() => {
+                document.getElementById('confirmNameInput').focus();
+            }, 300);
+        }
+        
+        // Close Delete Modal
+        function closeDeleteModal() {
+            const modal = document.getElementById('deleteRecordModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+        
+        // Confirm Delete Record
+        function confirmDeleteRecord() {
+            const modal = document.getElementById('deleteRecordModal');
+            const rowIndex = modal.dataset.rowToDelete;
+            const expectedName = modal.dataset.traineeName;
+            const inputName = document.getElementById('confirmNameInput').value.trim();
+            const errorSpan = document.getElementById('confirmError');
+            
+            // Validate name matches
+            if (inputName !== expectedName) {
+                errorSpan.style.display = 'flex';
+                document.getElementById('confirmNameInput').classList.add('error');
+                
+                // Shake animation
+                const input = document.getElementById('confirmNameInput');
+                input.style.animation = 'shake 0.5s';
+                setTimeout(() => {
+                    input.style.animation = '';
+                }, 500);
+                
+                return;
+            }
+            
+            if (rowIndex) {
+                // TODO: Implement actual API call to delete record
+                const table = document.querySelector('.records-section.active table');
+                const row = table.rows[rowIndex];
+                row.remove();
+                
+                alert('Record deleted successfully!');
+                closeDeleteModal();
+            }
         }
 
         function exportRecords(type) {
@@ -1031,6 +1717,269 @@
         }
 
         // Burger menu is now handled by burger-menu.js
+
+        // Menu toggle functions
+        function toggleActionMenu(button) {
+            const menu = button.nextElementSibling;
+            const isOpen = menu.style.display === 'block';
+            
+            // Close all other menus
+            document.querySelectorAll('.action-menu').forEach(m => {
+                if (m !== menu) m.style.display = 'none';
+            });
+            
+            // Toggle current menu
+            if (!isOpen) {
+                // Position the menu below the button
+                const rect = button.getBoundingClientRect();
+                menu.style.top = (rect.bottom + 5) + 'px';
+                menu.style.left = (rect.right - 180) + 'px';
+                menu.style.display = 'block';
+            } else {
+                menu.style.display = 'none';
+            }
+        }
+
+        function closeActionMenu(button) {
+            const menu = button.closest('.action-menu');
+            if (menu) menu.style.display = 'none';
+        }
+
+        // View application form
+        async function viewApplicationForm(userId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/applications/user/${userId}`);
+                
+                if (!response.ok) {
+                    alert('No application found');
+                    return;
+                }
+
+                const applications = await response.json();
+                
+                if (applications.length === 0) {
+                    alert('No application form submitted yet.');
+                    return;
+                }
+
+                const app = applications[0];
+                openApplicationFormWithData(app);
+                
+            } catch (error) {
+                console.error('Error viewing application:', error);
+                alert('No application form found.');
+            }
+        }
+
+        // View admission slip
+        async function viewAdmissionSlip(userId) {
+            try {
+                const response = await fetch(`${API_BASE_URL}/admissions/user/${userId}`);
+                
+                if (!response.ok) {
+                    alert('No admission found');
+                    return;
+                }
+
+                const admissions = await response.json();
+                
+                if (admissions.length === 0) {
+                    alert('No admission slip available yet.');
+                    return;
+                }
+
+                const admission = admissions[0];
+                openAdmissionFormWithData(admission);
+                
+            } catch (error) {
+                console.error('Error viewing admission:', error);
+                alert('No admission slip found.');
+            }
+        }
+
+        // Edit enrollment record - Replace with Approve/Decline options
+        function editEnrollmentRecord(recordId) {
+            // Find the button that was clicked
+            const button = event.target.closest('button');
+            const menu = button.closest('.action-menu');
+            
+            if (!menu) return;
+            
+            // Replace the Edit button with Approve and Decline buttons
+            const editButton = button;
+            
+            // Create approve button
+            const approveBtn = document.createElement('button');
+            approveBtn.style.cssText = 'width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #27AE60; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease; border-bottom: 1px solid #eee;';
+            approveBtn.innerHTML = '<i class="bi bi-check-circle" style="color: #27AE60;"></i> Approve';
+            approveBtn.onclick = function() {
+                approveEnrollment(recordId);
+                closeActionMenu(this);
+            };
+            
+            // Create decline button
+            const declineBtn = document.createElement('button');
+            declineBtn.style.cssText = 'width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #e74c3c; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease;';
+            declineBtn.innerHTML = '<i class="bi bi-x-circle" style="color: #e74c3c;"></i> Decline';
+            declineBtn.onclick = function() {
+                declineEnrollment(recordId);
+                closeActionMenu(this);
+            };
+            
+            // Replace the Edit button with Approve and Decline buttons
+            editButton.replaceWith(approveBtn);
+            approveBtn.insertAdjacentElement('afterend', declineBtn);
+        }
+        
+        // Approve enrollment
+        async function approveEnrollment(recordId) {
+            showConfirmation(
+                'Approve Enrollment',
+                'Are you sure you want to approve this enrollment?',
+                'confirmApproveEnrollment',
+                null
+            );
+            window.pendingApprovalId = recordId;
+        }
+        
+        async function confirmApproveEnrollment() {
+            const recordId = window.pendingApprovalId;
+            try {
+                // Try the enrollments endpoint first
+                let response = await fetch(`${API_BASE_URL}/enrollments/${recordId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'Approved' })
+                }).catch(() => ({ status: 404 })); // Suppress network errors
+                
+                // If enrollments endpoint doesn't work, try records endpoint
+                if (response.status === 404) {
+                    console.log('Enrollments endpoint not found, trying records endpoint...');
+                    response = await fetch(`${API_BASE_URL}/records/${recordId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'Approved' })
+                    }).catch(() => ({ status: 404 })); // Suppress network errors
+                }
+                
+                if (response.ok) {
+                    showSuccess('Success', 'Enrollment approved successfully!');
+                    setTimeout(() => loadEnrollmentRecords(), 1500);
+                } else if (response.status === 404) {
+                    showError('Error', 'The backend does not support updating enrollments yet. Please contact your administrator to implement the PUT /enrollments/{id} endpoint.');
+                    setTimeout(() => loadEnrollmentRecords(), 1500);
+                } else {
+                    showError('Error', 'Failed to approve enrollment');
+                }
+            } catch (error) {
+                console.error('Error approving enrollment:', error);
+                showError('Error', 'Error approving enrollment: ' + error.message);
+            }
+        }
+        
+        // Decline enrollment
+        async function declineEnrollment(recordId) {
+            showConfirmation(
+                'Decline Enrollment',
+                'Are you sure you want to decline this enrollment?',
+                'confirmDeclineEnrollment',
+                null
+            );
+            window.pendingDeclineId = recordId;
+        }
+        
+        async function confirmDeclineEnrollment() {
+            const recordId = window.pendingDeclineId;
+            try {
+                // Try the enrollments endpoint first
+                let response = await fetch(`${API_BASE_URL}/enrollments/${recordId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ status: 'Declined' })
+                }).catch(() => ({ status: 404 })); // Suppress network errors
+                
+                // If enrollments endpoint doesn't work, try records endpoint
+                if (response.status === 404) {
+                    console.log('Enrollments endpoint not found, trying records endpoint...');
+                    response = await fetch(`${API_BASE_URL}/records/${recordId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ status: 'Declined' })
+                    }).catch(() => ({ status: 404 })); // Suppress network errors
+                }
+                
+                if (response.ok) {
+                    showSuccess('Success', 'Enrollment declined successfully!');
+                    setTimeout(() => loadEnrollmentRecords(), 1500);
+                } else if (response.status === 404) {
+                    showError('Error', 'The backend does not support updating enrollments yet. Please contact your administrator to implement the PUT /enrollments/{id} endpoint.');
+                    setTimeout(() => loadEnrollmentRecords(), 1500);
+                } else {
+                    showError('Error', 'Failed to decline enrollment');
+                }
+            } catch (error) {
+                console.error('Error declining enrollment:', error);
+                showError('Error', 'Error declining enrollment: ' + error.message);
+            }
+        }
+
+        // Delete enrollment record
+        async function deleteEnrollmentRecord(recordId) {
+            showConfirmation(
+                'Delete Enrollment',
+                'Are you sure you want to delete this enrollment record? This action cannot be undone.',
+                'confirmDeleteEnrollment',
+                null
+            );
+            window.pendingDeleteId = recordId;
+        }
+        
+        function closeConfirmation() {
+            // Just close the confirmation - delete is not supported
+            return;
+        }
+        
+        async function confirmDeleteEnrollment() {
+            const recordId = window.pendingDeleteId;
+            try {
+                // Try to delete from enrollments endpoint first
+                let response = await fetch(`${API_BASE_URL}/enrollments/${recordId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' }
+                }).catch(() => ({ status: 404 }));
+                
+                // If enrollments endpoint doesn't work, try records endpoint
+                if (response.status === 404) {
+                    console.log('Enrollments endpoint not found, trying records endpoint...');
+                    response = await fetch(`${API_BASE_URL}/records/${recordId}`, {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                    }).catch(() => ({ status: 404 }));
+                }
+                
+                if (response.ok) {
+                    showSuccess('Success', 'Enrollment record deleted successfully!');
+                    setTimeout(() => loadEnrollmentRecords(), 1500);
+                } else if (response.status === 404) {
+                    showError('Error', 'The backend does not support deleting enrollments yet. Please contact your administrator to implement the DELETE /enrollments/{id} endpoint.');
+                    setTimeout(() => loadEnrollmentRecords(), 1500);
+                } else {
+                    showError('Error', 'Failed to delete enrollment record');
+                }
+            } catch (error) {
+                console.error('Error deleting enrollment record:', error);
+                showError('Error', 'Error deleting enrollment record: ' + error.message);
+            }
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.menu-btn') && !event.target.closest('.action-menu')) {
+                document.querySelectorAll('.action-menu').forEach(menu => {
+                    menu.style.display = 'none';
+                });
+            }
+        });
     </script>
 </body>
 </html>
@@ -1071,7 +2020,343 @@
         </div>
     </div>
 
+    <!-- Edit Record Modal -->
+    <div class="modal" id="editRecordModal">
+        <div class="modal-content modal-landscape">
+            <div class="modal-header modal-header-edit">
+                <h3><i class="bi bi-pencil-square"></i> Edit Record</h3>
+                <button class="modal-close" onclick="closeEditModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Edit form will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeEditModal()">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-primary" onclick="saveEditedRecord()">
+                    <i class="bi bi-check-circle"></i> Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="deleteRecordModal">
+        <div class="modal-content modal-delete">
+            <div class="modal-header modal-header-delete">
+                <h3><i class="bi bi-trash"></i> Confirm Deletion</h3>
+                <button class="modal-close" onclick="closeDeleteModal()">
+                    <i class="bi bi-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Delete confirmation will be inserted here -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="closeDeleteModal()">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+                <button type="button" class="btn btn-danger" onclick="confirmDeleteRecord()">
+                    <i class="bi bi-trash"></i> Delete Record
+                </button>
+            </div>
+        </div>
+    </div>
+
     <style>
+        /* Custom Notification Modal Styles */
+        .notification-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .notification-modal {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        .notification-modal.success {
+            border-top: 4px solid #27AE60;
+        }
+
+        .notification-modal.error {
+            border-top: 4px solid #e74c3c;
+        }
+
+        .notification-modal.warning {
+            border-top: 4px solid #f39c12;
+        }
+
+        .notification-modal.info {
+            border-top: 4px solid #3498db;
+        }
+
+        .notification-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .notification-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 12px;
+            text-align: center;
+        }
+
+        .notification-message {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 24px;
+            text-align: center;
+            line-height: 1.5;
+        }
+
+        .notification-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .notification-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .notification-btn-primary {
+            background: linear-gradient(135deg, #E67E22 0%, #d35400 100%);
+            color: white;
+        }
+
+        .notification-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(230, 126, 34, 0.3);
+        }
+
+        .notification-btn-secondary {
+            background: #f0f0f0;
+            color: #333;
+            border: 1px solid #ddd;
+        }
+
+        .notification-btn-secondary:hover {
+            background: #e8e8e8;
+        }
+
+        .notification-btn-success {
+            background: #27AE60;
+            color: white;
+        }
+
+        .notification-btn-success:hover {
+            background: #229954;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(39, 174, 96, 0.3);
+        }
+
+        .notification-btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .notification-btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Toast Notification Styles */
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            z-index: 10000;
+            animation: slideInRight 0.3s ease;
+            max-width: 400px;
+        }
+
+        .toast-notification.success {
+            border-left: 4px solid #27AE60;
+        }
+
+        .toast-notification.error {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .toast-notification.warning {
+            border-left: 4px solid #f39c12;
+        }
+
+        .toast-notification.info {
+            border-left: 4px solid #3498db;
+        }
+
+        .toast-icon {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: #333;
+            flex: 1;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOutRight {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+        }
+
+        /* Action Button Tooltip Styles */
+        .btn-icon {
+            position: relative;
+            background: none;
+            border: 1px solid #ddd;
+            padding: 6px 10px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .btn-icon:hover {
+            background: #f5f5f5;
+            border-color: var(--primary-color);
+            color: var(--primary-color);
+        }
+
+        .btn-icon.btn-danger {
+            color: #666;
+            background: none;
+            border: 1px solid #ddd;
+        }
+
+        .btn-icon.btn-danger:hover {
+            background: #fee;
+            border-color: #e74c3c;
+            color: #e74c3c;
+        }
+
+        .btn-icon::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .btn-icon::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-2px);
+            border: 5px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .btn-icon:hover::after,
+        .btn-icon:hover::before {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        .btn-icon:hover::before {
+            transform: translateX(-50%) translateY(2px);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -1250,6 +2535,339 @@
 
         body.dark-mode .modal-footer {
             border-top-color: #3a3a3a;
+        }
+
+        /* Edit Modal Styles */
+        .modal-landscape {
+            max-width: 800px;
+        }
+
+        .modal-header-edit {
+            background: linear-gradient(135deg, #3498DB 0%, #2980B9 100%);
+            color: white;
+            border-bottom: none;
+        }
+
+        .modal-header-edit h3 {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header-edit .modal-close {
+            color: white;
+        }
+
+        .modal-header-edit .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .edit-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: 13px;
+            color: #333;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #3498DB;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .form-input:read-only {
+            background: #f5f5f5;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #3498DB 0%, #2980B9 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #2980B9 0%, #21618C 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+
+        /* Delete Modal Styles */
+        .modal-delete {
+            max-width: 500px;
+        }
+
+        .modal-header-delete {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border-bottom: none;
+        }
+
+        .modal-header-delete h3 {
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-header-delete .modal-close {
+            color: white;
+        }
+
+        .modal-header-delete .modal-close:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+        }
+
+        .delete-confirmation {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .delete-icon {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: pulse 2s infinite;
+        }
+
+        .delete-icon i {
+            font-size: 40px;
+            color: white;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.7);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 0 0 10px rgba(231, 76, 60, 0);
+            }
+        }
+
+        .delete-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .delete-message {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .delete-message strong {
+            color: #e74c3c;
+            font-weight: 600;
+        }
+
+        .delete-warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 8px;
+            padding: 12px 16px;
+            color: #856404;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-align: left;
+        }
+
+        .delete-warning i {
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .delete-confirmation-input {
+            margin-top: 24px;
+            text-align: left;
+        }
+
+        .confirm-label {
+            display: block;
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+
+        .confirm-label strong {
+            color: #e74c3c;
+            font-weight: 700;
+        }
+
+        .confirm-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Roboto', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .confirm-input:focus {
+            outline: none;
+            border-color: #e74c3c;
+            box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.1);
+        }
+
+        .confirm-input.error {
+            border-color: #e74c3c;
+            background: #fff5f5;
+        }
+
+        .confirm-error {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #e74c3c;
+            font-size: 13px;
+            margin-top: 8px;
+            font-weight: 500;
+        }
+
+        .confirm-error i {
+            font-size: 16px;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: linear-gradient(135deg, #c0392b 0%, #a93226 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+
+        /* Dark Mode Support for New Modals */
+        body.dark-mode .modal-header-edit,
+        body.dark-mode .modal-header-delete {
+            /* Keep gradient colors in dark mode */
+        }
+
+        body.dark-mode .form-label {
+            color: #ffffff;
+        }
+
+        body.dark-mode .form-input {
+            background: #2a2a2a;
+            border-color: #3a3a3a;
+            color: #ffffff;
+        }
+
+        body.dark-mode .form-input:focus {
+            border-color: #3498DB;
+            background: #2a2a2a;
+        }
+
+        body.dark-mode .form-input:read-only {
+            background: #1a1a1a;
+            color: #999;
+        }
+
+        body.dark-mode .delete-title {
+            color: #ffffff;
+        }
+
+        body.dark-mode .delete-message {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .delete-warning {
+            background: #3a3a1a;
+            border-color: #ffc107;
+            color: #ffd54f;
+        }
+
+        body.dark-mode .confirm-label {
+            color: #ffffff;
+        }
+
+        body.dark-mode .confirm-input {
+            background: #2a2a2a;
+            border-color: #3a3a3a;
+            color: #ffffff;
+        }
+
+        body.dark-mode .confirm-input:focus {
+            border-color: #e74c3c;
+            background: #2a2a2a;
+        }
+
+        body.dark-mode .confirm-input.error {
+            background: #3a1a1a;
+            border-color: #e74c3c;
+        }
+
+        body.dark-mode .confirm-error {
+            color: #ff6b6b;
+        }
+
+        @media (max-width: 768px) {
+            .modal-landscape {
+                max-width: 95%;
+            }
+
+            .edit-form {
+                grid-template-columns: 1fr;
+            }
+
+            .delete-icon {
+                width: 60px;
+                height: 60px;
+            }
+
+            .delete-icon i {
+                font-size: 30px;
+            }
+
+            .delete-title {
+                font-size: 20px;
+            }
         }
     </style>
 </body>

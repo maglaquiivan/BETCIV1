@@ -684,6 +684,9 @@ function handleConfirmedSubmit() {
         .then(result => {
             showToast('Application submitted successfully!', 'success');
 
+            // Create enrollment record for admin approval
+            createEnrollmentFromApplication(data, result);
+
             form.reset();
 
             if (canvas) {
@@ -992,4 +995,66 @@ function initializePhilippineAddressDropdowns() {
             });
         }
     });
+}
+
+
+// Create enrollment record from submitted application
+async function createEnrollmentFromApplication(applicationData, applicationResult) {
+    try {
+        const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+        const userId = userSession.accountId || userSession._id || applicationData.userId;
+
+        if (!userId) {
+            console.warn('User ID not found for enrollment creation');
+            return;
+        }
+
+        // Get course information from application
+        const courseId = applicationData.competency_assessments && applicationData.competency_assessments[0] 
+            ? applicationData.competency_assessments[0].competency_code 
+            : 'Unknown';
+        
+        const courseName = applicationData.competency_assessments && applicationData.competency_assessments[0]
+            ? applicationData.competency_assessments[0].competency_title
+            : 'Unknown Course';
+
+        // Create enrollment data
+        const enrollmentData = {
+            traineeId: userId,
+            userId: userId,
+            courseId: courseId,
+            courseName: courseName,
+            enrollmentDate: new Date().toISOString(),
+            status: 'Pending',
+            progress: 0,
+            enrolleeData: {
+                firstName: applicationData.firstname || '',
+                lastName: applicationData.surname || '',
+                email: applicationData.email || '',
+                phone: applicationData.mobile || applicationData.tel || '',
+                address: applicationData.address || ''
+            },
+            applicationId: applicationResult._id || applicationResult.id,
+            startDate: new Date().toISOString()
+        };
+
+        // Submit enrollment to database
+        const response = await fetch(`${window.API_BASE_URL}/api/enrollments`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(enrollmentData)
+        });
+
+        if (response.ok) {
+            const enrollmentResult = await response.json();
+            console.log('Enrollment record created successfully:', enrollmentResult);
+        } else {
+            console.warn('Failed to create enrollment record:', response.status);
+        }
+    } catch (error) {
+        console.error('Error creating enrollment record:', error);
+        // Don't show error to user - enrollment creation is secondary to application submission
+    }
 }

@@ -22,6 +22,9 @@
     
     <!-- Training Catalog Page CSS -->
     <link rel="stylesheet" href="../assets/css/training-catalog.css" />
+    
+    <!-- Session Check Script (Load First) -->
+    <script src="../../assets/js/session-check.js"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -367,18 +370,16 @@
                     </div>
 
                     <!-- Image Upload Section -->
-                    <div class="form-group" style="margin-bottom: 18px;">
-                        <label class="form-label" for="competencyImage">Competency Image</label>
+                    <div class="form-group" style="margin-bottom: 24px;">
+                        <label class="form-label" for="competencyImageFile">Competency Image</label>
+                        <p style="font-size: 12px; color: #999; margin-bottom: 10px;">
+                            Upload an image. Image will be saved and displayed in both admin and trainee dashboards.
+                        </p>
                         <input type="file" id="competencyImageFile" accept="image/*" style="display: none;" onchange="handleCompetencyImageUpload(event)">
-                        <div style="display: flex; gap: 12px; align-items: start;">
-                            <button type="button" onclick="document.getElementById('competencyImageFile').click()" style="padding: 10px 20px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 14px; font-weight: 600;">
-                                <i class="bi bi-upload"></i> Upload Image
-                            </button>
-                            <div id="competencyImagePreview" style="flex: 1; min-height: 100px; border: 2px dashed #ddd; border-radius: 8px; display: flex; align-items: center; justify-content: center; background: #f8f9fa; overflow: hidden;">
-                                <span style="color: #999; font-size: 13px;">No image selected</span>
-                            </div>
+                        <div class="image-preview" id="competencyImagePreview" onclick="document.getElementById('competencyImageFile').click()" style="cursor: pointer; border: 2px dashed #ddd; border-radius: 10px; padding: 20px; text-align: center; background: #f9f9f9; min-height: 180px; display: flex; flex-direction: column; align-items: center; justify-content: center; transition: all 0.3s;">
+                            <i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i>
+                            <p style="margin: 12px 0 0 0; color: #999; font-size: 13px;">Click to upload competency image</p>
                         </div>
-                        <p style="font-size: 12px; color: #666; margin-top: 8px;">Recommended size: 400x200px. Supported formats: JPG, PNG, GIF</p>
                     </div>
 
                     <!-- Full Width Description -->
@@ -599,7 +600,7 @@
 
         function confirmDelete() {
             if (currentDeleteCard) {
-                const courseId = parseInt(currentDeleteCard.dataset.courseId);
+                const courseId = currentDeleteCard.dataset.courseId;
                 const title = currentDeleteCard.querySelector('.course-title').textContent;
                 const inputValue = document.getElementById('deleteConfirmInput').value.trim();
                 const errorMsg = document.getElementById('deleteErrorMsg');
@@ -934,7 +935,7 @@
             
             card.innerHTML = `
                 <div class="course-image">
-                    <img src="${imageUrl}" alt="${course.title || course.courseName}" style="max-width: 100%; max-height: 100%;">
+                    <img src="${imageUrl}" alt="${course.title || course.courseName}">
                 </div>
                 <div class="course-body">
                     <h3 class="course-title">${course.title || course.courseName}</h3>
@@ -951,10 +952,17 @@
         // Initialize courses on page load
         document.addEventListener('DOMContentLoaded', function() {
             loadCourses();
-            // Load competencies if on competencies tab
-            const competenciesSection = document.getElementById('competencies');
-            if (competenciesSection && competenciesSection.classList.contains('active')) {
+            
+            // Check URL hash for competencies tab
+            if (window.location.hash === '#competencies') {
+                showSection('competencies', null);
                 loadCompetencies();
+            } else {
+                // Load competencies if on competencies tab
+                const competenciesSection = document.getElementById('competencies');
+                if (competenciesSection && competenciesSection.classList.contains('active')) {
+                    loadCompetencies();
+                }
             }
         });
 
@@ -1012,6 +1020,7 @@
                     });
                     
                     const preview = document.getElementById('competencyImagePreview');
+                    preview.style.cursor = 'pointer';
                     preview.innerHTML = `<img src="${currentCompetencyImageData}" style="width: 100%; height: 100%; object-fit: cover;">`;
                 };
                 img.src = e.target.result;
@@ -1128,7 +1137,7 @@
                                     Units of Competency (${unitCount})
                                 </h4>
                                 <ul style="list-style: none; padding: 0; margin: 0;">
-                                    ${comp.units && comp.units.length > 0 ? comp.units.slice(0, 3).map(unit => `
+                                    ${comp.units && comp.units.length > 0 ? comp.units.map(unit => `
                                         <li style="
                                             font-size: 12px;
                                             color: #666;
@@ -1142,7 +1151,6 @@
                                         </li>
                                     `).join('') : '<li style="font-size: 12px; color: #999;">No units available</li>'}
                                 </ul>
-                                ${unitCount > 3 ? `<div style="font-size: 12px; color: #E67E22; margin-top: 8px; font-weight: 600;">+${unitCount - 3} more units</div>` : ''}
                             </div>
                             
                             <div style="display: flex; gap: 12px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; font-size: 12px;">
@@ -1218,6 +1226,36 @@
             document.getElementById('competencyModalTitle').textContent = 'Add New Competency';
             document.getElementById('competencyForm').reset();
             document.getElementById('competencyImagePreview').innerHTML = '<span style="color: #999; font-size: 13px;">No image selected</span>';
+            
+            // Auto-generate competency code based on last competency
+            fetch(`${API_BASE_URL}/competencies`)
+                .then(res => res.json())
+                .then(competencies => {
+                    if (competencies && competencies.length > 0) {
+                        // Sort by code to find the highest number
+                        const codes = competencies.map(c => c.code).filter(code => code);
+                        if (codes.length > 0) {
+                            // Extract numbers from codes and find the max
+                            const numbers = codes.map(code => {
+                                const match = code.match(/(\d+)$/);
+                                return match ? parseInt(match[1]) : 0;
+                            });
+                            const maxNumber = Math.max(...numbers);
+                            const nextNumber = String(maxNumber + 1).padStart(3, '0');
+                            
+                            // Get prefix from last code
+                            const lastCode = codes[codes.length - 1];
+                            const prefix = lastCode.substring(0, lastCode.lastIndexOf('-') + 1);
+                            
+                            document.getElementById('competencyCode').value = prefix + nextNumber;
+                        }
+                    }
+                })
+                .catch(err => console.error('Error fetching competencies:', err));
+            
+            // Auto-fill duration with default value
+            document.getElementById('competencyDuration').value = '40';
+            
             document.getElementById('editCompetencyModal').classList.add('active');
             loadCoursesForCompetency();
         }
@@ -1228,15 +1266,27 @@
             
             // Fetch the competency data from the API to ensure accuracy
             fetch(`${API_BASE_URL}/competencies/${currentEditCompetencyId}`)
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            throw new Error('Competency not found. It may have been deleted.');
+                        }
+                        throw new Error('Failed to load competency data');
+                    }
+                    return response.json();
+                })
                 .then(comp => {
                     document.getElementById('competencyModalTitle').textContent = 'Edit Competency';
                     document.getElementById('competencyCode').value = comp.code || '';
+                    document.getElementById('competencyCode').readOnly = true; // Make code read-only
+                    document.getElementById('competencyCode').style.backgroundColor = '#f5f5f5';
+                    document.getElementById('competencyCode').style.cursor = 'not-allowed';
+                    
                     document.getElementById('competencyTitle').value = comp.title || '';
                     document.getElementById('competencyDescription').value = comp.description || '';
                     document.getElementById('competencyLevel').value = comp.level || 'NC II';
                     document.getElementById('competencyStatus').value = comp.status || 'Active';
-                    document.getElementById('competencyDuration').value = comp.duration || '';
+                    document.getElementById('competencyDuration').value = comp.duration || '40';
                     
                     // Set existing image
                     if (comp.image) {
@@ -1259,7 +1309,7 @@
                         document.getElementById('competencyImagePreview').innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover;">`;
                     } else {
                         currentCompetencyImageData = null;
-                        document.getElementById('competencyImagePreview').innerHTML = '<span style="color: #999; font-size: 13px;">No image selected</span>';
+                        document.getElementById('competencyImagePreview').innerHTML = '<i class="bi bi-image" style="font-size: 48px; color: #ccc;"></i><p style="margin: 12px 0 0 0; color: #999; font-size: 13px;">Click to upload competency image</p>';
                     }
                     
                     // Load courses and then select the current one
@@ -1272,12 +1322,16 @@
                 })
                 .catch(error => {
                     console.error('Error loading competency data:', error);
-                    alert('Failed to load competency data');
+                    showNotification('Failed to load competency: ' + error.message, 'error');
+                    loadCompetencies(); // Reload to refresh the list
                 });
         }
 
         function closeCompetencyModal() {
             document.getElementById('editCompetencyModal').classList.remove('active');
+            document.getElementById('competencyCode').readOnly = false;
+            document.getElementById('competencyCode').style.backgroundColor = 'white';
+            document.getElementById('competencyCode').style.cursor = 'auto';
             currentEditRow = null;
             currentEditCompetencyId = null;
         }
@@ -1413,9 +1467,8 @@
         // Logout handler
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../../public/index.html';
+                // Call the logout function from session-check.js
+                logout();
             }
         }
 

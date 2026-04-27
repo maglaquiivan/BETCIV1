@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 
 const traineeAccountSchema = new mongoose.Schema({
   accountId: {
@@ -50,6 +51,21 @@ const traineeAccountSchema = new mongoose.Schema({
   dateOfBirth: Date
 }, {
   timestamps: true
+});
+
+// Hash password before saving
+traineeAccountSchema.pre('save', async function(next) {
+  if (!this.isModified('password')) {
+    return next();
+  }
+  
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = mongoose.model('TraineeAccount', traineeAccountSchema);

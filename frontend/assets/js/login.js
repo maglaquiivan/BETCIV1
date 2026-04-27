@@ -91,27 +91,38 @@ document.addEventListener('DOMContentLoaded', function() {
       const email = document.getElementById('login-email')?.value;
       const password = document.getElementById('login-password')?.value;
 
+      console.log('Login form submitted');
+      console.log('Email:', email);
+      console.log('Password:', password ? '***' : 'empty');
+
       if (!email || !password) {
         showModal('error', 'Missing Information', 'Please fill in all fields');
         return;
       }
 
       try {
+        console.log('Sending login request to http://localhost:5500/api/users/login');
         // Call MongoDB API for login
         const response = await fetch('http://localhost:5500/api/users/login', {
           method: 'POST',
+          credentials: 'include', // Important: send cookies for session
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({ email, password })
         });
 
+        console.log('Login response status:', response.status);
+        console.log('Login response ok:', response.ok);
+
         if (!response.ok) {
+          console.log('Login failed with status:', response.status);
           showModal('error', 'Login Failed', 'Username or password is incorrect. Please try again.');
           return;
         }
 
         const user = await response.json();
+        console.log('Login successful, user:', user.email);
 
         // Store user session (exclude large fields like profilePicture to avoid header size issues)
         const sessionData = {
@@ -153,13 +164,26 @@ document.addEventListener('DOMContentLoaded', function() {
       e.preventDefault();
       const firstName = document.getElementById('register-firstname').value.trim();
       const lastName = document.getElementById('register-lastname').value.trim();
-      const email = document.getElementById('register-email').value;
+      const email = document.getElementById('register-email').value.trim();
       const address = document.getElementById('register-address').value.trim();
       const password = document.getElementById('register-password').value;
       const confirm = document.getElementById('register-confirm').value;
 
       if (!firstName || !lastName || !email || !address || !password || !confirm) {
         showModal('error', 'Missing Information', 'Please fill in all required fields');
+        return;
+      }
+
+      // Validate email format
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        showModal('error', 'Invalid Email', 'Please enter a valid email address');
+        return;
+      }
+
+      // Only accept Gmail addresses
+      if (!email.toLowerCase().endsWith('@gmail.com')) {
+        showModal('error', 'Invalid Email', 'Please use a Gmail address (e.g., user@gmail.com)');
         return;
       }
 
@@ -173,7 +197,9 @@ document.addEventListener('DOMContentLoaded', function() {
         const username = email.split('@')[0];
 
         // Get the next trainee ID in ascending order
-        const traineeIdResponse = await fetch('http://localhost:5500/api/trainee-accounts');
+        const traineeIdResponse = await fetch('http://localhost:5500/api/trainee-accounts', {
+          credentials: 'include'
+        });
         const existingTrainees = await traineeIdResponse.json();
         
         // Find the highest TRN number
@@ -194,6 +220,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Call MongoDB API for registration - save to trainee-accounts collection
         const response = await fetch('http://localhost:5500/api/trainee-accounts', {
           method: 'POST',
+          credentials: 'include', // Important: send cookies for session
           headers: {
             'Content-Type': 'application/json'
           },
@@ -231,6 +258,7 @@ document.addEventListener('DOMContentLoaded', function() {
           
           const traineeResponse = await fetch('http://localhost:5500/api/trainees', {
             method: 'POST',
+            credentials: 'include',
             headers: {
               'Content-Type': 'application/json'
             },

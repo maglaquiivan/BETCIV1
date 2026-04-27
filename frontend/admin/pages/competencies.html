@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>Competencies - BETCI Admin</title>
-    <meta name="description" content="BETCI Admin - Competencies" />
+    <meta http-equiv="refresh" content="0; url=training-catalog.html#competencies" />
+    <title>Redirecting to Training Catalog - Competencies</title>
+    <script>
+        // Immediate redirect to training catalog competencies tab
+        window.location.href = 'training-catalog.html#competencies';
+    </script>
+</head>
+<body>
+    <p>Redirecting to Training Catalog - Competencies...</p>
+    <p>If you are not redirected, <a href="training-catalog.html#competencies">click here</a>.</p>
+</body>
+</html>
     
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="../../assets/img/logo.png" />
@@ -19,6 +28,9 @@
     
     <!-- Admin Dashboard CSS -->
     <link rel="stylesheet" href="../assets/css/admin-dashboard.css?v=7" />
+    
+    <!-- Session Check Script (Load First) -->
+    <script src="../../assets/js/session-check.js"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -164,7 +176,7 @@
                             <h3 class="competency-title">Equipment Operation</h3>
                             <p class="competency-description">Master the fundamental skills required to safely and efficiently operate heavy equipment in various industrial settings.</p>
                             <div class="competency-level">
-                                <label>Level:</label>
+                                <span class="competency-level-label">Level:</span>
                                 <span>Intermediate</span>
                             </div>
                             <div class="competency-footer">
@@ -182,7 +194,7 @@
                             <h3 class="competency-title">Safety Compliance</h3>
                             <p class="competency-description">Comprehensive understanding of workplace safety regulations, hazard identification, and emergency response procedures.</p>
                             <div class="competency-level">
-                                <label>Level:</label>
+                                <span class="competency-level-label">Level:</span>
                                 <span>Advanced</span>
                             </div>
                             <div class="competency-footer">
@@ -200,7 +212,7 @@
                             <h3 class="competency-title">Maintenance & Troubleshooting</h3>
                             <p class="competency-description">Ability to perform routine maintenance, diagnose equipment issues, and execute basic repairs on heavy machinery.</p>
                             <div class="competency-level">
-                                <label>Level:</label>
+                                <span class="competency-level-label">Level:</span>
                                 <span>Intermediate</span>
                             </div>
                             <div class="competency-footer">
@@ -218,7 +230,7 @@
                             <h3 class="competency-title">Productivity & Efficiency</h3>
                             <p class="competency-description">Optimize work processes, manage time effectively, and achieve production targets while maintaining quality standards.</p>
                             <div class="competency-level">
-                                <label>Level:</label>
+                                <span class="competency-level-label">Level:</span>
                                 <span>Beginner</span>
                             </div>
                             <div class="competency-footer">
@@ -236,7 +248,7 @@
                             <h3 class="competency-title">Teamwork & Communication</h3>
                             <p class="competency-description">Collaborate effectively with team members, communicate clearly, and follow instructions from supervisors and coordinators.</p>
                             <div class="competency-level">
-                                <label>Level:</label>
+                                <span class="competency-level-label">Level:</span>
                                 <span>Advanced</span>
                             </div>
                             <div class="competency-footer">
@@ -254,7 +266,7 @@
                             <h3 class="competency-title">Problem Solving</h3>
                             <p class="competency-description">Analyze complex situations, identify root causes, and develop practical solutions to operational challenges.</p>
                             <div class="competency-level">
-                                <label>Level:</label>
+                                <span class="competency-level-label">Level:</span>
                                 <span>Intermediate</span>
                             </div>
                             <div class="competency-footer">
@@ -269,12 +281,56 @@
 
     <!-- Scripts -->
     <script src="../../assets/js/dark-mode.js"></script>
-    <script src="../../assets/js/admin-dashboard.js?v=6"></script>
+    <script src="../assets/js/admin-dashboard.js?v=8"></script>
     <script>
         // Load dark mode theme
         if (typeof loadTheme === 'function') {
             loadTheme();
         }
+
+        // Debug: Add manual avatar refresh function
+        window.refreshAvatar = function() {
+            console.log('=== MANUAL AVATAR REFRESH ===');
+            const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+            if (userSession.accountId) {
+                const cachedPictureKey = `adminProfilePic_${userSession.accountId}`;
+                const cached = sessionStorage.getItem(cachedPictureKey);
+                console.log('Cache key:', cachedPictureKey);
+                console.log('Cached exists:', !!cached);
+                if (cached) {
+                    console.log('Cached length:', cached.length);
+                    console.log('Cached preview:', cached.substring(0, 100));
+                    if (typeof updateAllAvatarsWithImage === 'function') {
+                        updateAllAvatarsWithImage(cached);
+                        console.log('Avatar updated from cache');
+                    } else {
+                        console.error('updateAllAvatarsWithImage function not found');
+                    }
+                } else {
+                    console.log('No cached avatar found, fetching from API...');
+                    fetch(`http://localhost:5500/api/admin-accounts/${userSession.accountId}`)
+                        .then(r => r.json())
+                        .then(data => {
+                            console.log('API response has profilePicture:', !!data.profilePicture);
+                            if (data.profilePicture) {
+                                sessionStorage.setItem(cachedPictureKey, data.profilePicture);
+                                if (typeof updateAllAvatarsWithImage === 'function') {
+                                    updateAllAvatarsWithImage(data.profilePicture);
+                                    console.log('Avatar updated from API');
+                                }
+                            } else {
+                                console.log('No profilePicture in API response');
+                            }
+                        })
+                        .catch(err => console.error('API error:', err));
+                }
+            } else {
+                console.error('No accountId in session');
+            }
+        };
+        
+        console.log('=== COMPETENCIES PAGE LOADED ===');
+        console.log('To manually refresh avatar, run: refreshAvatar()');
 
         // Burger menu functionality
         document.addEventListener('DOMContentLoaded', function() {
@@ -351,9 +407,8 @@
         // Logout handler
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../../public/index.html';
+                // Call the logout function from session-check.js
+                logout();
             }
         }
 

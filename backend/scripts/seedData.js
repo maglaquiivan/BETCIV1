@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const Course = require('../models/Course');
 const User = require('../models/User');
 const Trainee = require('../models/Trainee');
@@ -96,120 +97,6 @@ const defaultUsers = [
     address: 'Sample Address'
   }
 ];
-
-async function seedDatabase() {
-  try {
-    await mongoose.connect(MONGODB_URI);
-    console.log('Connected to MongoDB');
-
-    // Clear existing data
-    await Course.deleteMany({});
-    await User.deleteMany({});
-    await Trainee.deleteMany({});
-    await Appointment.deleteMany({});
-    await Competency.deleteMany({});
-    await Account.deleteMany({});
-    await AdminAccount.deleteMany({});
-    await TraineeAccount.deleteMany({});
-    await Record.deleteMany({});
-    await Attendance.deleteMany({});
-    console.log('Cleared existing data');
-
-    // Insert courses
-    await Course.insertMany(defaultCourses);
-    console.log('✓ Courses seeded successfully (6 courses)');
-
-    // Insert users
-    await User.insertMany(defaultUsers);
-    console.log('✓ Users seeded successfully (2 users)');
-
-    // Insert trainees
-    await Trainee.insertMany(defaultTrainees);
-    console.log('✓ Trainees seeded successfully (5 trainees)');
-
-    // Insert appointments
-    await Appointment.insertMany(defaultAppointments);
-    console.log('✓ Appointments seeded successfully (4 appointments)');
-
-    // Insert competencies
-    await Competency.insertMany(defaultCompetencies);
-    console.log('✓ Competencies seeded successfully (3 competencies)');
-
-    // Insert accounts (legacy)
-    await Account.insertMany(defaultAccounts);
-    console.log('✓ Accounts seeded successfully (3 accounts)');
-
-    // Insert admin accounts (new collection)
-    const adminAccounts = defaultAccounts.filter(acc => acc.role === 'admin' || acc.role === 'instructor' || acc.role === 'staff');
-    if (adminAccounts.length > 0) {
-      await AdminAccount.insertMany(adminAccounts.map(acc => ({
-        accountId: acc.accountId,
-        username: acc.username,
-        email: acc.email,
-        password: acc.password,
-        firstName: acc.firstName,
-        lastName: acc.lastName,
-        role: acc.role,
-        status: acc.status,
-        lastLogin: acc.lastLogin
-      })));
-      console.log(`✓ Admin accounts seeded successfully (${adminAccounts.length} accounts)`);
-    }
-
-    // Insert trainee accounts (new collection) - using default trainee data
-    const traineeAccount = {
-      accountId: 'ACC1774597634318',
-      username: 'trainee',
-      email: 'trainee@betci.com',
-      password: 'trainee123',
-      firstName: 'John',
-      lastName: 'Doe',
-      role: 'trainee',
-      status: 'active',
-      phone: '+63 912 345 6789',
-      address: '123 Main St, Manila',
-      dateOfBirth: new Date('1995-05-15')
-    };
-    await TraineeAccount.create(traineeAccount);
-    console.log('✓ Trainee accounts seeded successfully (1 account)');
-
-    // Insert records
-    await Record.insertMany(defaultRecords);
-    console.log('✓ Records seeded successfully (3 records)');
-
-    // Insert attendance
-    await Attendance.insertMany(defaultAttendance);
-    console.log('✓ Attendance seeded successfully (4 attendance records)');
-
-    console.log('\n========================================');
-    console.log('Database seeded successfully!');
-    console.log('========================================');
-    console.log('\nCollections created:');
-    console.log('- courses (6)');
-    console.log('- users (2)');
-    console.log('- trainees (5)');
-    console.log('- appointments (4)');
-    console.log('- competencies (3)');
-    console.log('- accounts (3 - legacy)');
-    console.log('- adminaccounts (3 - new)');
-    console.log('- traineeaccounts (1 - new)');
-    console.log('- records (3)');
-    console.log('- attendances (4)');
-    console.log('\nDefault login credentials:');
-    console.log('- Admin: admin@betci.com / admin123 (ACC001)');
-    console.log('- Trainee: trainee@betci.com / trainee123 (ACC1774597634318)');
-    console.log('- Instructor: instructor@betci.com / instructor123 (ACC002)');
-    console.log('========================================\n');
-    
-    process.exit(0);
-  } catch (error) {
-    console.error('Error seeding database:', error);
-    process.exit(1);
-  }
-}
-
-seedDatabase();
-
 
 const defaultTrainees = [
   {
@@ -505,6 +392,8 @@ const defaultRecords = [
 const defaultAttendance = [
   {
     userId: 'TRN001',
+    firstName: 'John',
+    lastName: 'Doe',
     courseId: 'forklift-operation',
     date: new Date('2024-03-01'),
     status: 'present',
@@ -514,6 +403,8 @@ const defaultAttendance = [
   },
   {
     userId: 'TRN001',
+    firstName: 'John',
+    lastName: 'Doe',
     courseId: 'forklift-operation',
     date: new Date('2024-03-02'),
     status: 'present',
@@ -523,6 +414,8 @@ const defaultAttendance = [
   },
   {
     userId: 'TRN002',
+    firstName: 'Maria',
+    lastName: 'Santos',
     courseId: 'bulldozer-operation',
     date: new Date('2024-03-01'),
     status: 'present',
@@ -532,6 +425,8 @@ const defaultAttendance = [
   },
   {
     userId: 'TRN002',
+    firstName: 'Maria',
+    lastName: 'Santos',
     courseId: 'bulldozer-operation',
     date: new Date('2024-03-02'),
     status: 'late',
@@ -540,3 +435,122 @@ const defaultAttendance = [
     remarks: 'Traffic delay'
   }
 ];
+
+async function seedDatabase() {
+  try {
+    await mongoose.connect(MONGODB_URI);
+    console.log('Connected to MongoDB');
+
+    // Clear existing data
+    await Course.deleteMany({});
+    await User.deleteMany({});
+    await Trainee.deleteMany({});
+    await Appointment.deleteMany({});
+    await Competency.deleteMany({});
+    await Account.deleteMany({});
+    await AdminAccount.deleteMany({});
+    await TraineeAccount.deleteMany({});
+    await Record.deleteMany({});
+    await Attendance.deleteMany({});
+    console.log('Cleared existing data');
+
+    // Insert courses
+    await Course.insertMany(defaultCourses);
+    console.log('✓ Courses seeded successfully (6 courses)');
+
+    // Insert users (using create to trigger pre-save hook)
+    for (const user of defaultUsers) {
+      await User.create(user);
+    }
+    console.log('✓ Users seeded successfully (2 users)');
+
+    // Insert trainees
+    await Trainee.insertMany(defaultTrainees);
+    console.log('✓ Trainees seeded successfully (5 trainees)');
+
+    // Insert appointments
+    await Appointment.insertMany(defaultAppointments);
+    console.log('✓ Appointments seeded successfully (4 appointments)');
+
+    // Insert competencies
+    await Competency.insertMany(defaultCompetencies);
+    console.log('✓ Competencies seeded successfully (3 competencies)');
+
+    // Insert accounts (using create to trigger pre-save hook)
+    for (const acc of defaultAccounts) {
+      await Account.create(acc);
+    }
+    console.log('✓ Accounts seeded successfully (3 accounts)');
+
+    // Insert admin accounts (using create to trigger pre-save hook)
+    const adminAccounts = defaultAccounts.filter(acc => acc.role === 'admin' || acc.role === 'instructor' || acc.role === 'staff');
+    if (adminAccounts.length > 0) {
+      for (const acc of adminAccounts) {
+        await AdminAccount.create({
+          accountId: acc.accountId,
+          username: acc.username,
+          email: acc.email,
+          password: acc.password,
+          firstName: acc.firstName,
+          lastName: acc.lastName,
+          role: acc.role,
+          status: acc.status,
+          lastLogin: acc.lastLogin
+        });
+      }
+      console.log(`✓ Admin accounts seeded successfully (${adminAccounts.length} accounts)`);
+    }
+
+    // Insert trainee account (using create to trigger pre-save hook)
+    const traineeAccountData = {
+      accountId: 'ACC1774597634318',
+      username: 'trainee',
+      email: 'trainee@betci.com',
+      password: 'trainee123',
+      firstName: 'John',
+      lastName: 'Doe',
+      role: 'trainee',
+      status: 'active',
+      phone: '+63 912 345 6789',
+      address: '123 Main St, Manila',
+      dateOfBirth: new Date('1995-05-15')
+    };
+    await TraineeAccount.create(traineeAccountData);
+    console.log('✓ Trainee accounts seeded successfully (1 account)');
+
+    // Insert records
+    await Record.insertMany(defaultRecords);
+    console.log('✓ Records seeded successfully (3 records)');
+
+    // Insert attendance
+    await Attendance.insertMany(defaultAttendance);
+    console.log('✓ Attendance seeded successfully (4 attendance records)');
+
+    console.log('\n========================================');
+    console.log('Database seeded successfully!');
+    console.log('========================================');
+    console.log('\nCollections created:');
+    console.log('- courses (6)');
+    console.log('- users (2)');
+    console.log('- trainees (5)');
+    console.log('- appointments (4)');
+    console.log('- competencies (3)');
+    console.log('- accounts (3 - legacy)');
+    console.log('- adminaccounts (3 - new)');
+    console.log('- traineeaccounts (1 - new)');
+    console.log('- records (3)');
+    console.log('- attendances (4)');
+    console.log('\nDefault login credentials:');
+    console.log('- Admin: admin@betci.com / admin123 (ACC001)');
+    console.log('- Trainee: trainee@betci.com / trainee123 (ACC1774597634318)');
+    console.log('- Instructor: instructor@betci.com / instructor123 (ACC002)');
+    console.log('========================================\n');
+    
+    process.exit(0);
+  } catch (error) {
+    console.error('Error seeding database:', error);
+    process.exit(1);
+  }
+}
+
+seedDatabase();

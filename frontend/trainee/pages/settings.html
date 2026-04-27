@@ -129,6 +129,7 @@
             font-size: 14px;
             font-weight: 600;
             color: white;
+            text-transform: capitalize;
         }
         
         .info-badge {
@@ -216,6 +217,21 @@
             color: #1e293b;
             background: #f8fafc;
             transition: all 0.3s;
+        }
+        
+        /* Capitalize first letter of each word for name fields */
+        #firstName,
+        #lastName {
+            text-transform: capitalize;
+        }
+        
+        /* Display address in uppercase */
+        #address {
+            text-transform: uppercase;
+        }
+        
+        #displayAddress {
+            text-transform: uppercase;
         }
         
         .form-input-modern:focus {
@@ -712,6 +728,13 @@
             if (profileForm) {
                 profileForm.addEventListener('submit', function(e) {
                     e.preventDefault();
+                    
+                    // Convert address to uppercase before saving
+                    const addressField = document.getElementById('address');
+                    if (addressField && addressField.value) {
+                        addressField.value = addressField.value.toUpperCase();
+                    }
+                    
                     showNotification('Profile updated successfully!', 'success');
                     toggleEditMode(); // Exit edit mode after saving
                 });
@@ -1009,6 +1032,42 @@
                 formActions.style.display = 'none';
             }
         }
+        
+        // Convert text to proper case (capitalize first letter of each word)
+        function toProperCase(text) {
+            if (!text) return text;
+            return text.toLowerCase().replace(/\b\w/g, char => char.toUpperCase());
+        }
+        
+        // Add event listeners to name fields to handle caps lock
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstNameInput = document.getElementById('firstName');
+            const lastNameInput = document.getElementById('lastName');
+            
+            // Handle first name input
+            if (firstNameInput) {
+                firstNameInput.addEventListener('input', function(e) {
+                    const cursorPosition = e.target.selectionStart;
+                    const originalLength = e.target.value.length;
+                    e.target.value = toProperCase(e.target.value);
+                    const newLength = e.target.value.length;
+                    // Restore cursor position
+                    e.target.setSelectionRange(cursorPosition, cursorPosition);
+                });
+            }
+            
+            // Handle last name input
+            if (lastNameInput) {
+                lastNameInput.addEventListener('input', function(e) {
+                    const cursorPosition = e.target.selectionStart;
+                    const originalLength = e.target.value.length;
+                    e.target.value = toProperCase(e.target.value);
+                    const newLength = e.target.value.length;
+                    // Restore cursor position
+                    e.target.setSelectionRange(cursorPosition, cursorPosition);
+                });
+            }
+        });
 
         function cancelEdit() {
             const form = document.getElementById('profileForm');

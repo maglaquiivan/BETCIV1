@@ -409,6 +409,211 @@
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
         }
 
+        /* Review Modal Styles */
+        .review-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .review-modal {
+            background: white;
+            max-width: 1200px;
+            margin: 20px auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .review-modal-header {
+            background: linear-gradient(135deg, #E67E22 0%, #d35400 100%);
+            color: white;
+            padding: 24px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .review-modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .review-modal-close {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .review-modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        .review-modal-body {
+            padding: 30px;
+            max-height: calc(100vh - 250px);
+            overflow-y: auto;
+        }
+
+        .review-section {
+            margin-bottom: 30px;
+            border: 2px solid #E67E22;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .review-section-header {
+            background: #fff5ed;
+            padding: 12px 20px;
+            border-bottom: 2px solid #E67E22;
+        }
+
+        .review-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #E67E22;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .review-section-content {
+            padding: 20px;
+            background: white;
+        }
+
+        .review-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 16px;
+        }
+
+        .review-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .review-field-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+
+        .review-field-value {
+            font-size: 14px;
+            color: #333;
+            padding: 8px 12px;
+            background: #f9f9f9;
+            border-radius: 4px;
+            border: 1px solid #e0e0e0;
+            min-height: 36px;
+            display: flex;
+            align-items: center;
+        }
+
+        .review-field-value.empty {
+            color: #999;
+            font-style: italic;
+        }
+
+        .review-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        .review-table th {
+            background: #E67E22;
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .review-table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            font-size: 13px;
+        }
+
+        .review-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .review-signature {
+            border: 2px solid #333;
+            padding: 10px;
+            background: white;
+            border-radius: 4px;
+            max-width: 300px;
+        }
+
+        .review-signature img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .review-modal-footer {
+            padding: 20px 30px;
+            background: #f5f5f5;
+            border-top: 1px solid #ddd;
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .review-picture {
+            max-width: 150px;
+            border: 2px solid #333;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            .review-modal {
+                margin: 10px;
+            }
+
+            .review-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .review-table {
+                font-size: 11px;
+            }
+
+            .review-table th,
+            .review-table td {
+                padding: 6px;
+            }
+        }
+
         /* Print Styles */
         @media print {
             body {
@@ -1056,8 +1261,8 @@
                     <button type="button" class="action-btn print-btn" onclick="printApplicationForm()">
                         <i class="bi bi-printer"></i> Print
                     </button>
-                    <button type="button" class="action-btn submit-btn" onclick="submitApplicationForm()">
-                        <i class="bi bi-check-circle"></i> Submit
+                    <button type="button" class="action-btn submit-btn" onclick="showReviewModal()">
+                        <i class="bi bi-eye"></i> Review & Submit
                     </button>
                     <button type="button" class="action-btn back-btn" onclick="goBack()">
                         <i class="bi bi-arrow-left"></i> Back
@@ -1066,6 +1271,27 @@
             </div>
         </div>
     </main>
+
+    <!-- Review Modal -->
+    <div id="reviewModal" class="review-modal-overlay">
+        <div class="review-modal">
+            <div class="review-modal-header">
+                <h2><i class="bi bi-clipboard-check"></i> Review Your Application</h2>
+                <button class="review-modal-close" onclick="closeReviewModal()">×</button>
+            </div>
+            <div class="review-modal-body" id="reviewModalBody">
+                <!-- Content will be populated by JavaScript -->
+            </div>
+            <div class="review-modal-footer">
+                <button type="button" class="action-btn back-btn" onclick="closeReviewModal()">
+                    <i class="bi bi-pencil"></i> Edit Form
+                </button>
+                <button type="button" class="action-btn submit-btn" onclick="confirmSubmit()">
+                    <i class="bi bi-check-circle"></i> Confirm & Submit
+                </button>
+            </div>
+        </div>
+    </div>
 
     <!-- HTML2PDF Library for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -1087,10 +1313,28 @@
             const originalError = console.error;
             console.error = function(...args) {
                 const errorString = args.join(' ');
-                if (errorString.includes('431') || errorString.includes('ERR_CONNECTION_RESET') || errorString.includes('Failed to load resource')) {
+                // Suppress form validation warnings and connection errors
+                if (errorString.includes('431') || 
+                    errorString.includes('ERR_CONNECTION_RESET') || 
+                    errorString.includes('Failed to load resource') ||
+                    errorString.includes('form field element') ||
+                    errorString.includes('label for=') ||
+                    errorString.includes('autocomplete')) {
                     return;
                 }
                 originalError.apply(console, args);
+            };
+
+            const originalWarn = console.warn;
+            console.warn = function(...args) {
+                const warnString = args.join(' ');
+                // Suppress form validation warnings
+                if (warnString.includes('form field element') ||
+                    warnString.includes('label for=') ||
+                    warnString.includes('autocomplete')) {
+                    return;
+                }
+                originalWarn.apply(console, args);
             };
         })();
 
@@ -1142,7 +1386,11 @@
                 }
             }
             
+            // Load saved data first
             loadSavedData();
+            
+            // Setup auto-save for all form inputs
+            setupAutoSave();
         });
         
         function startDrawing(e) {
@@ -2019,15 +2267,505 @@
             }, 500);
         }
 
-        // Submit application form with confirmation
-        async function submitApplicationForm() {
-            // Show confirmation popup
-            const confirmed = confirm('Are you sure you want to submit this application form? Please verify all information is correct before proceeding.');
-            
-            if (!confirmed) {
+        // Show review modal with all form data
+        function showReviewModal() {
+            // Validate required fields first
+            const lastName = document.getElementById('lastName').value;
+            const firstName = document.getElementById('firstName').value;
+            const assessmentTitle = document.getElementById('assessmentTitle').value;
+
+            if (!lastName || !firstName || !assessmentTitle) {
+                alert('Please fill in all required fields: Surname, First Name, and Assessment Title');
                 return;
             }
 
+            // Build review content
+            let reviewHTML = '';
+
+            // Application Information Section
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-section-header">
+                        <h3 class="review-section-title">Application Information</h3>
+                    </div>
+                    <div class="review-section-content">
+                        <div class="review-grid">
+                            <div class="review-field">
+                                <div class="review-field-label">Reference Number</div>
+                                <div class="review-field-value">${getRefNumber() || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">ULI</div>
+                                <div class="review-field-value">${getULI() || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">School/Training Center</div>
+                                <div class="review-field-value">${document.getElementById('schoolName').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Assessment Title</div>
+                                <div class="review-field-value">${assessmentTitle}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">School Address</div>
+                                <div class="review-field-value">${document.getElementById('schoolAddress').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Date of Application</div>
+                                <div class="review-field-value">${document.getElementById('applicationDate').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Assessment Type</div>
+                                <div class="review-field-value">${document.querySelector('input[name="assessmentType"]:checked')?.value || '<span class="empty">Not selected</span>'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Client Type Section
+            const clientTypes = [];
+            if (document.getElementById('tvetGraduating')?.checked) clientTypes.push('TVET Graduating Student');
+            if (document.getElementById('tvetGraduate')?.checked) clientTypes.push('TVET Graduate');
+            if (document.getElementById('industryWorker')?.checked) clientTypes.push('Industry Worker');
+            if (document.getElementById('k12')?.checked) clientTypes.push('K-12');
+            if (document.getElementById('owf')?.checked) clientTypes.push('OWF');
+
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-section-header">
+                        <h3 class="review-section-title">Client Type</h3>
+                    </div>
+                    <div class="review-section-content">
+                        <div class="review-field-value">${clientTypes.length > 0 ? clientTypes.join(', ') : '<span class="empty">Not selected</span>'}</div>
+                    </div>
+                </div>
+            `;
+
+            // Personal Information Section
+            const picturePreview = document.getElementById('picturePreview');
+            const hasPicture = picturePreview && picturePreview.style.display !== 'none';
+            
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-section-header">
+                        <h3 class="review-section-title">Personal Information</h3>
+                    </div>
+                    <div class="review-section-content">
+                        <div class="review-grid">
+                            ${hasPicture ? `
+                            <div class="review-field">
+                                <div class="review-field-label">Picture</div>
+                                <img src="${picturePreview.src}" class="review-picture" alt="Profile Picture">
+                            </div>
+                            ` : ''}
+                            <div class="review-field">
+                                <div class="review-field-label">Surname</div>
+                                <div class="review-field-value">${lastName}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">First Name</div>
+                                <div class="review-field-value">${firstName}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Second Name</div>
+                                <div class="review-field-value">${document.getElementById('secondName').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Middle Name</div>
+                                <div class="review-field-value">${document.getElementById('middleName').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Middle Initial</div>
+                                <div class="review-field-value">${document.getElementById('middleInitial').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Name Extension</div>
+                                <div class="review-field-value">${document.getElementById('extension').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Sex</div>
+                                <div class="review-field-value">${document.querySelector('input[name="sex"]:checked')?.value || '<span class="empty">Not selected</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Civil Status</div>
+                                <div class="review-field-value">${document.querySelector('input[name="civilStatus"]:checked')?.value || '<span class="empty">Not selected</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Birth Date</div>
+                                <div class="review-field-value">${document.getElementById('birthdate').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Birth Place</div>
+                                <div class="review-field-value">${document.getElementById('birthplace').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Age</div>
+                                <div class="review-field-value">${document.getElementById('age').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Mailing Address Section
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-section-header">
+                        <h3 class="review-section-title">Mailing Address</h3>
+                    </div>
+                    <div class="review-section-content">
+                        <div class="review-grid">
+                            <div class="review-field">
+                                <div class="review-field-label">Number Street</div>
+                                <div class="review-field-value">${document.getElementById('numberStreet').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Barangay</div>
+                                <div class="review-field-value">${document.getElementById('barangay').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">District</div>
+                                <div class="review-field-value">${document.getElementById('district').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">City</div>
+                                <div class="review-field-value">${document.getElementById('city').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Province</div>
+                                <div class="review-field-value">${document.getElementById('province').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Region</div>
+                                <div class="review-field-value">${document.getElementById('region').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Zip Code</div>
+                                <div class="review-field-value">${document.getElementById('zip').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Parents Information Section
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-section-header">
+                        <h3 class="review-section-title">Parents Information</h3>
+                    </div>
+                    <div class="review-section-content">
+                        <div class="review-grid">
+                            <div class="review-field">
+                                <div class="review-field-label">Mother's Name</div>
+                                <div class="review-field-value">${document.getElementById('motherName').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Father's Name</div>
+                                <div class="review-field-value">${document.getElementById('fatherName').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Contact Information Section
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-section-header">
+                        <h3 class="review-section-title">Contact Information</h3>
+                    </div>
+                    <div class="review-section-content">
+                        <div class="review-grid">
+                            <div class="review-field">
+                                <div class="review-field-label">Telephone</div>
+                                <div class="review-field-value">${document.getElementById('tel').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Mobile</div>
+                                <div class="review-field-value">${document.getElementById('mobile').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Email</div>
+                                <div class="review-field-value">${document.getElementById('email').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Fax</div>
+                                <div class="review-field-value">${document.getElementById('fax').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Others</div>
+                                <div class="review-field-value">${document.getElementById('othersContact').value || '<span class="empty">Not provided</span>'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Educational & Employment Status Section
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-section-header">
+                        <h3 class="review-section-title">Educational & Employment Status</h3>
+                    </div>
+                    <div class="review-section-content">
+                        <div class="review-grid">
+                            <div class="review-field">
+                                <div class="review-field-label">Highest Educational Attainment</div>
+                                <div class="review-field-value">${document.querySelector('input[name="education"]:checked')?.value || '<span class="empty">Not selected</span>'}</div>
+                            </div>
+                            <div class="review-field">
+                                <div class="review-field-label">Employment Status</div>
+                                <div class="review-field-value">${document.querySelector('input[name="employmentStatus"]:checked')?.value || '<span class="empty">Not selected</span>'}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Work Experience Section
+            const workExpRows = document.querySelectorAll('#workExperienceTable tbody tr');
+            if (workExpRows.length > 0) {
+                reviewHTML += `
+                    <div class="review-section">
+                        <div class="review-section-header">
+                            <h3 class="review-section-title">Work Experience</h3>
+                        </div>
+                        <div class="review-section-content">
+                            <table class="review-table">
+                                <thead>
+                                    <tr>
+                                        <th>Company Name</th>
+                                        <th>Position</th>
+                                        <th>Inclusive Dates</th>
+                                        <th>Monthly Salary</th>
+                                        <th>Status</th>
+                                        <th>Years Exp.</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                workExpRows.forEach(row => {
+                    const cells = row.querySelectorAll('input');
+                    if (cells.length >= 6) {
+                        reviewHTML += `
+                            <tr>
+                                <td>${cells[0].value || '-'}</td>
+                                <td>${cells[1].value || '-'}</td>
+                                <td>${cells[2].value || '-'}</td>
+                                <td>${cells[3].value || '-'}</td>
+                                <td>${cells[4].value || '-'}</td>
+                                <td>${cells[5].value || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                });
+                
+                reviewHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Training/Seminars Section
+            const trainingRows = document.querySelectorAll('#trainingTable tbody tr');
+            if (trainingRows.length > 0) {
+                reviewHTML += `
+                    <div class="review-section">
+                        <div class="review-section-header">
+                            <h3 class="review-section-title">Training/Seminars Attended</h3>
+                        </div>
+                        <div class="review-section-content">
+                            <table class="review-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Venue</th>
+                                        <th>Inclusive Dates</th>
+                                        <th>No. of Hours</th>
+                                        <th>Conducted By</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                trainingRows.forEach(row => {
+                    const cells = row.querySelectorAll('input');
+                    if (cells.length >= 5) {
+                        reviewHTML += `
+                            <tr>
+                                <td>${cells[0].value || '-'}</td>
+                                <td>${cells[1].value || '-'}</td>
+                                <td>${cells[2].value || '-'}</td>
+                                <td>${cells[3].value || '-'}</td>
+                                <td>${cells[4].value || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                });
+                
+                reviewHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Licensure Exams Section
+            const licensureRows = document.querySelectorAll('#licensureTable tbody tr');
+            if (licensureRows.length > 0) {
+                reviewHTML += `
+                    <div class="review-section">
+                        <div class="review-section-header">
+                            <h3 class="review-section-title">Licensure Examinations Passed</h3>
+                        </div>
+                        <div class="review-section-content">
+                            <table class="review-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Year Taken</th>
+                                        <th>Venue</th>
+                                        <th>Rating</th>
+                                        <th>Remarks</th>
+                                        <th>Expiry Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                licensureRows.forEach(row => {
+                    const cells = row.querySelectorAll('input');
+                    if (cells.length >= 6) {
+                        reviewHTML += `
+                            <tr>
+                                <td>${cells[0].value || '-'}</td>
+                                <td>${cells[1].value || '-'}</td>
+                                <td>${cells[2].value || '-'}</td>
+                                <td>${cells[3].value || '-'}</td>
+                                <td>${cells[4].value || '-'}</td>
+                                <td>${cells[5].value || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                });
+                
+                reviewHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Competency Assessments Section
+            const competencyRows = document.querySelectorAll('#competencyTable tbody tr');
+            if (competencyRows.length > 0) {
+                reviewHTML += `
+                    <div class="review-section">
+                        <div class="review-section-header">
+                            <h3 class="review-section-title">Competency Assessments Passed</h3>
+                        </div>
+                        <div class="review-section-content">
+                            <table class="review-table">
+                                <thead>
+                                    <tr>
+                                        <th>Title</th>
+                                        <th>Qualification Level</th>
+                                        <th>Industry Sector</th>
+                                        <th>Certificate Number</th>
+                                        <th>Date of Issuance</th>
+                                        <th>Expiration Date</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+                
+                competencyRows.forEach(row => {
+                    const cells = row.querySelectorAll('input');
+                    if (cells.length >= 6) {
+                        reviewHTML += `
+                            <tr>
+                                <td>${cells[0].value || '-'}</td>
+                                <td>${cells[1].value || '-'}</td>
+                                <td>${cells[2].value || '-'}</td>
+                                <td>${cells[3].value || '-'}</td>
+                                <td>${cells[4].value || '-'}</td>
+                                <td>${cells[5].value || '-'}</td>
+                            </tr>
+                        `;
+                    }
+                });
+                
+                reviewHTML += `
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                `;
+            }
+
+            // Signature Section
+            const signatureData = canvas.toDataURL();
+            reviewHTML += `
+                <div class="review-section">
+                    <div class="review-section-header">
+                        <h3 class="review-section-title">Signature</h3>
+                    </div>
+                    <div class="review-section-content">
+                        <div class="review-signature">
+                            <img src="${signatureData}" alt="Applicant Signature">
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Populate modal and show
+            document.getElementById('reviewModalBody').innerHTML = reviewHTML;
+            document.getElementById('reviewModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close review modal
+        function closeReviewModal() {
+            document.getElementById('reviewModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Helper function to get reference number
+        function getRefNumber() {
+            let refNum = '';
+            for (let i = 1; i <= 15; i++) {
+                const val = document.getElementById(`refNum${i}`)?.value || '';
+                refNum += val;
+            }
+            return refNum || null;
+        }
+
+        // Helper function to get ULI
+        function getULI() {
+            let uli = '';
+            for (let i = 1; i <= 14; i++) {
+                const val = document.getElementById(`uli${i}`)?.value || '';
+                uli += val;
+                if (i === 2 || i === 6 || i === 10) uli += '-';
+            }
+            return uli || null;
+        }
+
+        // Confirm and submit from review modal
+        function confirmSubmit() {
+            closeReviewModal();
+            submitApplicationForm();
+        }
+
+        // Submit application form with confirmation
+        async function submitApplicationForm() {
             // Validate required fields
             const lastName = document.getElementById('lastName').value;
             const firstName = document.getElementById('firstName').value;
@@ -2199,83 +2937,107 @@
                     const result = await response.json();
                     console.log('Application submitted:', result);
                     
+                    // Clear the draft from localStorage after successful submission
+                    localStorage.removeItem('applicationFormDraft');
+                    
                     // Also save to localStorage as backup
                     localStorage.setItem('applicationData', JSON.stringify(applicationData));
                     
-                    // Check if this application is for a course enrollment
+                    // ALWAYS create an enrollment record for admin approval
+                    try {
+                        const enrollmentData = {
+                            traineeId: userSession.accountId,
+                            userId: userSession.accountId,
+                            courseId: applicationData.competencyAssessments && applicationData.competencyAssessments[0] 
+                                ? applicationData.competencyAssessments[0].competency_code 
+                                : 'General Assessment',
+                            courseName: applicationData.competencyAssessments && applicationData.competencyAssessments[0]
+                                ? applicationData.competencyAssessments[0].competency_title
+                                : 'General Assessment',
+                            status: 'Pending',
+                            enrollmentDate: new Date().toISOString(),
+                            applicationId: result._id || result.id,
+                            enrolleeData: {
+                                firstName: applicationData.profile.firstName || '',
+                                lastName: applicationData.profile.surname || '',
+                                email: applicationData.profile.email || '',
+                                phone: applicationData.profile.mobile || applicationData.profile.tel || '',
+                                address: `${applicationData.profile.numberStreet || ''}, ${applicationData.profile.barangay || ''}, ${applicationData.profile.city || ''}, ${applicationData.profile.province || ''}`.replace(/^, |, $|, , /g, ''),
+                                dateOfBirth: applicationData.profile.birthDate || '',
+                                gender: applicationData.profile.sex || '',
+                                education: applicationData.profile.highestEducationalAttainment || ''
+                            },
+                            progress: 0,
+                            startDate: new Date().toISOString()
+                        };
+                        
+                        const enrollmentResponse = await fetch('http://localhost:5500/api/enrollments', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(enrollmentData)
+                        });
+                        
+                        if (enrollmentResponse.ok) {
+                            console.log('Enrollment record created for admin approval');
+                        } else {
+                            console.warn('Failed to create enrollment record:', enrollmentResponse.status);
+                        }
+                    } catch (enrollError) {
+                        console.error('Error creating enrollment record:', enrollError);
+                    }
+                    
+                    // Check if this application is for a course enrollment (legacy support)
                     const enrollmentCourse = sessionStorage.getItem('enrollmentCourse');
                     if (enrollmentCourse) {
                         try {
                             const courseData = JSON.parse(enrollmentCourse);
                             
-                            // Create enrollment record
-                            const enrollmentResponse = await fetch('http://localhost:5500/api/enrollments', {
+                            // Create record for admin dashboard
+                            const recordData = {
+                                userId: userSession.accountId,
+                                courseId: courseData.courseId,
+                                courseName: courseData.courseName,
+                                status: 'In Progress',
+                                progress: 0,
+                                startDate: new Date(),
+                                applicationId: result._id || result.id,
+                                enrolleeData: {
+                                    firstName: applicationData.profile.firstName,
+                                    lastName: applicationData.profile.surname,
+                                    email: applicationData.profile.email,
+                                    phone: applicationData.profile.mobile,
+                                    address: `${applicationData.profile.numberStreet}, ${applicationData.profile.barangay}, ${applicationData.profile.city}, ${applicationData.profile.province}`,
+                                    dateOfBirth: applicationData.profile.birthDate,
+                                    gender: applicationData.profile.sex,
+                                    education: applicationData.profile.highestEducationalAttainment,
+                                    emergencyContact: {
+                                        name: applicationData.profile.emergencyContactName || 'N/A',
+                                        phone: applicationData.profile.emergencyContactNumber || 'N/A'
+                                    }
+                                }
+                            };
+                            
+                            await fetch('http://localhost:5500/api/records', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json'
                                 },
-                                body: JSON.stringify({
-                                    userId: userSession.accountId,
-                                    courseId: courseData.courseId,
-                                    courseName: courseData.courseName,
-                                    status: 'active',
-                                    enrollmentDate: new Date(),
-                                    applicationId: applicationData.applicationId,
-                                    enrolleeData: applicationData.profile
-                                })
+                                body: JSON.stringify(recordData)
                             });
                             
-                            if (enrollmentResponse.ok) {
-                                console.log('Enrollment created successfully');
-                                
-                                // Create record for admin dashboard
-                                const recordData = {
-                                    userId: userSession.accountId,
-                                    courseId: courseData.courseId,
-                                    courseName: courseData.courseName,
-                                    status: 'In Progress',
-                                    progress: 0,
-                                    startDate: new Date(),
-                                    applicationId: applicationData.applicationId,
-                                    enrolleeData: {
-                                        firstName: applicationData.profile.firstName,
-                                        lastName: applicationData.profile.surname,
-                                        email: applicationData.profile.email,
-                                        phone: applicationData.profile.mobile,
-                                        address: `${applicationData.profile.numberStreet}, ${applicationData.profile.barangay}, ${applicationData.profile.city}, ${applicationData.profile.province}`,
-                                        dateOfBirth: applicationData.profile.birthDate,
-                                        gender: applicationData.profile.sex,
-                                        education: applicationData.profile.highestEducationalAttainment,
-                                        emergencyContact: {
-                                            name: applicationData.profile.emergencyContactName || 'N/A',
-                                            phone: applicationData.profile.emergencyContactNumber || 'N/A'
-                                        }
-                                    }
-                                };
-                                
-                                await fetch('http://localhost:5500/api/records', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json'
-                                    },
-                                    body: JSON.stringify(recordData)
-                                });
-                                
-                                // Clear the enrollment course from session
-                                sessionStorage.removeItem('enrollmentCourse');
-                                
-                                alert(`Application submitted successfully! You are now enrolled in ${courseData.courseName}`);
-                            } else {
-                                console.error('Failed to create enrollment');
-                                alert('Application submitted but enrollment failed. Please contact admin.');
-                            }
+                            // Clear the enrollment course from session
+                            sessionStorage.removeItem('enrollmentCourse');
+                            
+                            alert(`Application submitted successfully! You are now enrolled in ${courseData.courseName}`);
                         } catch (enrollError) {
-                            console.error('Error creating enrollment:', enrollError);
-                            alert('Application submitted but enrollment failed. Please contact admin.');
+                            console.error('Error creating record:', enrollError);
+                            alert('Application submitted successfully!');
                         }
                     } else {
-                        // Regular application without course enrollment
-                        alert('Application Form submitted successfully!');
+                        // Regular application - enrollment will be created for admin approval
+                        alert('Application Form submitted successfully! Waiting for admin approval.');
                     }
                     
                     goBack();
@@ -2303,58 +3065,400 @@
             window.location.href = '../assessment.html';
         }
 
+        // Setup auto-save functionality
+        function setupAutoSave() {
+            // Get all input, select, and textarea elements
+            const formElements = document.querySelectorAll('input, select, textarea');
+            
+            formElements.forEach(element => {
+                // Skip file inputs and buttons
+                if (element.type === 'file' || element.type === 'button' || element.type === 'submit') {
+                    return;
+                }
+                
+                // Add event listeners for auto-save
+                if (element.type === 'checkbox' || element.type === 'radio') {
+                    element.addEventListener('change', saveFormData);
+                } else {
+                    element.addEventListener('input', debounce(saveFormData, 500));
+                }
+            });
+            
+            // Save signature when drawn
+            canvas.addEventListener('mouseup', debounce(saveFormData, 500));
+            canvas.addEventListener('touchend', debounce(saveFormData, 500));
+        }
+
+        // Debounce function to limit save frequency
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        // Save all form data to localStorage
+        function saveFormData() {
+            const formData = {
+                // Reference Number
+                referenceNumber: {},
+                // ULI
+                uli: {},
+                // Application Info
+                schoolName: document.getElementById('schoolName')?.value || '',
+                assessmentTitle: document.getElementById('assessmentTitle')?.value || '',
+                schoolAddress: document.getElementById('schoolAddress')?.value || '',
+                applicationDate: document.getElementById('applicationDate')?.value || '',
+                assessmentType: document.querySelector('input[name="assessmentType"]:checked')?.value || '',
+                // Client Type
+                clientType: {
+                    tvetGraduating: document.getElementById('tvetGraduating')?.checked || false,
+                    tvetGraduate: document.getElementById('tvetGraduate')?.checked || false,
+                    industryWorker: document.getElementById('industryWorker')?.checked || false,
+                    k12: document.getElementById('k12')?.checked || false,
+                    owf: document.getElementById('owf')?.checked || false
+                },
+                // Personal Info
+                lastName: document.getElementById('lastName')?.value || '',
+                firstName: document.getElementById('firstName')?.value || '',
+                secondName: document.getElementById('secondName')?.value || '',
+                middleName: document.getElementById('middleName')?.value || '',
+                middleInitial: document.getElementById('middleInitial')?.value || '',
+                extension: document.getElementById('extension')?.value || '',
+                // Address
+                numberStreet: document.getElementById('numberStreet')?.value || '',
+                district: document.getElementById('district')?.value || '',
+                region: document.getElementById('region')?.value || '',
+                province: document.getElementById('province')?.value || '',
+                city: document.getElementById('city')?.value || '',
+                barangay: document.getElementById('barangay')?.value || '',
+                zip: document.getElementById('zip')?.value || '',
+                // Parents
+                motherName: document.getElementById('motherName')?.value || '',
+                fatherName: document.getElementById('fatherName')?.value || '',
+                // Personal Details
+                sex: document.querySelector('input[name="sex"]:checked')?.value || '',
+                civilStatus: document.querySelector('input[name="civilStatus"]:checked')?.value || '',
+                // Contact
+                tel: document.getElementById('tel')?.value || '',
+                mobile: document.getElementById('mobile')?.value || '',
+                email: document.getElementById('email')?.value || '',
+                fax: document.getElementById('fax')?.value || '',
+                othersContact: document.getElementById('othersContact')?.value || '',
+                // Education & Employment
+                education: document.querySelector('input[name="education"]:checked')?.value || '',
+                employmentStatus: document.querySelector('input[name="employmentStatus"]:checked')?.value || '',
+                // Birth Info
+                birthdate: document.getElementById('birthdate')?.value || '',
+                birthplace: document.getElementById('birthplace')?.value || '',
+                age: document.getElementById('age')?.value || '',
+                // Signature
+                signature: canvas.toDataURL()
+            };
+
+            // Save reference number
+            for (let i = 1; i <= 15; i++) {
+                formData.referenceNumber[`refNum${i}`] = document.getElementById(`refNum${i}`)?.value || '';
+            }
+
+            // Save ULI
+            for (let i = 1; i <= 14; i++) {
+                formData.uli[`uli${i}`] = document.getElementById(`uli${i}`)?.value || '';
+            }
+
+            // Save work experience rows
+            formData.workExperience = [];
+            document.querySelectorAll('#workExperienceTable tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('input');
+                if (cells.length >= 6) {
+                    formData.workExperience.push({
+                        companyName: cells[0].value,
+                        position: cells[1].value,
+                        inclusiveDates: cells[2].value,
+                        monthlySalary: cells[3].value,
+                        statusAppointment: cells[4].value,
+                        yearsExp: cells[5].value
+                    });
+                }
+            });
+
+            // Save training rows
+            formData.training = [];
+            document.querySelectorAll('#trainingTable tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('input');
+                if (cells.length >= 5) {
+                    formData.training.push({
+                        title: cells[0].value,
+                        venue: cells[1].value,
+                        dates: cells[2].value,
+                        hours: cells[3].value,
+                        conductedBy: cells[4].value
+                    });
+                }
+            });
+
+            // Save licensure rows
+            formData.licensure = [];
+            document.querySelectorAll('#licensureTable tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('input');
+                if (cells.length >= 6) {
+                    formData.licensure.push({
+                        title: cells[0].value,
+                        year: cells[1].value,
+                        venue: cells[2].value,
+                        rating: cells[3].value,
+                        remarks: cells[4].value,
+                        expiry: cells[5].value
+                    });
+                }
+            });
+
+            // Save competency rows
+            formData.competency = [];
+            document.querySelectorAll('#competencyTable tbody tr').forEach(row => {
+                const cells = row.querySelectorAll('input');
+                if (cells.length >= 6) {
+                    formData.competency.push({
+                        title: cells[0].value,
+                        level: cells[1].value,
+                        sector: cells[2].value,
+                        certNum: cells[3].value,
+                        issuance: cells[4].value,
+                        expiry: cells[5].value
+                    });
+                }
+            });
+
+            // Save picture if uploaded
+            const picturePreview = document.getElementById('picturePreview');
+            if (picturePreview && picturePreview.style.display !== 'none') {
+                formData.picture = picturePreview.src;
+            }
+
+            localStorage.setItem('applicationFormDraft', JSON.stringify(formData));
+            console.log('Form data auto-saved');
+        }
+
         // Load saved data if available
         function loadSavedData() {
-            const savedData = localStorage.getItem('applicationData');
-            if (savedData) {
-                try {
-                    const data = JSON.parse(savedData);
-                    
-                    // Load all fields
-                    if (data.schoolName) document.getElementById('schoolName').value = data.schoolName;
-                    if (data.assessmentTitle) document.getElementById('assessmentTitle').value = data.assessmentTitle;
-                    if (data.schoolAddress) document.getElementById('schoolAddress').value = data.schoolAddress;
-                    if (data.applicationDate) document.getElementById('applicationDate').value = data.applicationDate;
-                    
-                    if (data.lastName) document.getElementById('lastName').value = data.lastName;
-                    if (data.firstName) document.getElementById('firstName').value = data.firstName;
-                    if (data.secondName) document.getElementById('secondName').value = data.secondName;
-                    if (data.middleName) document.getElementById('middleName').value = data.middleName;
-                    if (data.middleInitial) document.getElementById('middleInitial').value = data.middleInitial;
-                    if (data.extension) document.getElementById('extension').value = data.extension;
-                    
-                    if (data.numberStreet) document.getElementById('numberStreet').value = data.numberStreet;
-                    if (data.barangay) document.getElementById('barangay').value = data.barangay;
-                    if (data.district) document.getElementById('district').value = data.district;
-                    if (data.city) document.getElementById('city').value = data.city;
-                    if (data.province) document.getElementById('province').value = data.province;
-                    if (data.region) document.getElementById('region').value = data.region;
-                    if (data.zip) document.getElementById('zip').value = data.zip;
-                    
-                    if (data.motherName) document.getElementById('motherName').value = data.motherName;
-                    if (data.fatherName) document.getElementById('fatherName').value = data.fatherName;
-                    
-                    if (data.tel) document.getElementById('tel').value = data.tel;
-                    if (data.mobile) document.getElementById('mobile').value = data.mobile;
-                    if (data.email) document.getElementById('email').value = data.email;
-                    if (data.fax) document.getElementById('fax').value = data.fax;
-                    if (data.othersContact) document.getElementById('othersContact').value = data.othersContact;
-                    
-                    if (data.birthdate) document.getElementById('birthdate').value = data.birthdate;
-                    if (data.birthplace) document.getElementById('birthplace').value = data.birthplace;
-                    if (data.age) document.getElementById('age').value = data.age;
-                    
-                    // Load signature
-                    if (data.signature) {
-                        const img = new Image();
-                        img.onload = function() {
-                            ctx.drawImage(img, 0, 0);
-                        };
-                        img.src = data.signature;
+            const savedData = localStorage.getItem('applicationFormDraft');
+            if (!savedData) {
+                console.log('No saved data found');
+                return;
+            }
+
+            try {
+                const data = JSON.parse(savedData);
+                
+                // Load reference number
+                if (data.referenceNumber) {
+                    for (let i = 1; i <= 15; i++) {
+                        const elem = document.getElementById(`refNum${i}`);
+                        if (elem && data.referenceNumber[`refNum${i}`]) {
+                            elem.value = data.referenceNumber[`refNum${i}`];
+                        }
                     }
-                } catch (e) {
-                    console.log('No saved data found');
                 }
+
+                // Load ULI
+                if (data.uli) {
+                    for (let i = 1; i <= 14; i++) {
+                        const elem = document.getElementById(`uli${i}`);
+                        if (elem && data.uli[`uli${i}`]) {
+                            elem.value = data.uli[`uli${i}`];
+                        }
+                    }
+                }
+
+                // Load application info
+                if (data.schoolName) document.getElementById('schoolName').value = data.schoolName;
+                if (data.assessmentTitle) document.getElementById('assessmentTitle').value = data.assessmentTitle;
+                if (data.schoolAddress) document.getElementById('schoolAddress').value = data.schoolAddress;
+                if (data.applicationDate) document.getElementById('applicationDate').value = data.applicationDate;
+                
+                // Load assessment type
+                if (data.assessmentType) {
+                    const radio = document.querySelector(`input[name="assessmentType"][value="${data.assessmentType}"]`);
+                    if (radio) radio.checked = true;
+                }
+
+                // Load client type
+                if (data.clientType) {
+                    if (data.clientType.tvetGraduating) document.getElementById('tvetGraduating').checked = true;
+                    if (data.clientType.tvetGraduate) document.getElementById('tvetGraduate').checked = true;
+                    if (data.clientType.industryWorker) document.getElementById('industryWorker').checked = true;
+                    if (data.clientType.k12) document.getElementById('k12').checked = true;
+                    if (data.clientType.owf) document.getElementById('owf').checked = true;
+                }
+
+                // Load personal info
+                if (data.lastName) document.getElementById('lastName').value = data.lastName;
+                if (data.firstName) document.getElementById('firstName').value = data.firstName;
+                if (data.secondName) document.getElementById('secondName').value = data.secondName;
+                if (data.middleName) document.getElementById('middleName').value = data.middleName;
+                if (data.middleInitial) document.getElementById('middleInitial').value = data.middleInitial;
+                if (data.extension) document.getElementById('extension').value = data.extension;
+
+                // Load address
+                if (data.numberStreet) document.getElementById('numberStreet').value = data.numberStreet;
+                if (data.district) document.getElementById('district').value = data.district;
+                if (data.region) document.getElementById('region').value = data.region;
+                if (data.province) document.getElementById('province').value = data.province;
+                if (data.city) document.getElementById('city').value = data.city;
+                if (data.barangay) document.getElementById('barangay').value = data.barangay;
+                if (data.zip) document.getElementById('zip').value = data.zip;
+
+                // Load parents
+                if (data.motherName) document.getElementById('motherName').value = data.motherName;
+                if (data.fatherName) document.getElementById('fatherName').value = data.fatherName;
+
+                // Load sex
+                if (data.sex) {
+                    const radio = document.querySelector(`input[name="sex"][value="${data.sex}"]`);
+                    if (radio) radio.checked = true;
+                }
+
+                // Load civil status
+                if (data.civilStatus) {
+                    const radio = document.querySelector(`input[name="civilStatus"][value="${data.civilStatus}"]`);
+                    if (radio) radio.checked = true;
+                }
+
+                // Load contact
+                if (data.tel) document.getElementById('tel').value = data.tel;
+                if (data.mobile) document.getElementById('mobile').value = data.mobile;
+                if (data.email) document.getElementById('email').value = data.email;
+                if (data.fax) document.getElementById('fax').value = data.fax;
+                if (data.othersContact) document.getElementById('othersContact').value = data.othersContact;
+
+                // Load education
+                if (data.education) {
+                    const radio = document.querySelector(`input[name="education"][value="${data.education}"]`);
+                    if (radio) radio.checked = true;
+                }
+
+                // Load employment status
+                if (data.employmentStatus) {
+                    const radio = document.querySelector(`input[name="employmentStatus"][value="${data.employmentStatus}"]`);
+                    if (radio) radio.checked = true;
+                }
+
+                // Load birth info
+                if (data.birthdate) document.getElementById('birthdate').value = data.birthdate;
+                if (data.birthplace) document.getElementById('birthplace').value = data.birthplace;
+                if (data.age) document.getElementById('age').value = data.age;
+
+                // Load work experience
+                if (data.workExperience && data.workExperience.length > 0) {
+                    const tbody = document.querySelector('#workExperienceTable tbody');
+                    tbody.innerHTML = '';
+                    data.workExperience.forEach(exp => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="companyName" class="field-input" style="width: 100%; min-width: 150px;" value="${exp.companyName || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="position" class="field-input" style="width: 100%; min-width: 120px;" value="${exp.position || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="inclusiveDates" class="field-input" style="width: 100%; min-width: 120px;" value="${exp.inclusiveDates || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="monthlySalary" class="field-input" style="width: 100%; min-width: 100px;" value="${exp.monthlySalary || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="statusAppointment" class="field-input" style="width: 100%; min-width: 120px;" value="${exp.statusAppointment || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="number" name="yearsExp" class="field-input" style="width: 100%; min-width: 80px;" value="${exp.yearsExp || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">
+                                <button type="button" class="action-btn" style="background: #e74c3c; padding: 5px 10px; font-size: 11px;" onclick="removeRow(this)">Remove</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                // Load training
+                if (data.training && data.training.length > 0) {
+                    const tbody = document.querySelector('#trainingTable tbody');
+                    tbody.innerHTML = '';
+                    data.training.forEach(train => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="trainingTitle" class="field-input" style="width: 100%; min-width: 150px;" value="${train.title || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="trainingVenue" class="field-input" style="width: 100%; min-width: 120px;" value="${train.venue || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="trainingDates" class="field-input" style="width: 100%; min-width: 120px;" value="${train.dates || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="number" name="trainingHours" class="field-input" style="width: 100%; min-width: 80px;" value="${train.hours || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="trainingConductedBy" class="field-input" style="width: 100%; min-width: 150px;" value="${train.conductedBy || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">
+                                <button type="button" class="action-btn" style="background: #e74c3c; padding: 5px 10px; font-size: 11px;" onclick="removeRow(this)">Remove</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                // Load licensure
+                if (data.licensure && data.licensure.length > 0) {
+                    const tbody = document.querySelector('#licensureTable tbody');
+                    tbody.innerHTML = '';
+                    data.licensure.forEach(lic => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="licensureTitle" class="field-input" style="width: 100%; min-width: 150px;" value="${lic.title || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="number" name="licensureYear" class="field-input" style="width: 100%; min-width: 80px;" value="${lic.year || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="licensureVenue" class="field-input" style="width: 100%; min-width: 120px;" value="${lic.venue || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="licensureRating" class="field-input" style="width: 100%; min-width: 80px;" value="${lic.rating || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="licensureRemarks" class="field-input" style="width: 100%; min-width: 100px;" value="${lic.remarks || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="date" name="licensureExpiry" class="field-input" style="width: 100%; min-width: 120px;" value="${lic.expiry || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">
+                                <button type="button" class="action-btn" style="background: #e74c3c; padding: 5px 10px; font-size: 11px;" onclick="removeRow(this)">Remove</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                // Load competency
+                if (data.competency && data.competency.length > 0) {
+                    const tbody = document.querySelector('#competencyTable tbody');
+                    tbody.innerHTML = '';
+                    data.competency.forEach(comp => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="competencyTitle" class="field-input" style="width: 100%; min-width: 150px;" value="${comp.title || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="competencyLevel" class="field-input" style="width: 100%; min-width: 100px;" value="${comp.level || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="competencySector" class="field-input" style="width: 100%; min-width: 120px;" value="${comp.sector || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="text" name="competencyCertNum" class="field-input" style="width: 100%; min-width: 120px;" value="${comp.certNum || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="date" name="competencyIssuance" class="field-input" style="width: 100%; min-width: 120px;" value="${comp.issuance || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px;"><input type="date" name="competencyExpiry" class="field-input" style="width: 100%; min-width: 120px;" value="${comp.expiry || ''}"></td>
+                            <td style="border: 1px solid #ddd; padding: 5px; text-align: center;">
+                                <button type="button" class="action-btn" style="background: #e74c3c; padding: 5px 10px; font-size: 11px;" onclick="removeRow(this)">Remove</button>
+                            </td>
+                        `;
+                        tbody.appendChild(row);
+                    });
+                }
+
+                // Load picture
+                if (data.picture) {
+                    const picturePreview = document.getElementById('picturePreview');
+                    const pictureTextBox = document.getElementById('pictureTextBox');
+                    if (picturePreview && pictureTextBox) {
+                        picturePreview.src = data.picture;
+                        picturePreview.style.display = 'block';
+                        pictureTextBox.style.display = 'none';
+                    }
+                }
+
+                // Load signature
+                if (data.signature) {
+                    const img = new Image();
+                    img.onload = function() {
+                        ctx.drawImage(img, 0, 0);
+                    };
+                    img.src = data.signature;
+                }
+
+                console.log('Form data loaded from auto-save');
+            } catch (e) {
+                console.error('Error loading saved data:', e);
             }
         }
     </script>

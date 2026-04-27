@@ -266,50 +266,61 @@ function handleFormSubmit(formId, callback) {
    ============================================ */
 
 function showNotification(message, type = 'info') {
+    // Remove any existing notifications
+    const existingNotifications = document.querySelectorAll('.custom-notification');
+    existingNotifications.forEach(notif => notif.remove());
+    
     const notification = document.createElement('div');
-    notification.className = `notification notification-${type}`;
+    notification.className = 'custom-notification';
+    
+    // Set icon based on type
+    let icon = '';
+    let bgColor = '';
+    switch(type) {
+        case 'success':
+            icon = '<i class="bi bi-check-circle-fill"></i>';
+            bgColor = '#10b981';
+            break;
+        case 'error':
+            icon = '<i class="bi bi-x-circle-fill"></i>';
+            bgColor = '#ef4444';
+            break;
+        case 'warning':
+            icon = '<i class="bi bi-exclamation-triangle-fill"></i>';
+            bgColor = '#f59e0b';
+            break;
+        default:
+            icon = '<i class="bi bi-info-circle-fill"></i>';
+            bgColor = '#3b82f6';
+    }
+    
     notification.innerHTML = `
         <div class="notification-content">
-            <i class="icon"></i>
-            <span>${message}</span>
+            <span class="notification-icon">${icon}</span>
+            <span class="notification-message">${message}</span>
         </div>
     `;
     
-    document.body.appendChild(notification);
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${bgColor};
+        color: white;
+        padding: 16px 24px;
+        border-radius: 8px;
+        z-index: 10001;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        animation: slideInRight 0.3s ease-out;
+        min-width: 300px;
+        max-width: 500px;
+    `;
     
-    // Add styles if not already present
-    if (!document.getElementById('notification-styles')) {
+    // Add animation styles if not already added
+    if (!document.getElementById('notificationStyles')) {
         const style = document.createElement('style');
-        style.id = 'notification-styles';
-        style.innerHTML = `
-            .notification {
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: white;
-                padding: 16px 20px;
-                border-radius: 8px;
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-                z-index: 3000;
-                animation: slideInRight 0.3s ease;
-            }
-            
-            .notification-success {
-                border-left: 4px solid #10b981;
-            }
-            
-            .notification-error {
-                border-left: 4px solid #ef4444;
-            }
-            
-            .notification-warning {
-                border-left: 4px solid #f59e0b;
-            }
-            
-            .notification-info {
-                border-left: 4px solid #0ea5e9;
-            }
-            
+        style.id = 'notificationStyles';
+        style.textContent = `
             @keyframes slideInRight {
                 from {
                     transform: translateX(400px);
@@ -320,13 +331,45 @@ function showNotification(message, type = 'info') {
                     opacity: 1;
                 }
             }
+            
+            @keyframes slideOutRight {
+                from {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+                to {
+                    transform: translateX(400px);
+                    opacity: 0;
+                }
+            }
+            
+            .custom-notification .notification-content {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            
+            .custom-notification .notification-icon {
+                font-size: 24px;
+                display: flex;
+                align-items: center;
+            }
+            
+            .custom-notification .notification-message {
+                font-size: 14px;
+                font-weight: 500;
+                flex: 1;
+            }
         `;
         document.head.appendChild(style);
     }
     
-    // Remove after 3 seconds
+    document.body.appendChild(notification);
+    
+    // Auto remove after 3 seconds with slide out animation
     setTimeout(() => {
-        notification.remove();
+        notification.style.animation = 'slideOutRight 0.3s ease-out';
+        setTimeout(() => notification.remove(), 300);
     }, 3000);
 }
 
@@ -716,10 +759,16 @@ function createTraineeCard(trainee) {
         ? new Date(trainee.enrolledCourses[0].enrollmentDate).toLocaleDateString()
         : new Date(trainee.createdAt || Date.now()).toLocaleDateString();
     
+    // Check if trainee has a profile picture
+    const hasProfilePicture = trainee.profilePicture && trainee.profilePicture.trim() !== '';
+    const avatarContent = hasProfilePicture 
+        ? `<img src="${trainee.profilePicture}" alt="${trainee.firstName} ${trainee.lastName}" style="width: 100%; height: 100%; object-fit: cover; border-radius: 50%;">` 
+        : `<span>${initials}</span>`;
+    
     card.innerHTML = `
         <div class="trainee-header">
             <div class="trainee-avatar">
-                <span>${initials}</span>
+                ${avatarContent}
             </div>
             <div class="trainee-info">
                 <h4>${trainee.firstName} ${trainee.lastName}</h4>
@@ -732,8 +781,15 @@ function createTraineeCard(trainee) {
             <span class="meta-item"><i class="bi bi-calendar"></i> Enrolled: ${enrollDate}</span>
         </div>
         <div class="trainee-actions">
-            <button class="btn-action edit" onclick="window.location.href='trainees.html'"><i class="bi bi-pencil"></i> Edit</button>
-            <button class="btn-action delete" onclick="deleteTraineeFromDashboard('${trainee.traineeId}')"><i class="bi bi-trash"></i> Delete</button>
+            <button class="btn-action view" onclick="viewTraineeDetailsModal('${trainee.traineeId}')" style="background: #3498db; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600; transition: all 0.3s ease; flex: 1; justify-content: center;">
+                <i class="bi bi-eye"></i> View
+            </button>
+            <button class="btn-action edit" onclick="editTraineeDetailsModal('${trainee.traineeId}')" style="background: #f39c12; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600; transition: all 0.3s ease; flex: 1; justify-content: center;">
+                <i class="bi bi-pencil"></i> Edit
+            </button>
+            <button class="btn-action delete" onclick="deleteTraineeDetailsModal('${trainee.traineeId}')" style="background: #e74c3c; color: white; border: none; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px; font-weight: 600; transition: all 0.3s ease; flex: 1; justify-content: center;">
+                <i class="bi bi-trash"></i> Delete
+            </button>
         </div>
     `;
     
@@ -877,6 +933,121 @@ async function deleteTraineeFromDashboard(traineeId) {
     }
 }
 
+// View trainee details from dashboard
+function viewTraineeDetails(traineeId) {
+    console.log('Viewing trainee:', traineeId);
+    
+    fetch(`${API_BASE_URL}/trainees/${traineeId}`)
+        .then(res => res.json())
+        .then(trainee => {
+            const details = `
+Name: ${trainee.firstName} ${trainee.lastName}
+Email: ${trainee.email}
+Phone: ${trainee.phone || 'N/A'}
+Address: ${trainee.address || 'N/A'}
+Status: ${trainee.status || 'active'}
+Enrolled: ${trainee.enrolledCourses && trainee.enrolledCourses[0] ? trainee.enrolledCourses[0].courseName : 'No course'}
+            `;
+            alert(details);
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            showNotification('Failed to load trainee details', 'error');
+        });
+}
+
+// Edit trainee from dashboard
+function editTraineeDetails(traineeId) {
+    console.log('Editing trainee:', traineeId);
+    
+    fetch(`${API_BASE_URL}/trainees/${traineeId}`)
+        .then(res => res.json())
+        .then(trainee => {
+            const firstName = prompt('First Name:', trainee.firstName);
+            if (firstName === null) return;
+            
+            const lastName = prompt('Last Name:', trainee.lastName);
+            if (lastName === null) return;
+            
+            const email = prompt('Email:', trainee.email);
+            if (email === null) return;
+            
+            const phone = prompt('Phone:', trainee.phone || '');
+            if (phone === null) return;
+            
+            const address = prompt('Address:', trainee.address || '');
+            if (address === null) return;
+            
+            const status = prompt('Status (active/inactive/graduated):', trainee.status || 'active');
+            if (status === null) return;
+            
+            const updatedData = {
+                firstName,
+                lastName,
+                email,
+                phone,
+                address,
+                status,
+                enrolledCourses: trainee.enrolledCourses || []
+            };
+            
+            return fetch(`${API_BASE_URL}/trainees/${traineeId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(updatedData)
+            });
+        })
+        .then(res => {
+            if (res.ok) {
+                showNotification('Trainee updated successfully', 'success');
+                loadTrainees();
+                loadDashboardStats();
+            } else {
+                showNotification('Failed to update trainee', 'error');
+            }
+        })
+        .catch(err => {
+            console.error('Error:', err);
+            showNotification('Error updating trainee: ' + err.message, 'error');
+        });
+}
+
+// Delete trainee from dashboard
+function deleteTraineeDetails(traineeId) {
+    if (!confirm('Are you sure you want to delete this trainee? This action cannot be undone.')) return;
+    
+    fetch(`${API_BASE_URL}/trainees/${traineeId}`, {
+        method: 'DELETE'
+    })
+    .then(res => {
+        if (res.ok) {
+            showNotification('Trainee deleted successfully', 'success');
+            loadTrainees();
+            loadDashboardStats();
+        } else {
+            showNotification('Failed to delete trainee', 'error');
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        showNotification('Error deleting trainee: ' + err.message, 'error');
+    });
+}
+
+// View application form for trainee from dashboard
+function viewApplicationFormFromDashboard(traineeId) {
+    console.log('Viewing application form for trainee:', traineeId);
+    // Redirect to records page with trainee ID to view application
+    window.location.href = `records.html?traineeId=${traineeId}&view=application`;
+}
+
+// View admission slip for trainee from dashboard
+function viewAdmissionSlipFromDashboard(traineeId) {
+    console.log('Viewing admission slip for trainee:', traineeId);
+    // Redirect to records page with trainee ID to view admission slip
+    window.location.href = `records.html?traineeId=${traineeId}&view=admission`;
+}
+
 // Edit course
 async function editCourse(courseId) {
     try {
@@ -937,7 +1108,7 @@ function loadAdminProfilePicture() {
             }
         }
         
-        // Update user name from session first (faster)
+        // Update user name from session
         if (userSession.firstName && userSession.lastName) {
             const userName = `${userSession.firstName} ${userSession.lastName}`;
             const firstName = userSession.firstName.toUpperCase();
@@ -968,83 +1139,42 @@ function loadAdminProfilePicture() {
             }
         }
         
-        // Check for cached profile picture first
+        // Check for cached profile picture
         if (userSession.accountId || userSession.userId) {
             const userId = userSession.accountId || userSession.userId;
             const cachedPictureKey = `adminProfilePic_${userId}`;
             const cachedPicture = sessionStorage.getItem(cachedPictureKey);
             
-            // If we have a cached picture, use it immediately
+            // If we have a cached picture, use it
             if (cachedPicture && cachedPicture.startsWith('data:')) {
-                console.log('Using cached admin profile picture');
                 updateAllAvatarsWithImage(cachedPicture);
             }
-            
-            // Always fetch from API to ensure we have the latest
-            fetch(`http://localhost:5500/api/admin-accounts/${userId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        console.warn(`Admin account ${userId} not found in database. Using session data.`);
-                        return null;
-                    }
-                    return response.json();
-                })
-                .then(admin => {
-                    if (!admin) {
-                        console.log('Using session data for admin profile');
-                        return;
-                    }
-                    
-                    console.log('Admin profile loaded from API:', admin);
-                    
-                    // Update name from API (more accurate)
-                    if (admin.firstName && admin.lastName) {
-                        const userName = `${admin.firstName} ${admin.lastName}`;
-                        const firstName = admin.firstName.toUpperCase();
-                        
-                        document.querySelectorAll('.user-name').forEach(el => {
-                            el.textContent = firstName;
-                        });
-                        
-                        const dropdownUserInfo = document.querySelector('.dropdown-user-info h4');
-                        if (dropdownUserInfo) {
-                            dropdownUserInfo.textContent = userName.toUpperCase();
-                        }
-                        
-                        const profileAvatarInfo = document.querySelector('.profile-avatar-info h3');
-                        if (profileAvatarInfo) {
-                            profileAvatarInfo.textContent = userName;
-                        }
-                    }
-                    
-                    // Update email from API
-                    if (admin.email) {
-                        const dropdownEmail = document.querySelector('.dropdown-user-info p');
-                        if (dropdownEmail) {
-                            dropdownEmail.textContent = admin.email;
-                        }
-                    }
-                    
-                    // Update profile picture if exists
-                    if (admin.profilePicture && admin.profilePicture.startsWith('data:')) {
-                        console.log('Updating admin profile picture from API');
-                        // Cache in sessionStorage for faster loading on page changes
-                        sessionStorage.setItem(cachedPictureKey, admin.profilePicture);
-                        
-                        // Update all avatar elements
-                        updateAllAvatarsWithImage(admin.profilePicture);
-                    }
-                })
-                .catch(error => {
-                    console.warn('Could not fetch admin profile from database:', error.message);
-                    console.log('Using session data for admin profile');
-                });
         }
         
     } catch (error) {
         console.error('Error loading admin profile picture:', error);
     }
 }
+
+// Manual refresh function for debugging
+window.refreshAvatar = function() {
+    console.log('=== MANUAL AVATAR REFRESH ===');
+    const userSession = JSON.parse(localStorage.getItem('userSession') || sessionStorage.getItem('userSession') || '{}');
+    if (userSession.accountId) {
+        const cachedPictureKey = `adminProfilePic_${userSession.accountId}`;
+        const cacheTimestampKey = `${cachedPictureKey}_timestamp`;
+        
+        // Clear cache to force API fetch
+        sessionStorage.removeItem(cachedPictureKey);
+        sessionStorage.removeItem(cacheTimestampKey);
+        console.log('✓ Cache cleared');
+        
+        // Reload avatar
+        loadAdminProfilePicture();
+    } else {
+        console.error('✗ No accountId in session');
+    }
+};
 
 // Update all avatar elements with profile picture
 function updateAllAvatars(imageUrl) {
@@ -1113,3 +1243,514 @@ function updateAllAvatarsWithImage(imageUrl) {
     
     console.log('updateAllAvatarsWithImage: Avatar update complete');
 }
+
+
+// ===== MODAL FUNCTIONS FOR TRAINEE MANAGEMENT =====
+
+// Create modal HTML
+function createTraineeModal() {
+    if (document.getElementById('traineeModal')) return;
+    
+    const modal = document.createElement('div');
+    modal.id = 'traineeModal';
+    modal.innerHTML = `
+        <div class="trainee-modal-overlay">
+            <div class="trainee-modal-content">
+                <div class="trainee-modal-header">
+                    <h2 id="modalTitle">Trainee Details</h2>
+                    <button class="trainee-modal-close" onclick="closeTraineeModal()">&times;</button>
+                </div>
+                <div class="trainee-modal-body" id="modalBody">
+                    <!-- Content will be inserted here -->
+                </div>
+                <div class="trainee-modal-footer" id="modalFooter">
+                    <!-- Buttons will be inserted here -->
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    
+    // Add CSS only if not already added
+    if (!document.getElementById('traineeModalStyles')) {
+        const style = document.createElement('style');
+        style.id = 'traineeModalStyles';
+        style.textContent = `
+        .trainee-modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .trainee-modal-overlay.active {
+            display: flex;
+        }
+        
+        .trainee-modal-content {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 900px;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .trainee-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px;
+            border-bottom: 1px solid #eee;
+            background: linear-gradient(135deg, #E67E22 0%, #F4C430 100%);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+        
+        .trainee-modal-header h2 {
+            margin: 0;
+            font-size: 24px;
+            font-weight: 600;
+        }
+        
+        .trainee-modal-close {
+            background: none;
+            border: none;
+            font-size: 32px;
+            cursor: pointer;
+            color: white;
+            padding: 0;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+        
+        .trainee-modal-close:hover {
+            transform: rotate(90deg);
+        }
+        
+        .trainee-modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        
+        .trainee-modal-footer {
+            display: flex;
+            gap: 12px;
+            padding: 24px;
+            border-top: 1px solid #eee;
+            justify-content: flex-end;
+            background: #f9f9f9;
+            border-radius: 0 0 12px 12px;
+        }
+        
+        .modal-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .modal-btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .modal-btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+        }
+        
+        .modal-btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .modal-btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .modal-btn-danger {
+            background: #e74c3c;
+            color: white;
+        }
+        
+        .modal-btn-danger:hover {
+            background: #c0392b;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+        
+        .trainee-details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        
+        .detail-field {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .detail-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        
+        .detail-value {
+            font-size: 16px;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s ease;
+            box-sizing: border-box;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #E67E22;
+            box-shadow: 0 0 0 3px rgba(230, 126, 34, 0.1);
+        }
+    `;
+        document.head.appendChild(style);
+    }
+}
+
+// View trainee details with modal
+function viewTraineeDetailsModal(traineeId) {
+    console.log('Viewing trainee:', traineeId);
+    
+    createTraineeModal();
+    
+    // Wait a tick to ensure modal is in DOM
+    setTimeout(() => {
+        fetch(`${API_BASE_URL}/trainees/${traineeId}`)
+            .then(res => res.json())
+            .then(trainee => {
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                const modalFooter = document.getElementById('modalFooter');
+                const modalOverlay = document.querySelector('.trainee-modal-overlay');
+                
+                if (!modalTitle || !modalBody || !modalFooter || !modalOverlay) {
+                    console.error('Modal elements not found');
+                    return;
+                }
+                
+                modalTitle.textContent = `${trainee.firstName} ${trainee.lastName}`;
+            
+            modalBody.innerHTML = `
+                <div class="trainee-details-grid">
+                    <div class="detail-field">
+                        <span class="detail-label">First Name</span>
+                        <span class="detail-value">${trainee.firstName}</span>
+                    </div>
+                    <div class="detail-field">
+                        <span class="detail-label">Last Name</span>
+                        <span class="detail-value">${trainee.lastName}</span>
+                    </div>
+                    <div class="detail-field">
+                        <span class="detail-label">Email</span>
+                        <span class="detail-value">${trainee.email}</span>
+                    </div>
+                    <div class="detail-field">
+                        <span class="detail-label">Phone</span>
+                        <span class="detail-value">${trainee.phone || 'N/A'}</span>
+                    </div>
+                    <div class="detail-field">
+                        <span class="detail-label">Address</span>
+                        <span class="detail-value">${trainee.address || 'N/A'}</span>
+                    </div>
+                    <div class="detail-field">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value" style="color: ${trainee.status === 'active' ? '#27AE60' : '#e74c3c'}; font-weight: 600;">
+                            ${trainee.status ? trainee.status.charAt(0).toUpperCase() + trainee.status.slice(1) : 'N/A'}
+                        </span>
+                    </div>
+                    <div class="detail-field">
+                        <span class="detail-label">Enrolled Course</span>
+                        <span class="detail-value">${trainee.enrolledCourses && trainee.enrolledCourses[0] ? trainee.enrolledCourses[0].courseName : 'No course'}</span>
+                    </div>
+                    <div class="detail-field">
+                        <span class="detail-label">Account ID</span>
+                        <span class="detail-value">${trainee.traineeId || 'N/A'}</span>
+                    </div>
+                </div>
+            `;
+            
+            modalFooter.innerHTML = `
+                <button class="modal-btn modal-btn-secondary" onclick="closeTraineeModal()">
+                    <i class="bi bi-x-circle"></i> Close
+                </button>
+            `;
+            
+            modalOverlay.classList.add('active');
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                showNotification('Failed to load trainee details', 'error');
+            });
+    }, 0);
+
+// Edit trainee details with modal
+function editTraineeDetailsModal(traineeId) {
+    console.log('Editing trainee:', traineeId);
+    
+    createTraineeModal();
+    
+    // Wait a tick to ensure modal is in DOM
+    setTimeout(() => {
+        fetch(`${API_BASE_URL}/trainees/${traineeId}`)
+            .then(res => res.json())
+            .then(trainee => {
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                const modalFooter = document.getElementById('modalFooter');
+                const modalOverlay = document.querySelector('.trainee-modal-overlay');
+                
+                if (!modalTitle || !modalBody || !modalFooter || !modalOverlay) {
+                    console.error('Modal elements not found');
+                    return;
+                }
+                
+                modalTitle.textContent = `Edit: ${trainee.firstName} ${trainee.lastName}`;
+            
+            modalBody.innerHTML = `
+                <div class="trainee-details-grid">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="editFirstName" value="${trainee.firstName}">
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="editLastName" value="${trainee.lastName}">
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="editEmail" value="${trainee.email}">
+                    </div>
+                    <div class="form-group">
+                        <label>Phone</label>
+                        <input type="tel" id="editPhone" value="${trainee.phone || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Address</label>
+                        <input type="text" id="editAddress" value="${trainee.address || ''}">
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="editStatus">
+                            <option value="active" ${trainee.status === 'active' ? 'selected' : ''}>Active</option>
+                            <option value="inactive" ${trainee.status === 'inactive' ? 'selected' : ''}>Inactive</option>
+                            <option value="graduated" ${trainee.status === 'graduated' ? 'selected' : ''}>Graduated</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            
+            modalFooter.innerHTML = `
+                <button class="modal-btn modal-btn-secondary" onclick="closeTraineeModal()">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+                <button class="modal-btn modal-btn-primary" onclick="saveDashboardTraineeEdit('${traineeId}')">
+                    <i class="bi bi-check-circle"></i> Save Changes
+                </button>
+            `;
+            
+            modalOverlay.classList.add('active');
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                showNotification('Failed to load trainee details', 'error');
+            });
+    }, 0);
+
+// Save trainee edit from dashboard
+function saveDashboardTraineeEdit(traineeId) {
+    const firstName = document.getElementById('editFirstName').value;
+    const lastName = document.getElementById('editLastName').value;
+    const email = document.getElementById('editEmail').value;
+    const phone = document.getElementById('editPhone').value;
+    const address = document.getElementById('editAddress').value;
+    const status = document.getElementById('editStatus').value;
+    
+    if (!firstName || !lastName || !email) {
+        showNotification('Please fill in all required fields', 'error');
+        return;
+    }
+    
+    const updatedData = {
+        firstName,
+        lastName,
+        email,
+        phone,
+        address,
+        status
+    };
+    
+    fetch(`${API_BASE_URL}/trainees/${traineeId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updatedData)
+    })
+    .then(res => {
+        if (res.ok) {
+            showNotification('Trainee updated successfully', 'success');
+            closeTraineeModal();
+            loadTrainees();
+        } else {
+            showNotification('Failed to update trainee', 'error');
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        showNotification('Error updating trainee: ' + err.message, 'error');
+    });
+}
+
+// Delete trainee details with modal
+function deleteTraineeDetailsModal(traineeId) {
+    createTraineeModal();
+    
+    // Wait a tick to ensure modal is in DOM
+    setTimeout(() => {
+        fetch(`${API_BASE_URL}/trainees/${traineeId}`)
+            .then(res => res.json())
+            .then(trainee => {
+                const modalTitle = document.getElementById('modalTitle');
+                const modalBody = document.getElementById('modalBody');
+                const modalFooter = document.getElementById('modalFooter');
+                const modalOverlay = document.querySelector('.trainee-modal-overlay');
+                
+                if (!modalTitle || !modalBody || !modalFooter || !modalOverlay) {
+                    console.error('Modal elements not found');
+                    return;
+                }
+                
+                modalTitle.textContent = `Delete Trainee`;
+            
+            modalBody.innerHTML = `
+                <div style="text-align: center; padding: 40px 20px;">
+                    <i class="bi bi-exclamation-triangle" style="font-size: 64px; color: #e74c3c; display: block; margin-bottom: 20px;"></i>
+                    <h3 style="margin: 0 0 16px 0; color: #2c3e50;">Are you sure?</h3>
+                    <p style="color: #7f8c8d; margin: 0 0 8px 0; font-size: 16px;">You are about to delete:</p>
+                    <p style="color: #2c3e50; font-weight: 600; font-size: 18px; margin: 0 0 24px 0;">
+                        ${trainee.firstName} ${trainee.lastName}
+                    </p>
+                    <p style="color: #e74c3c; font-size: 14px; margin: 0;">
+                        This action cannot be undone.
+                    </p>
+                </div>
+            `;
+            
+            modalFooter.innerHTML = `
+                <button class="modal-btn modal-btn-secondary" onclick="closeTraineeModal()">
+                    <i class="bi bi-x-circle"></i> Cancel
+                </button>
+                <button class="modal-btn modal-btn-danger" onclick="confirmDashboardDeleteTrainee('${traineeId}')">
+                    <i class="bi bi-trash"></i> Delete Permanently
+                </button>
+            `;
+            
+            modalOverlay.classList.add('active');
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                showNotification('Failed to load trainee details', 'error');
+            });
+    }, 0);
+}
+
+// Confirm delete trainee from dashboard
+function confirmDashboardDeleteTrainee(traineeId) {
+    fetch(`${API_BASE_URL}/trainees/${traineeId}`, {
+        method: 'DELETE'
+    })
+    .then(res => {
+        if (res.ok) {
+            showNotification('Trainee deleted successfully', 'success');
+            closeTraineeModal();
+            loadTrainees();
+        } else {
+            showNotification('Failed to delete trainee', 'error');
+        }
+    })
+    .catch(err => {
+        console.error('Error:', err);
+        showNotification('Error deleting trainee: ' + err.message, 'error');
+    });
+}
+
+// Close modal
+function closeTraineeModal() {
+    const modalOverlay = document.querySelector('.trainee-modal-overlay');
+    if (modalOverlay) {
+        modalOverlay.classList.remove('active');
+    }
+}
+
+// Close modal when clicking outside
+document.addEventListener('click', function(event) {
+    if (event.target.classList.contains('trainee-modal-overlay')) {
+        closeTraineeModal();
+    }
+});

@@ -99,6 +99,54 @@
             color: white;
         }
 
+        /* Tooltip Styles for Action Buttons */
+        .btn-icon {
+            position: relative;
+        }
+
+        .btn-icon::after {
+            content: attr(title);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-8px);
+            background: rgba(0, 0, 0, 0.9);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .btn-icon::before {
+            content: '';
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-2px);
+            border: 5px solid transparent;
+            border-top-color: rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .btn-icon:hover::after,
+        .btn-icon:hover::before {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-4px);
+        }
+
+        .btn-icon:hover::before {
+            transform: translateX(-50%) translateY(2px);
+        }
+
         .tab-item i {
             font-size: 16px;
         }
@@ -599,12 +647,18 @@
             background: white;
             border-radius: 12px;
             width: 90%;
-            max-width: 500px;
+            max-width: 950px;
+            max-height: 92vh;
             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
         }
 
         .modal-content.modal-small {
-            max-width: 450px;
+            max-width: 500px;
+        }
+        
+        .modal-content.modal-wide {
+            max-width: 950px;
         }
 
         .modal-header {
@@ -643,6 +697,8 @@
 
         .modal-body {
             padding: 24px;
+            max-height: calc(92vh - 180px);
+            overflow-y: auto;
         }
 
         .form-group {
@@ -675,7 +731,9 @@
             display: flex;
             gap: 12px;
             justify-content: flex-end;
-            margin-top: 24px;
+            padding: 18px 24px;
+            background: #fafafa;
+            border-top: 1px solid #e0e0e0;
         }
 
         .btn {
@@ -735,6 +793,9 @@
             font-size: 16px;
         }
     </style>
+    
+    <!-- Session Check Script (Load First) -->
+    <script src="../../assets/js/session-check.js"></script>
 </head>
 <body>
     <div class="admin-container">
@@ -888,6 +949,7 @@
                         <table class="table" id="accountsTable">
                             <thead>
                                 <tr>
+                                    <th>Profile</th>
                                     <th>ID</th>
                                     <th>Username</th>
                                     <th>Name</th>
@@ -902,7 +964,7 @@
                             <tbody>
                                 <!-- Data will be loaded from MongoDB via JavaScript -->
                                 <tr>
-                                    <td colspan="9" style="text-align: center; padding: 40px;">
+                                    <td colspan="10" style="text-align: center; padding: 40px;">
                                         <i class="bi bi-hourglass-split" style="font-size: 24px; color: #999;"></i>
                                         <p style="color: #999; margin-top: 10px;">Loading accounts from database...</p>
                                     </td>
@@ -1045,9 +1107,8 @@
         // Logout handler
         function handleLogout() {
             if (confirm('Are you sure you want to logout?')) {
-                localStorage.removeItem('userSession');
-                sessionStorage.removeItem('userSession');
-                window.location.href = '../../public/index.html';
+                // Call the logout function from session-check.js
+                logout();
             }
         }
 
@@ -1102,6 +1163,34 @@
                 deleteInput.addEventListener('input', function() {
                     this.style.borderColor = '';
                     document.getElementById('deleteAccountErrorMsg').style.display = 'none';
+                });
+            }
+        });
+
+        // Menu toggle functions for three-dot dropdown
+        function toggleActionMenu(button) {
+            const menu = button.nextElementSibling;
+            const isOpen = menu.style.display === 'block';
+            
+            // Close all other menus
+            document.querySelectorAll('.action-menu').forEach(m => {
+                if (m !== menu) m.style.display = 'none';
+            });
+            
+            // Toggle current menu
+            menu.style.display = isOpen ? 'none' : 'block';
+        }
+
+        function closeActionMenu(button) {
+            const menu = button.closest('.action-menu');
+            if (menu) menu.style.display = 'none';
+        }
+
+        // Close menus when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.menu-btn') && !e.target.closest('.action-menu')) {
+                document.querySelectorAll('.action-menu').forEach(menu => {
+                    menu.style.display = 'none';
                 });
             }
         });
@@ -1339,6 +1428,9 @@
                 const accountsResponse = await fetch(`${API_BASE_URL}/trainee-accounts`);
                 const accounts = await accountsResponse.json();
                 
+                // Store accounts data globally
+                accountsData = accounts;
+                
                 // Fetch all enrollments
                 const enrollmentsResponse = await fetch(`${API_BASE_URL}/enrollments`);
                 const enrollments = await enrollmentsResponse.json();
@@ -1378,8 +1470,16 @@
                            </div>`
                         : '<span style="color: #999; font-style: italic;">No courses</span>';
                     
+                    // Profile picture or initials
+                    const initials = `${account.firstName.charAt(0)}${account.lastName.charAt(0)}`.toUpperCase();
+                    const hasProfilePicture = account.profilePicture && account.profilePicture.trim() !== '';
+                    const profileDisplay = hasProfilePicture
+                        ? `<img src="${account.profilePicture}" alt="${account.firstName} ${account.lastName}" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;">`
+                        : `<div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #E67E22, #d35400); display: flex; align-items: center; justify-content: center; color: white; font-weight: 600; font-size: 14px;">${initials}</div>`;
+                    
                     const row = document.createElement('tr');
                     row.innerHTML = `
+                        <td>${profileDisplay}</td>
                         <td>${account.accountId || 'N/A'}</td>
                         <td>${account.username || 'N/A'}</td>
                         <td>${account.firstName} ${account.lastName}</td>
@@ -1389,15 +1489,22 @@
                         <td><span class="badge badge-${account.status === 'active' ? 'success' : 'danger'}">${account.status || 'active'}</span></td>
                         <td>${account.lastLogin ? new Date(account.lastLogin).toLocaleDateString() : 'Never'}</td>
                         <td>
-                            <button class="btn-icon" onclick="viewAccount('${account._id}')" title="View">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                            <button class="btn-icon" onclick="editAccount('${account._id}')" title="Edit">
-                                <i class="bi bi-pencil"></i>
-                            </button>
-                            <button class="btn-icon btn-danger" onclick="deleteAccount('${account._id}', '${account.username}')" title="Delete">
-                                <i class="bi bi-trash"></i>
-                            </button>
+                            <div style="position: relative;">
+                                <button class="menu-btn" onclick="toggleActionMenu(this)" style="background: #E67E22; color: white; border: none; padding: 8px 10px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(230, 126, 34, 0.3);">
+                                    <i class="bi bi-three-dots-vertical"></i>
+                                </button>
+                                <div class="action-menu" style="display: none; position: fixed; background: white; border: 1px solid #ddd; border-radius: 6px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); z-index: 10000; min-width: 180px;">
+                                    <button onclick="viewAccount('${account.accountId}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #333; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease; border-bottom: 1px solid #eee;">
+                                        <i class="bi bi-eye" style="color: #E67E22;"></i> View
+                                    </button>
+                                    <button onclick="editAccount('${account.accountId}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #333; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease; border-bottom: 1px solid #eee;">
+                                        <i class="bi bi-pencil" style="color: #2196F3;"></i> Edit
+                                    </button>
+                                    <button onclick="deleteAccount('${account.accountId}', '${account.username}'); closeActionMenu(this)" style="width: 100%; padding: 12px 16px; border: none; background: none; text-align: left; cursor: pointer; font-size: 13px; color: #e74c3c; display: flex; align-items: center; gap: 10px; transition: all 0.2s ease;">
+                                        <i class="bi bi-trash" style="color: #e74c3c;"></i> Delete
+                                    </button>
+                                </div>
+                            </div>
                         </td>
                     `;
                     tbody.appendChild(row);
@@ -1408,7 +1515,7 @@
                 const tbody = document.querySelector('#accountsTable tbody');
                 tbody.innerHTML = `
                     <tr>
-                        <td colspan="9" style="text-align: center; padding: 40px; color: #e74c3c;">
+                        <td colspan="10" style="text-align: center; padding: 40px; color: #e74c3c;">
                             <i class="bi bi-exclamation-triangle" style="font-size: 24px;"></i>
                             <p style="margin-top: 10px;">Error loading accounts: ${error.message}</p>
                         </td>
@@ -1417,25 +1524,276 @@
             }
         }
         
+        // Close Permissions Modal
+        function closePermissionsModal() {
+            document.getElementById('editPermissionsModal').classList.remove('active');
+        }
+        
+        // Save Role Permissions
+        async function saveRolePermissions(event) {
+            event.preventDefault();
+            // Add save logic here
+            showNotification('Permissions updated successfully!', 'success');
+            closePermissionsModal();
+        }
+        
         // Load accounts when page loads
         document.addEventListener('DOMContentLoaded', function() {
             loadAccountsWithCourses();
         });
         
-        // Placeholder functions for actions
-        function viewAccount(id) {
-            alert('View account: ' + id);
-        }
+        // Store accounts data for quick access
+        let accountsData = [];
         
-        function editAccount(id) {
-            alert('Edit account: ' + id);
-        }
-        
-        function deleteAccount(id, username) {
-            if (confirm(`Delete account: ${username}?`)) {
-                // Add delete logic here
-                alert('Delete functionality to be implemented');
+        // View Account - Opens landscape modal with account details
+        async function viewAccount(accountId) {
+            try {
+                const account = accountsData.find(acc => acc.accountId === accountId);
+                if (!account) {
+                    alert('Account not found');
+                    return;
+                }
+                
+                // Populate view modal
+                document.getElementById('viewAccountId').textContent = account.accountId || 'N/A';
+                document.getElementById('viewUsername').textContent = account.username || 'N/A';
+                document.getElementById('viewFirstName').textContent = account.firstName || 'N/A';
+                document.getElementById('viewLastName').textContent = account.lastName || 'N/A';
+                document.getElementById('viewEmail').textContent = account.email || 'N/A';
+                
+                // Role badge
+                const roleBadge = document.getElementById('viewRole');
+                roleBadge.textContent = account.role || 'N/A';
+                roleBadge.className = `badge badge-${account.role}`;
+                
+                // Status badge
+                const statusBadge = document.getElementById('viewStatus');
+                statusBadge.textContent = account.status || 'active';
+                statusBadge.className = `status-badge ${account.status || 'active'}`;
+                
+                document.getElementById('viewLastLogin').textContent = account.lastLogin 
+                    ? new Date(account.lastLogin).toLocaleString() 
+                    : 'Never';
+                
+                document.getElementById('viewPermissions').textContent = account.permissions 
+                    ? account.permissions.join(', ') 
+                    : 'Default permissions';
+                
+                document.getElementById('viewCreatedAt').textContent = account.createdAt 
+                    ? new Date(account.createdAt).toLocaleString() 
+                    : 'N/A';
+                
+                // Open modal
+                document.getElementById('viewAccountModal').classList.add('active');
+            } catch (error) {
+                console.error('Error viewing account:', error);
+                alert('Error loading account details');
             }
+        }
+        
+        // Edit Account - Opens landscape modal with form
+        async function editAccount(accountId) {
+            try {
+                const account = accountsData.find(acc => acc.accountId === accountId);
+                if (!account) {
+                    alert('Account not found');
+                    return;
+                }
+                
+                // Store current account ID for saving
+                currentEditRow = account;
+                
+                // Populate edit modal
+                document.getElementById('accountModalTitle').textContent = 'Edit Account';
+                document.getElementById('accountUsername').value = account.username || '';
+                document.getElementById('accountEmail').value = account.email || '';
+                document.getElementById('accountFirstName').value = account.firstName || '';
+                document.getElementById('accountLastName').value = account.lastName || '';
+                document.getElementById('accountRole').value = account.role || 'trainee';
+                
+                // Make password optional for editing
+                const passwordField = document.getElementById('accountPassword');
+                passwordField.required = false;
+                passwordField.placeholder = 'Leave blank to keep current password';
+                passwordField.value = '';
+                
+                // Open modal
+                document.getElementById('accountModal').classList.add('active');
+            } catch (error) {
+                console.error('Error editing account:', error);
+                alert('Error loading account for editing');
+            }
+        }
+        
+        // Delete Account - Opens landscape confirmation modal
+        function deleteAccount(accountId, username) {
+            // Store account info for deletion
+            window.deleteAccountId = accountId;
+            window.deleteAccountUsername = username;
+            
+            // Populate delete modal
+            document.getElementById('deleteAccountName').textContent = username;
+            document.getElementById('deleteAccountConfirmInput').value = '';
+            document.getElementById('deleteAccountErrorMsg').style.display = 'none';
+            
+            // Open modal
+            document.getElementById('deleteAccountModal').classList.add('active');
+        }
+        
+        // Confirm Delete Account
+        async function confirmDeleteAccount() {
+            const confirmInput = document.getElementById('deleteAccountConfirmInput').value;
+            const errorMsg = document.getElementById('deleteAccountErrorMsg');
+            
+            if (confirmInput !== window.deleteAccountUsername) {
+                errorMsg.style.display = 'block';
+                document.getElementById('deleteAccountConfirmInput').style.borderColor = 'var(--danger)';
+                return;
+            }
+            
+            try {
+                const API_BASE_URL = 'http://localhost:5500/api';
+                const response = await fetch(`${API_BASE_URL}/trainee-accounts/${window.deleteAccountId}`, {
+                    method: 'DELETE'
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to delete account');
+                }
+                
+                showNotification('Account deleted successfully!', 'success');
+                closeDeleteAccountModal();
+                loadAccountsWithCourses(); // Reload table
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                showNotification('Failed to delete account: ' + error.message, 'error');
+            }
+        }
+        
+        // Close View Account Modal
+        function closeViewAccountModal() {
+            document.getElementById('viewAccountModal').classList.remove('active');
+        }
+        
+        // Close Account Modal (Add/Edit)
+        function closeAccountModal() {
+            document.getElementById('accountModal').classList.remove('active');
+            document.getElementById('accountForm').reset();
+            currentEditRow = null;
+        }
+        
+        // Close Delete Account Modal
+        function closeDeleteAccountModal() {
+            document.getElementById('deleteAccountModal').classList.remove('active');
+            document.getElementById('deleteAccountConfirmInput').value = '';
+            document.getElementById('deleteAccountErrorMsg').style.display = 'none';
+        }
+        
+        // Save Account (Add or Edit)
+        async function saveAccount(event) {
+            event.preventDefault();
+            
+            const accountData = {
+                username: document.getElementById('accountUsername').value,
+                email: document.getElementById('accountEmail').value,
+                firstName: document.getElementById('accountFirstName').value,
+                lastName: document.getElementById('accountLastName').value,
+                role: document.getElementById('accountRole').value,
+                password: document.getElementById('accountPassword').value
+            };
+            
+            try {
+                const API_BASE_URL = 'http://localhost:5500/api';
+                let response;
+                
+                if (currentEditRow) {
+                    // Update existing account - use accountId instead of _id
+                    // Only include password if it was changed
+                    if (!accountData.password) {
+                        delete accountData.password;
+                    }
+                    
+                    response = await fetch(`${API_BASE_URL}/trainee-accounts/${currentEditRow.accountId}`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(accountData)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to update account');
+                    }
+                    
+                    showNotification('Account updated successfully!', 'success');
+                } else {
+                    // Create new account
+                    if (!accountData.password) {
+                        alert('Password is required for new accounts');
+                        return;
+                    }
+                    
+                    response = await fetch(`${API_BASE_URL}/trainee-accounts`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(accountData)
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error('Failed to create account');
+                    }
+                    
+                    showNotification('Account created successfully!', 'success');
+                }
+                
+                closeAccountModal();
+                loadAccountsWithCourses(); // Reload table
+            } catch (error) {
+                console.error('Error saving account:', error);
+                showNotification('Failed to save account: ' + error.message, 'error');
+            }
+        }
+        
+        // Show notification
+        function showNotification(message, type = 'info') {
+            const notification = document.createElement('div');
+            notification.className = 'notification notification-' + type;
+            
+            const icons = {
+                success: 'bi-check-circle-fill',
+                error: 'bi-x-circle-fill',
+                warning: 'bi-exclamation-triangle-fill',
+                info: 'bi-info-circle-fill'
+            };
+            
+            const colors = {
+                success: '#27AE60',
+                error: '#E74C3C',
+                warning: '#F39C12',
+                info: '#3498DB'
+            };
+            
+            notification.innerHTML = `<i class="bi ${icons[type] || icons.info}"></i> ${message}`;
+            notification.style.cssText = `
+                position: fixed; 
+                top: 20px; 
+                right: 20px; 
+                background: white; 
+                padding: 16px 20px; 
+                border-radius: 8px; 
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                z-index: 10000;
+                border-left: 4px solid ${colors[type] || colors.info};
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                font-weight: 500;
+                max-width: 400px;
+            `;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.remove();
+            }, 4000);
         }
     </script>
 

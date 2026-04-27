@@ -163,6 +163,12 @@
     justify-content: center;
 }
 
+.course-image img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
 .course-body {
     padding: 20px;
     display: flex;
